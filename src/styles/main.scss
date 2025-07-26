@@ -1,0 +1,88 @@
+@use 'variables';
+@use 'mixins';
+
+@use "bulma/sass/utilities"
+with ($family-primary: '"Staatliches", "Nunito", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", sans-serif',
+  $grey-dark: variables.$navy,
+  $grey-light: variables.$gray,
+  $primary: variables.$blue,
+  $background: variables.$black,
+  $link: variables.$purple,
+  $control-border-width: 2px
+);
+
+@use "bulma/sass/form" with (
+  $input-shadow: none
+);
+
+@forward "bulma/sass/base";
+@forward "bulma/sass/components/navbar";
+@forward "bulma/sass/layout/hero";
+@forward "bulma/sass/layout/section";
+@forward "bulma/sass/layout/container";
+@forward "bulma/sass/themes";
+//@import url("https://fonts.googleapis.com/css?family=Staatliches");
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+
+  @media (prefers-color-scheme: dark) {}
+}
+
+body {
+  position: relative;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  // --bulma-scheme-main: #(variables.$main-background-color);
+  // --bulma-background: #{variables.$main-background-color};
+  // --bulma-body-background: #{variables.$main-background-color};
+  // --bulma-text: #{variables.$main-background-color};
+}
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.main-content {
+  position: absolute;
+  top: 52px;
+  left: 0px;
+  right: 0px;
+}
+
+.sign-in-skeleton {
+  height: 30px;
+  width: 100%;
+}
+
+@media screen and (max-width: 1023px) {
+  .navbar {
+    display: flex;
+    flex-wrap: wrap;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    position: absolute;
+    opacity: 90%;
+  }
+
+  .navbar-brand {
+    min-width: 100%;
+  }
+
+  .navbar-menu {
+    margin-left: auto;
+    min-width: 50%;
+  }
+}

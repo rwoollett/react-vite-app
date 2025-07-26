@@ -1,0 +1,68 @@
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+// import CountdownPage from './pages/CountdownPage'
+// import FlipImagePage from './pages/FlipImagePage'
+import './styles/main.scss'
+import { ROUTES } from './resources/routes-constants'
+import NavBar from './components/NavBar'
+import HomePage from './pages/HomePage'
+import SignIn from './pages/SignIn'
+import NotFoundPage from './pages/NotFoundPage'
+import Banner from './components/Banner'
+import SignOut from './components/SignOut'
+import useSignedInAuthorize from './hooks/use-signedin-authenticate'
+import ProtectedRoute from './pages/ProtectedRoute'
+import Skeleton from './components/Skeleton'
+// import CountdownCreate from './components/CountdownCreate'
+// import CountdownList from './components/CountdownList'
+// import SignOut from './components/SignOut'
+// import SignUp from './components/SignUp'
+
+const RootComponent: React.FC = () => {
+  const { isLoggedIn, isLoading } = useSignedInAuthorize();
+
+  if (isLoading) {
+    console.log('isload', isLoading, isLoggedIn)
+    return (
+      <div className='main-content'>
+        <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
+        <Skeleton times={1} className={'sign-in-skeleton'} />
+      </div>
+    )
+  }
+
+  return (
+    <Router future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }}>
+      <NavBar isLoggedIn={isLoggedIn} />
+      <div className='main-content'>
+        <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
+        <Routes>
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path={ROUTES.HOMEPAGE_ROUTE}
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <HomePage />
+              </ProtectedRoute>} />
+          <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
+          <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
+          
+          {/*
+        
+        <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
+        <Route path={ROUTES.COUNTDOWNPAGE_ROUTE} element={<CountdownPage />} >
+          <Route index element={<CountdownList />} />
+          <Route path="create" element={<CountdownCreate />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route> */}
+
+          {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
+        </Routes>
+      </div>
+    </Router>
+  )
+}
+
+export default RootComponent

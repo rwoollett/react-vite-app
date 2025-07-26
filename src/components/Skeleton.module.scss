@@ -1,0 +1,48 @@
+@use '../styles/mixins';
+
+.skeleton {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+
+  -webkit-animation: shimmer 1.5s infinite linear;
+  animation: shimmer 1.5s infinite linear;
+  -webkit-transform: translateX(-100%);
+  -ms-transform: translateX(-100%);
+  transform: translateX(-100%);
+
+  background: -moz-linear-gradient(to right, var(--tw-gradient-stops));
+  background: -webkit-linear-gradient(to right, var(--tw-gradient-stops));
+  background: -o-linear-gradient(to right, var(--tw-gradient-stops));
+  background: -ms-linear-gradient(to right, var(--tw-gradient-stops));
+  background: linear-gradient(to right, var(--tw-gradient-stops));
+
+  &__container {
+    --tw-gradient-from: #e5e7eb;
+    --tw-gradient-to: #e5e7eb;
+    --tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to);
+
+    position: relative;
+    overflow: hidden;
+    background-color: var(--tw-gradient-from);
+    margin-bottom: 10px;
+  }
+
+
+  @-webkit-keyframes shimmer {
+    100% {
+      -webkit-transform: translateX(100%);
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes shimmer {
+    100% {
+      -webkit-transform: translateX(100%);
+      transform: translateX(100%);
+    }
+  }
+
+}

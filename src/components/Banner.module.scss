@@ -1,0 +1,33 @@
+@use '../styles/mixins';
+
+.banner {
+  background-image: linear-gradient(rgba(12, 200, 198, 0.5),
+      rgba(212, 204, 198, 0.5)),
+    url(../styles/coastalDream.jpg);
+  background-size: cover;
+  background-position: center;
+  padding: 5vh 0px;
+  color: white;
+  margin-top: 0px;
+
+  &__container {
+    @include mixins.container;
+
+    & .title {
+      font-size: 3em;
+      flex: 1;
+    }
+
+    & .desc {
+      margin-bottom: 10px;
+      flex: 1;
+    }
+
+    & .date {
+      font-size: small;
+      background-color: white;
+      flex: 1;
+    }
+
+  }
+}

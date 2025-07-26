@@ -1,0 +1,79 @@
+@use './variables';
+
+@mixin container {
+  width: calc(880px + 3vw / 2);
+  margin: 0 auto;
+
+  @media (max-width: 992px) {
+    width: calc(700px + 3vw / 2);
+  }
+
+  @media (max-width: 768px) {
+    width: calc(460px + 3vw / 2);
+  }
+
+  @media (max-width: 480px) {
+    width: calc(300px + 3vw / 2);
+  }
+
+}
+
+@mixin flexingItem($direction, $align) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  @if ($direction == 'row') {
+    align-content: space-around;
+    justify-content: space-between;
+  }
+
+}
+
+@mixin linkColors {
+  & a, a:visited {
+    color: var(--link-color);
+  }
+  & a:hover {
+    color: var(--link-hover-color);
+    cursor: pointer;
+  }
+
+}
+
+@mixin formGrouped {
+  form {
+    flex-grow: 1;
+    flex: 0 0 40%;
+
+    & .group {
+      margin-bottom: 10px;
+
+      & label {
+        width: 100%;
+        color: rgba(0, 0, 0, 0.75);
+      }
+
+      & input,
+      select,
+      textarea {
+        width: 100%;
+        color: rgba(0, 0, 0, 0.75);
+      }
+
+      & textarea {
+        padding: 10px;
+        border: 2px solid;
+        overflow: auto;
+        resize: vertical;
+      }
+
+    }
+  }
+
+}
+
+@mixin boxMargin {
+  box-sizing: border-box;
+  margin: 0;
+  outline: none;
+}

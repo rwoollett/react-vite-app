@@ -1,0 +1,25 @@
+
+
+.alert {
+  position: relative;
+  padding: 8px 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+
+  & ul {
+    list-style: none;
+    margin-top: 0px;
+    margin-bottom: 0px;
+
+  }
+
+  &::after, ::before {
+    box-sizing: border-box;
+  }
+}
