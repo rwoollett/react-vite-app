@@ -14,6 +14,7 @@ import ProtectedRoute from './pages/ProtectedRoute'
 import Skeleton from './components/Skeleton'
 import UserPage from './pages/UserPage'
 import TTTPage from './pages/TTTPage'
+
 // import CountdownCreate from './components/CountdownCreate'
 // import CountdownList from './components/CountdownList'
 // import SignOut from './components/SignOut'
@@ -37,7 +38,7 @@ const RootComponent: React.FC = () => {
       v7_relativeSplatPath: true
     }}>
       <NavBar isLoggedIn={isLoggedIn} />
-      <div className='main-content'>
+      <section className='main-content'>
         <Routes>
           <Route path="*" element={<NotFoundPage />} />
           <Route path={ROUTES.USER_ROUTE}
@@ -61,7 +62,7 @@ const RootComponent: React.FC = () => {
 
           {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
         </Routes>
-      </div>
+      </section>
     </Router>
   )
 }

@@ -9,7 +9,7 @@ interface BannerProps {
 
 const Banner = ({ title, desc }: BannerProps): JSX.Element => {
   return (
-    <div className={`${style.banner} hero`}>
+    <div className={`${style.banner} `}>
       <div className={`${style.banner__container}`}>
         <h1 className={`${style.title} title`}>{title}</h1>
         <p className={`${style.desc}`}>{desc}</p>

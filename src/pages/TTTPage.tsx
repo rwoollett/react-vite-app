@@ -364,23 +364,25 @@ const CanvasComponent: React.FC = () => {
 
   const { rowSize, colSize, blockSize } = boardBounds;
   return (
-    <div className="panel">
-      <p className="panel-heading mb-4">Tic Tac Toe {gameId} {gameActive && hasMovedBoard && "Move made"} {gameActive && (hasMovedBoard || "Make a move")}</p>
-      <div className="columns">
-        <div className="column is-one-third">
-          {gameActive || gameOption('Select Game Options', startButtonText, true)}
-          {gameActive && gameOption('Playing Tic Tac Toe!', 'Finish Game', false)}
-        </div>
-        <div className="column">
-          <canvas className='is-clickable'
-            onMouseMove={handleOnMouseMove}
-            onMouseDown={handleOnMouseDown}
-            onMouseLeave={handleOnMouseLeave}
-            ref={canvasRef}
-            width={colSize * blockSize}
-            height={rowSize * blockSize}
-            style={{ border: '1px solid #EEEEEE' }}>
-          </canvas>
+    <div className="container">
+      <div className="panel">
+        <p className="panel-heading mb-4">Tic Tac Toe {gameId} {gameActive && hasMovedBoard && "Move made"} {gameActive && (hasMovedBoard || "Make a move")}</p>
+        <div className="columns">
+          <div className="column is-one-third">
+            {gameActive || gameOption('Select Game Options', startButtonText, true)}
+            {gameActive && gameOption('Playing Tic Tac Toe!', 'Finish Game', false)}
+          </div>
+          <div className="column">
+            <canvas className='is-clickable'
+              onMouseMove={handleOnMouseMove}
+              onMouseDown={handleOnMouseDown}
+              onMouseLeave={handleOnMouseLeave}
+              ref={canvasRef}
+              width={colSize * blockSize}
+              height={rowSize * blockSize}
+              style={{ border: '1px solid #EEEEEE' }}>
+            </canvas>
+          </div>
         </div>
       </div>
     </div>

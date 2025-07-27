@@ -30,7 +30,7 @@ const SignUp = (): JSX.Element => {
       navigate(ROUTES.USER_ROUTE);
     }
   }, [isLoggedIn, isLoading, navigate]);
-  
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const errorMessage: string[] = [];
@@ -59,9 +59,9 @@ const SignUp = (): JSX.Element => {
   };
 
   return (
-    <div>
-      <section className='section'>
-        <div className="container is-fluid">
+    <div className='hero'>
+      <div className='hero-body'>
+        <div className="container">
           <form onSubmit={onSubmit}>
             <ul>
               {errorMessage.length > 0 && errorMessage.map((err, i) => {
@@ -97,7 +97,7 @@ const SignUp = (): JSX.Element => {
             </div>
           </form>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

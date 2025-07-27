@@ -35,33 +35,37 @@ const HomePage: React.FC = () => {
 
   return (<>
     <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
-    <section className='section'>
-      <header>
-        <h1 className="title">
-          Network with NMToken Dashboard
-        </h1>
-        {isLoggedIn && (
-          <div className='mb-2 columns has-background-info-light'>
-            <div className="column is-narrow">
-              <div className="is-size-6">Welcome, <b>{email}</b>!</div>
+    <div className='hero is-fullheight-with-navbar'>
+      <div className='hero-head'>
+        <header>
+          {isLoggedIn && (
+            <div className='mt-0 columns has-background-info-light'>
+              <div className="column is-narrow">
+                <div className="is-size-6">Welcome, <b>{email}</b>!</div>
+              </div>
+              <div className="column is-narrow">
+                <span className={`tag ${connected ? 'is-success' : 'is-danger'}`}>
+                  {connected ? 'Connected' : 'Disconnected'}
+                </span>
+              </div>
+              <div className="column">
+                <button type="button" className="tag is-link" onClick={handleSendMessage}>Send</button>
+              </div>
+              <div className="column is-narrow">
+                <span className={`tag ${received.length > 0 ? 'is-warning' : 'is-info'}`}>
+                  {received.length > 0 ? `Received ${received.length} notifications` : 'No new notifications'}
+                </span>
+              </div>
             </div>
-            <div className="column is-narrow">
-              <span className={`tag ${connected ? 'is-success' : 'is-danger'}`}>
-                {connected ? 'Connected' : 'Disconnected'}
-              </span>
-            </div>
-            <div className="column">
-              <button type="button" className="tag is-link" onClick={handleSendMessage}>Send</button>
-            </div>
-            <div className="column is-narrow">
-              <span className={`tag ${received.length > 0 ? 'is-warning' : 'is-info'}`}>
-                {received.length > 0 ? `Received ${received.length} notifications` : 'No new notifications'}
-              </span>
-            </div>
-          </div>
-        )}
-      </header>
-    </section>
+          )}
+        </header>
+      </div>
+
+      <div className='hero-body'>
+        <div className="container is-fluid">
+        </div>
+      </div>
+    </div>
   </>
   )
 }

@@ -66,47 +66,49 @@ const SignIn: React.FC = () => {
 
   return (<>
     <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
-    <section className='section'>
-      <div className="container is-fluid">
-        <form onSubmit={onHandleLogin}>
-          <ul>
-            {errorMessage.length > 0 && errorMessage.map((err, i) => {
-              return (<li key={i}>{err}</li>);
-            })}
-          </ul>
-          {(results.isError) && errors}
-          <div className="field">
-            <div className="control">
-              <label htmlFor="emailInput" className="label">Email</label>
-              <input id="emailInput" name="emailInput" value={email}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
-                className={`input ${email === '' && errorMessage.length && 'is-danger'}`}
-                autoComplete="email" type="text" placeholder="temp@hello.co.nz" />
+    <div className='hero'>
+      <div className='hero-body'>
+        <div className="container">
+          <form onSubmit={onHandleLogin}>
+            <ul>
+              {errorMessage.length > 0 && errorMessage.map((err, i) => {
+                return (<li key={i}>{err}</li>);
+              })}
+            </ul>
+            {(results.isError) && errors}
+            <div className="field">
+              <div className="control">
+                <label htmlFor="emailInput" className="label">Email</label>
+                <input id="emailInput" name="emailInput" value={email}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
+                  className={`input ${email === '' && errorMessage.length && 'is-danger'}`}
+                  autoComplete="email" type="text" placeholder="temp@hello.co.nz" />
+              </div>
             </div>
-          </div>
 
-          <div className="field">
-            <div className="control">
-              <label htmlFor='passwordInput' className="label">Password</label>
-              <input id='passwordInput' name='passwordInput' value={password}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-                className={`input ${password === '' && errorMessage.length && 'is-danger'}`}
-                autoComplete="current-password" type="password" placeholder="password" />
+            <div className="field">
+              <div className="control">
+                <label htmlFor='passwordInput' className="label">Password</label>
+                <input id='passwordInput' name='passwordInput' value={password}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
+                  className={`input ${password === '' && errorMessage.length && 'is-danger'}`}
+                  autoComplete="current-password" type="password" placeholder="password" />
+              </div>
             </div>
-          </div>
 
-          <div className="field is-grouped">
-            <div className="control">
-              <Button primary type="submit">Login</Button>
+            <div className="field is-grouped">
+              <div className="control">
+                <Button primary type="submit">Login</Button>
+              </div>
+              <div className="control">
+                <Button secondary onClick={redirectToHomePage} type="button">Home</Button>
+              </div>
             </div>
-            <div className="control">
-              <Button secondary onClick={redirectToHomePage} type="button">Home</Button>
-            </div>
-          </div>
 
-        </form>
+          </form>
+        </div>
       </div>
-    </section>
+    </div>
   </>
   )
 }

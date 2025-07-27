@@ -11,7 +11,7 @@ interface NavBarProps {
   isLoggedIn: boolean;
 }
 
-function NavBar({ isLoggedIn } : NavBarProps): JSX.Element {
+function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
   const [burgerActive, setBurgerActive] = useState(false);
   const { email } = useSignedInAuthorize();
 
@@ -38,35 +38,37 @@ function NavBar({ isLoggedIn } : NavBarProps): JSX.Element {
   return (
     // 
     <nav className="navbar" role="navigation" aria-label="main navigation">
-      <div className="navbar-brand">
-        <a title="link to home page" className="navbar-item" href={ROUTES.HOMEPAGE_ROUTE}>
-          <img alt='RW' title="RWIcon" src={logo} width="32" height="32" />
-        </a>
-        <div className='navbar-item'>{email}</div>
-        <button title="menu icon" role="button" onClick={handleClickBurger}
-          className={`navbar-burger ${burgerActive && 'is-active'}`} aria-label="menu" >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </button>
-      </div>
-      <div onMouseLeave={handleMouseLeave} className={`navbar-menu ${burgerActive && 'is-active'}`}>
-        <div className="navbar-start">
-          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link>
-          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.FLIPIMAGEPAGE_ROUTE}>Flip Image</Link>
-          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.TTTPAGE_ROUTE}>Tic Tac Toe</Link>
-          <div className="navbar-item has-dropdown is-hoverable">
-            <a className="navbar-link">Utility</a>
-            <div className="navbar-dropdown">
-              <a className="navbar-item">About</a>
-              <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.COUNTDOWNPAGE_ROUTE} state={{ tableMode: TABLE_VIEW }}>Countdown Timer</Link>
+      {/* <div className='container'> */}
+        <div className="navbar-brand">
+          <a title="link to home page" className="navbar-item" href={ROUTES.HOMEPAGE_ROUTE}>
+            <img alt='RW' title="RWIcon" src={logo} width="32" height="32" />
+          </a>
+          <div className='navbar-item'>{email}</div>
+          <button title="menu icon" role="button" onClick={handleClickBurger}
+            className={`navbar-burger ${burgerActive && 'is-active'}`} aria-label="menu" >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+        <div onMouseLeave={handleMouseLeave} className={`navbar-menu ${burgerActive && 'is-active'}`}>
+          <div className="navbar-start">
+            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link>
+            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.FLIPIMAGEPAGE_ROUTE}>Flip Image</Link>
+            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.TTTPAGE_ROUTE}>Tic Tac Toe</Link>
+            <div className="navbar-item has-dropdown is-hoverable">
+              <a className="navbar-link">Utility</a>
+              <div className="navbar-dropdown">
+                <a className="navbar-item">About</a>
+                <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.COUNTDOWNPAGE_ROUTE} state={{ tableMode: TABLE_VIEW }}>Countdown Timer</Link>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="navbar-end">
-          {userBar}
-        </div>
+          <div className="navbar-end">
+            {userBar}
+          </div>
+        {/* </div> */}
       </div>
     </nav>
   );
