@@ -254,8 +254,8 @@ const CanvasComponent: React.FC = () => {
     }
   };
 
-  const handleOnMouseLeave = (event: MouseEvent<HTMLCanvasElement>) => {
-    event.preventDefault();
+  const handleOnMouseLeave = (_event: MouseEvent<HTMLCanvasElement>) => {
+    //event.preventDefault();
     setPlayerHover(-1);
   };
 
@@ -263,8 +263,8 @@ const CanvasComponent: React.FC = () => {
     setPlayer(newOption);
   };
 
-  const handleOpponentStart = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
+  const handleOpponentStart = (_event: ChangeEvent<HTMLInputElement>) => {
+    //event.preventDefault();
     setIsOpponentStart(!isOpponentStart);
   };
 
@@ -355,7 +355,6 @@ const CanvasComponent: React.FC = () => {
           <div className="field is-grouped">
             <div className="control">
               <Button primary type="submit">{buttonText}</Button>
-              {/* <button type="submit" className="button is-link">{buttonText}</button> */}
             </div>
           </div>
         </form>

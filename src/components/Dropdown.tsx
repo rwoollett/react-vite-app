@@ -56,7 +56,7 @@ function Dropdown(
     )
   });
 
-  const icon = <span className="is-size-5">
+  const icon = <span className="is-size-6 mb-2">
     {/* {isOpen ? <i className="fas fa-angle-down" aria-hidden="true"></i> : <i className="fas fa-angle-down" aria-hidden="true"></i>} */}
     {isOpen ? 'v' : '<'}
   </span>
