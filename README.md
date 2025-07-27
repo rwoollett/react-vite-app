@@ -2,7 +2,7 @@
 
 <br />
 The net processor use the CSToken service to get connected into a backend pool of processors to 
-provide functionality to the front end applications. Uses the cSToken service api to show the request and 
+provide functionality to the front end applications. Uses the CSToken service api to show the request and 
 acquire of the shared token to enter the CS in the pool of netproc processor.
 
 <br />
