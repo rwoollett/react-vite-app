@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../resources/routes-constants';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import Skeleton from '../components/Skeleton';
+import Banner from '../components/Banner';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -24,14 +25,14 @@ const SignIn: React.FC = () => {
   if (isLoading) {
     return <Skeleton times={1} className="sign-in-skeleton" />
   }
-  
+
   const redirectToHomePage = () => {
     navigate(ROUTES.HOMEPAGE_ROUTE)
   }
 
   useEffect(() => {
     if (isLoggedIn && !isLoading) {
-      navigate(ROUTES.HOMEPAGE_ROUTE);
+      navigate(ROUTES.USER_ROUTE);
     }
   }, [isLoggedIn, isLoading, navigate]);
 
@@ -63,7 +64,8 @@ const SignIn: React.FC = () => {
 
   };
 
-  return (
+  return (<>
+    <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
     <section className='section'>
       <div className="container is-fluid">
         <form onSubmit={onHandleLogin}>
@@ -105,6 +107,7 @@ const SignIn: React.FC = () => {
         </form>
       </div>
     </section>
+  </>
   )
 }
 

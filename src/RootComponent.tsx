@@ -8,11 +8,11 @@ import NavBar from './components/NavBar'
 import HomePage from './pages/HomePage'
 import SignIn from './pages/SignIn'
 import NotFoundPage from './pages/NotFoundPage'
-import Banner from './components/Banner'
 import SignOut from './components/SignOut'
 import useSignedInAuthorize from './hooks/use-signedin-authenticate'
 import ProtectedRoute from './pages/ProtectedRoute'
 import Skeleton from './components/Skeleton'
+import UserPage from './pages/UserPage'
 // import CountdownCreate from './components/CountdownCreate'
 // import CountdownList from './components/CountdownList'
 // import SignOut from './components/SignOut'
@@ -25,7 +25,6 @@ const RootComponent: React.FC = () => {
     console.log('isload', isLoading, isLoggedIn)
     return (
       <div className='main-content'>
-        <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
         <Skeleton times={1} className={'sign-in-skeleton'} />
       </div>
     )
@@ -38,17 +37,17 @@ const RootComponent: React.FC = () => {
     }}>
       <NavBar isLoggedIn={isLoggedIn} />
       <div className='main-content'>
-        <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
         <Routes>
           <Route path="*" element={<NotFoundPage />} />
-          <Route path={ROUTES.HOMEPAGE_ROUTE}
+          <Route path={ROUTES.USER_ROUTE}
             element={
               <ProtectedRoute isLoggedIn={isLoggedIn}>
-                <HomePage />
+                <UserPage />
               </ProtectedRoute>} />
+          <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
           <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
           <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
-          
+
           {/*
         
         <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />

@@ -1,16 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, type FormEvent } from 'react'
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
+import { useAppSelector } from '../store/reducers/store';
+import Greeting from '../components/Greeting';
+import { sayFarewell } from '../utility/functions';
+import Button from '../components/Button';
 import { useWebSocket } from '../hooks/use-websocket-context';
-import Banner from '../components/Banner';
 
 
-const HomePage: React.FC = () => {
+const UserPage: React.FC = () => {
+  const [farewell, setFarewell] = useState("");
   const { isLoggedIn, email } = useSignedInAuthorize();
   const { wsRef, messageQueue } = useWebSocket();
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
   const latestTimestamp = 'something';
   const lastProcessedSeq = useRef(0);
+
+  const contents = useAppSelector((state) => {
+    return state.data.contents;
+  });
 
   const handleSendMessage = () => {
     const { payload } = { payload: latestTimestamp };
@@ -33,8 +41,12 @@ const HomePage: React.FC = () => {
     }
   }, [messageQueue]);
 
-  return (<>
-    <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
+  const onHandleGreet = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFarewell(sayFarewell(contents[0]));
+  };
+
+  return (
     <section className='section'>
       <header>
         <h1 className="title">
@@ -61,10 +73,25 @@ const HomePage: React.FC = () => {
           </div>
         )}
       </header>
+
+      <div className="container is-fluid">
+        <form onSubmit={onHandleGreet}>
+
+          <div className="field is-grouped">
+            <div className="control">
+              <Button primary type="submit">Greet</Button>
+            </div>
+          </div>
+
+          <div className='block'>
+            {isLoggedIn && <Greeting name={`${contents}`} />}
+            <p>{farewell}</p>
+          </div>
+        </form>
+      </div>
     </section>
-  </>
   )
 }
 
-export default HomePage
+export default UserPage
 

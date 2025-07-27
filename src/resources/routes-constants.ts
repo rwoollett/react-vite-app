@@ -1,4 +1,5 @@
 export const ROUTES = {
+  USER_ROUTE: '/users',
   HOMEPAGE_ROUTE: '/',
   SIGNOUT_ROUTE: '/signout',
   REGISTER_ROUTE: '/signup',

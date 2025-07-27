@@ -16,11 +16,15 @@ with ($family-primary: '"Staatliches", "Nunito", "Segoe UI", "Roboto", "Oxygen",
 );
 
 @forward "bulma/sass/base";
+@forward "bulma/sass/grid/columns";
 @forward "bulma/sass/components/navbar";
 @forward "bulma/sass/layout/hero";
 @forward "bulma/sass/layout/section";
 @forward "bulma/sass/layout/container";
+@forward "bulma/sass/elements/title";
+@forward "bulma/sass/elements/tag";
 @forward "bulma/sass/themes";
+@forward "bulma/sass/helpers";
 //@import url("https://fonts.googleapis.com/css?family=Staatliches");
 @import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
 

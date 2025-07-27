@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import { WebSocketProvider } from "./context/websocket";
 import RootComponent from './RootComponent'
 import { persistor, store } from './store/reducers/store'
 import { ipApi } from './store/api/ipApi'
@@ -13,7 +14,9 @@ const App: React.FC = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <RootComponent />
+        <WebSocketProvider>
+          <RootComponent />
+        </WebSocketProvider>
       </PersistGate>
     </Provider>
   )

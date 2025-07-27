@@ -27,7 +27,7 @@ const SignUp = (): JSX.Element => {
 
   useEffect(() => {
     if (isLoggedIn && !isLoading) {
-      navigate(ROUTES.HOMEPAGE_ROUTE);
+      navigate(ROUTES.USER_ROUTE);
     }
   }, [isLoggedIn, isLoading, navigate]);
   
