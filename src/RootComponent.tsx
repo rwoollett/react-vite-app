@@ -13,6 +13,7 @@ import useSignedInAuthorize from './hooks/use-signedin-authenticate'
 import ProtectedRoute from './pages/ProtectedRoute'
 import Skeleton from './components/Skeleton'
 import UserPage from './pages/UserPage'
+import TTTPage from './pages/TTTPage'
 // import CountdownCreate from './components/CountdownCreate'
 // import CountdownList from './components/CountdownList'
 // import SignOut from './components/SignOut'
@@ -45,6 +46,7 @@ const RootComponent: React.FC = () => {
                 <UserPage />
               </ProtectedRoute>} />
           <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
+          <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
           <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
           <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
 

@@ -15,13 +15,20 @@ with ($family-primary: '"Staatliches", "Nunito", "Segoe UI", "Roboto", "Oxygen",
   $input-shadow: none
 );
 
+// @use "scss/fontawesome.scss"
+// with ($fa-font-path: variables.$fa-font-path);
+// @forward "scss/solid.scss";
+
 @forward "bulma/sass/base";
 @forward "bulma/sass/grid/columns";
 @forward "bulma/sass/components/navbar";
+@forward "bulma/sass/components/panel";
+@forward "bulma/sass/components/dropdown";
 @forward "bulma/sass/layout/hero";
 @forward "bulma/sass/layout/section";
 @forward "bulma/sass/layout/container";
 @forward "bulma/sass/elements/title";
+@forward "bulma/sass/elements/icon";
 @forward "bulma/sass/elements/tag";
 @forward "bulma/sass/themes";
 @forward "bulma/sass/helpers";
