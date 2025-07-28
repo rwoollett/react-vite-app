@@ -1,4 +1,3 @@
-@use '../styles/variables';
 
 .tableLayout {
   table-layout: auto;
@@ -29,7 +28,7 @@
 
 .control {
   cursor: pointer;
-  color: variables.$lime;
+  color: var(--bulma-arrow-color);
   display: flex;
   margin: auto;
   align-items: center;
@@ -39,7 +38,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: variables.$navy;
+    background-color: var(--bulma-background-hover);
     animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 

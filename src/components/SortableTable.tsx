@@ -6,7 +6,7 @@ import style from './SortableTable.module.scss';
 function SortableTable<T>(props: {
   data: T[];
   config: ConfigTable<T>,
-  keyFn: (item:T) => string|number;
+  keyFn: (item: T) => string | number;
 }) {
   const { config, data } = props;
   const { sortOrder, sortBy, sortedData, setSortColumn } = useSort(data, config.columns);
@@ -24,7 +24,7 @@ function SortableTable<T>(props: {
           onClick={() => setSortColumn(column.label)}
         >
           <div className={style.control}>
-            {column.label}
+            <span className={style.columnName}>{column.label}</span>
             {getIcon(column.label, sortBy, sortOrder)}
           </div>
         </th>
@@ -42,7 +42,7 @@ function getIcon(label: string, sortBy: string | null, sortOrder: string | null)
     return (
       <div className={style.arrowContainer}>
         {/* <GoArrowUp /> <GoArrowDown /> */}
-        ^ v
+        <span className={style.arrowItem}>^</span> <span className={style.arrowItem}>v</span>
       </div>
     );
   }
@@ -50,13 +50,13 @@ function getIcon(label: string, sortBy: string | null, sortOrder: string | null)
   if (sortOrder === null) {
     return (
       <div className={style.arrowContainer}>
-        ^ v
+        <span className={style.arrowItem}>^</span> <span className={style.arrowItem}>v</span>
       </div>
     );
   } else if (sortOrder === 'asc') {
     return (
       <div className={style.arrowContainer}>
-        ^
+        <span className={style.arrowItem}>^</span>
         {/* <GoArrowUp /> */}
       </div>
     );
@@ -64,7 +64,7 @@ function getIcon(label: string, sortBy: string | null, sortOrder: string | null)
     return (
       <div className={style.arrowContainer}>
         {/* <GoArrowDown /> */}
-        v
+        <span className={style.arrowItem}>v</span>
       </div>
     );
   }

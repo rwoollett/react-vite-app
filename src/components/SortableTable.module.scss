@@ -4,7 +4,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: variables.$navy;
+    background-color: var(--bulma-highlight-background-color);
   }
 
   .control {
@@ -12,9 +12,19 @@
     align-items: center;
     height: 24px;
 
+    .columnName {
+      display: block;
+      flex: 1 1 auto;
+    }
+    .arrowItem {
+      display: block;
+      flex: 1 1 auto;
+      font-size: xx-small;
+    }
     .arrowContainer {
       display: flex;
       flex-direction: column;
+      flex: 1 1 auto;
     }
   }
 }

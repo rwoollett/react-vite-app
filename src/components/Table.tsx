@@ -101,8 +101,8 @@ function Table<T>({ data, config, keyFn }: {
     const selector = <td key={`selector_${keyFn(rowData)}`}
       className={editClasses}>
       <div>
-        {!selectIndex[keyFn(rowData)] && <Button onClick={() => handleSelectIndex(keyFn(rowData))} className={style.control}>+</Button>}
-        {selectIndex[keyFn(rowData)] && <Button onClick={() => handleSelectIndex(keyFn(rowData))} className={style.control}>-</Button>}
+        {!selectIndex[keyFn(rowData)] && <Button type="button" onClick={() => handleSelectIndex(keyFn(rowData))} className={style.control}>+</Button>}
+        {selectIndex[keyFn(rowData)] && <Button type="button" onClick={() => handleSelectIndex(keyFn(rowData))} className={style.control}>-</Button>}
       </div>
     </td>;
 
@@ -122,8 +122,8 @@ function Table<T>({ data, config, keyFn }: {
   const selectorAll = <th key={`selectorAll`}
     className={editClasses}>
     <div>
-      {!selectAll && <Button onClick={handleSelectAll} className={style.control}>+</Button>}
-      {selectAll && <Button onClick={handleSelectAll} className={style.control}>-</Button>}
+      {!selectAll && <Button type="button" onClick={handleSelectAll} className={style.control}>+</Button>}
+      {selectAll && <Button type="button" onClick={handleSelectAll} className={style.control}>-</Button>}
     </div>
   </th>;
 
@@ -136,15 +136,15 @@ function Table<T>({ data, config, keyFn }: {
   };
 
   const renderEditCancelButton = edit === false
-    ? <Button onClick={handleEdit} secondary outline>Edit</Button>
-    : <Button onClick={handleCancel} primary>Cancel</Button>;
+    ? <Button type="button" onClick={handleEdit} secondary outline>Edit</Button>
+    : <Button type="button" onClick={handleCancel} primary>Cancel</Button>;
 
   const isSelectedEdit = Object.values(selectIndex)
     .reduce((prev, curr) => curr === true ? true : prev, false);
 
   const renderedEditable = config.edit.map((command) => {
     return (
-      <td key={command.label}><Button onClick={() => {
+      <td key={command.label}><Button type="button" onClick={() => {
         data.forEach((rowData) => {
           selectIndex[keyFn(rowData)] === true && command.execute(rowData);
         });
@@ -155,7 +155,7 @@ function Table<T>({ data, config, keyFn }: {
 
   const renderedAction = config.action.map((command) => {
     return (
-      <td key={command.label}><Button onClick={() => {
+      <td key={command.label}><Button type="button" onClick={() => {
         command.execute();
         setTableMode(TABLE_VIEW);
       }} primary outline>{command.label}</Button></td>
