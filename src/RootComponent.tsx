@@ -14,6 +14,7 @@ import ProtectedRoute from './pages/ProtectedRoute'
 import Skeleton from './components/Skeleton'
 import UserPage from './pages/UserPage'
 import TTTPage from './pages/TTTPage'
+import FlipImagePage from './pages/FlipImagePage'
 
 // import CountdownCreate from './components/CountdownCreate'
 // import CountdownList from './components/CountdownList'
@@ -47,12 +48,12 @@ const RootComponent: React.FC = () => {
               </ProtectedRoute>} />
           <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
           <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
+          <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
           <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
           <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
 
           {/*
         
-        <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
         <Route path={ROUTES.COUNTDOWNPAGE_ROUTE} element={<CountdownPage />} >
           <Route index element={<CountdownList />} />
           <Route path="create" element={<CountdownCreate />} />

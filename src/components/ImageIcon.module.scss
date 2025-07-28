@@ -1,0 +1,45 @@
+.relPos {
+  display: flex;
+  position: relative;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.imgShow {
+  box-shadow: 1px 1px 10px #999;
+  max-height: 120px;
+  max-width: 120px;
+  display: inline-block;
+  vertical-align: top;
+  margin: 2px;
+}
+
+.overText:hover {
+  background-color: bisque;
+  opacity: 80%;
+}
+
+.overText {
+  display: inline-flex;
+  flex: 0 1 auto;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0%;
+}
+
+.larger {
+  font-size:xx-large;
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

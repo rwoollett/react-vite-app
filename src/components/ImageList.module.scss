@@ -1,0 +1,9 @@
+.imageScrolls {
+  display: flex;
+  flex-flow: nowrap !important;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: 130px;
+  white-space: nowrap;
+}
+

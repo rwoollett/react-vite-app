@@ -1,0 +1,147 @@
+@import '../styles/mixins';
+
+.flipImage {
+  width: 600px;
+  height: 500px;
+  overflow: hidden;
+  position: relative;
+  @include boxMargin;
+
+  .flipTools {
+    width: 300px;
+    height: 250px;
+    float: left;
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-wrap: wrap;
+      height: 100%;
+
+      .button {
+        display: inline-flex;
+        font-size: xx-large;
+        opacity: 100%;
+
+        &:hover {
+          cursor: pointer;
+          animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes ping {
+
+          75%,
+          100% {
+            transform: scale(1);
+            opacity: 25%;
+          }
+        }
+      }
+    }
+
+    .flipBox {
+      background-color: transparent;
+      width: 250px;
+      height: 250px;
+      border: 1px solid #f1f1f1;
+      perspective: 1000px;
+      padding: 4px;
+      float: left;
+      @include boxMargin;
+
+      & .flipBoxInner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+        @include boxMargin;
+
+
+        & .flipBoxFront,
+        .flipBoxBack {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+          @include boxMargin;
+        }
+
+        & .flipBoxFront {
+          @include boxMargin;
+        }
+
+        & .flipBoxBack {
+          //transform-origin: 100% 121px; /* half of height after padding and border*/
+          //transform: rotateY(-180deg);
+          @include boxMargin;
+
+          & .imageMirrorY {
+            transform: scaleY(-1);
+          }
+          & .imageMirrorX {
+            transform: scaleX(-1);
+          }
+        }
+
+
+      }
+
+      &:hover .flipBoxInner {
+        //transform-origin: 100% 121px; /* half of height after padding and border*/
+        //transform: rotateY(-180deg);
+        @include boxMargin;
+      }
+
+      .leftFlip {
+        transform: rotateY(180deg);
+      }
+
+      .rightFlip {
+        transform: rotateY(-180deg);
+      }
+
+      .upFlip {
+        transform-origin: 100% 121px; /* half of height */
+        transform: rotateX(180deg);
+      }
+
+      .downFlip {
+        transform-origin: 100% 121px; /* half of height */
+        transform: rotateX(-180deg);
+      }
+
+      .leftFlipBack {
+        transform: rotateY(-180deg);
+      }
+
+      .rightFlipBack {
+        transform: rotateY(180deg);
+      }
+
+      .upFlipBack {
+        transform-origin: 100% 121px; /* half of height */
+        transform: rotateX(-180deg);
+      }
+
+      .downFlipBack {
+        transform-origin: 100% 121px; /* half of height */
+        transform: rotateX(180deg);
+      }
+
+      & .imgShow {
+        box-shadow: 1px 1px 8px #999;
+        max-height: 250px;
+        max-width: 250px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0px;
+        height: 100%;
+      }
+    }
+  }
+}
