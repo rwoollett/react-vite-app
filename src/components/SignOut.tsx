@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSignOutMutation } from '../store/api/usersApi';
 import { setContents } from '../store/actions/data';
 import { useAppDispatch } from '../store/reducers/store';
+import { ROUTES } from '../resources/routes-constants';
 
 const SignOut = (): JSX.Element => {
   const [signOut] = useSignOutMutation();
@@ -13,7 +14,7 @@ const SignOut = (): JSX.Element => {
     try {
       signOut().unwrap();
       dispatch(setContents([]));
-      navigate("/");
+      navigate(ROUTES.HOMEPAGE_ROUTE);
 
     } catch (error) {
       console.log(error);
