@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import style from './Countdown.module.scss';
 
 function Countdown({ timeTillDate }: { timeTillDate: Date }) {
