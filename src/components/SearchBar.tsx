@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { useState } from "react";
 import style from "./SearchBar.module.scss";
 
