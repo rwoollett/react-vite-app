@@ -16,31 +16,39 @@ This is the structure of the files in the project:
     ├── public                # files for online access
     │   └── vite.svg
     ├── src                   # React web application source
+    │   ├── client             
+    │   │   └── wsock.ts      # connect to a ws service
     │   ├── components        # dir of Components on pages
     │   │   ├── Banner.tsx
     │   │   ├── Button.tsx
     │   │   ├── DateDisplay.tsx
+    │   │   ├── Dropdown.tsx
     │   │   ├── Greeting.tsx
     │   │   ├── NavBar.tsx
     │   │   ├── Signout.tsx
     │   │   ├── Skeleton.tsx
     │   │   ├── StatusAlert.tsx
     │   │   └── Table.tsx
+    │   ├── context           # dir of react context and provider 
+    │   │   └── websocket.ts  # context websocket message by service
     │   ├── hooks             # dir of Use hooks for shared actions
     │   │   ├── use-signedin-authenticate.tsx
-    │   │   └── use-sort.tsx
+    │   │   ├── use-sort.tsx
+    │   │   └── use-websocket-context.tsx
     │   ├── pages             # dir of Pages from a route with react router
     │   │   ├── HomePage.tsx
     │   │   ├── NotFoundPage.tsx
     │   │   ├── ProtectedRoute.tsx
     │   │   ├── SignIn.tsx
-    │   │   └── SignUp.tsx
+    │   │   ├── SignUp.tsx
+    │   │   ├── TTTPage.tsx
+    │   │   └── UserPage.tsx
     │   ├── resources         # dir of Constants var
     │   │   ├── api-constants.ts
     │   │   └── routes-constants.ts
     │   ├── store             # dir of Redux reducers
     │   │   ├── actions
-    |   │   │   └── data.ts   # dispatch actions to store state
+    |   │   │   └── data.ts   # dispatch actions to data state in root store
     │   │   ├── api           # Redux toolkit create api reducers
     |   │   │   ├── ipApi.ts
     |   │   │   └── usersApi.ts
@@ -55,13 +63,16 @@ This is the structure of the files in the project:
     │   │   └── main.scss
     │   ├── types             # dir of typescript types
     │   │   ├── coutdown.ts
+    │   │   ├── cstoken.ts
     │   │   ├── geoLocation.ts
     │   │   ├── imageData.ts
-    │   │   ├── reducers.ts
+    │   │   ├── index.ts
     │   │   ├── statusErrors.ts
+    │   │   ├── ttt.ts
     │   │   └── user.ts
     │   ├── utility           # dir of shared functions
     │   │   ├── date.ts
+    │   │   ├── DrawingTTT.ts
     │   │   ├── functions.ts
     │   │   └── searchImage.ts
     │   ├── App.tsx           # App component
