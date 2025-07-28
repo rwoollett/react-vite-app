@@ -20,7 +20,8 @@ with ($family-primary: '"Staatliches", "Nunito", "Segoe UI", "Roboto", "Oxygen",
 // @forward "scss/solid.scss";
 
 @forward "bulma/sass/base";
-@forward "bulma/sass/grid/columns";
+@forward "bulma/sass/grid";
+@forward "bulma/sass/components/card";
 @forward "bulma/sass/components/navbar";
 @forward "bulma/sass/components/panel";
 @forward "bulma/sass/components/dropdown";
@@ -29,6 +30,7 @@ with ($family-primary: '"Staatliches", "Nunito", "Segoe UI", "Roboto", "Oxygen",
 @forward "bulma/sass/layout/container";
 @forward "bulma/sass/elements/title";
 @forward "bulma/sass/elements/icon";
+@forward "bulma/sass/elements/table";
 @forward "bulma/sass/elements/tag";
 @forward "bulma/sass/themes";
 @forward "bulma/sass/helpers";

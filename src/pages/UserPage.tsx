@@ -5,6 +5,7 @@ import Greeting from '../components/Greeting';
 import { sayFarewell } from '../utility/functions';
 import Button from '../components/Button';
 import { useWebSocket } from '../hooks/use-websocket-context';
+import Dashboard from './dashboard/Dashboard';
 
 
 const UserPage: React.FC = () => {
@@ -74,7 +75,7 @@ const UserPage: React.FC = () => {
       </div>
 
       <div className='hero-body'>
-        <div className="container is-fluid">
+        <div className="container is-widescreen">
           <form onSubmit={onHandleGreet}>
 
             <div className="field is-grouped">
@@ -88,6 +89,10 @@ const UserPage: React.FC = () => {
               <p>{farewell}</p>
             </div>
           </form>
+          <div className="px-4 pb-6">
+            <Dashboard />
+          </div>
+
         </div>
       </div>
     </div>

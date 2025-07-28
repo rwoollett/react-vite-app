@@ -9,3 +9,5 @@ export type CurrentUser = Pick<User, "id" | "email">;
 export interface CurrentUserCheck {
   currentUser?: CurrentUser;
 }
+
+export type SignInUser = Pick<User, "email" | "password">;
