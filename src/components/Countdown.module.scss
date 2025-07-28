@@ -1,0 +1,48 @@
+//@import url('https://fonts.googleapis.com/css?family=Lato');
+@use '../styles/mixins';
+
+.countdown {
+ // font-family: 'Lato', sans-serif;
+  @include mixins.boxMargin;
+  margin: 4px;
+  background-color:rgb(247, 247, 237);  
+
+
+  h1 {
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  &_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //lex-wrap: wrap;
+    
+  }
+
+  &_item {
+    color:purple;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    line-height: 20px;
+    margin-right: 10px;
+    margin-left: 4px;
+    padding: 4px;
+    position: relative;
+    width: 50px;
+    height: 50px;
+  }
+
+  &_item span {
+    color: #333;
+    font-size: xx-small;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+}

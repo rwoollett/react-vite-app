@@ -1,0 +1,20 @@
+@use '../styles/variables';
+
+.sortableHeader {
+  cursor: pointer;
+
+  &:hover {
+    background-color: variables.$navy;
+  }
+
+  .control {
+    display: flex;
+    align-items: center;
+    height: 24px;
+
+    .arrowContainer {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
