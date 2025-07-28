@@ -24,7 +24,6 @@ const RootComponent: React.FC = () => {
   const { isLoggedIn, isLoading } = useSignedInAuthorize();
 
   if (isLoading) {
-    console.log('isload', isLoading, isLoggedIn)
     return (
       <div className='main-content'>
         <Skeleton times={1} className={'sign-in-skeleton'} />
