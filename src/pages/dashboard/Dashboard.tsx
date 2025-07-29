@@ -24,7 +24,9 @@ const Dashboard: React.FC = () => {
         if (!json || !Array.isArray(json.getClients)) {
           throw new Error("Invalid response format");
         }
-        setData({ getClients: json.getClients });
+        const sortedClients = [...json.getClients].sort((a, b) => a.ip.localeCompare(b.ip));
+        //const filteredClients = sortedClients.filter(client => client.connected === true);
+        setData({ getClients: sortedClients });
         console.log(import.meta.env.VITE_CSTOKEN_SERVER_URL, json.getClients);
         setLoading(false);
       })

@@ -106,7 +106,7 @@ const CanvasComponent: React.FC = () => {
     for (const { seq, msg } of tttMessageQueue) {
       if (seq > updatedSeq) {
         if (msg.subject === "game_Update" && msg.payload.gameId === gameId) {
-          console.log('client', updatedSeq, seq, msg);
+          //console.log('client', updatedSeq, seq, msg);
           const newBoard = msg.payload.board.split(",");
           setBoard(newBoard.map((cell) => parseInt(cell)));
           setPlayMessage("Your turn.");
