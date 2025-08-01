@@ -36,7 +36,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             messageBuffer.current.push({ seq: nextSeq, msg });
             if (!updateTimer.current) {
               updateTimer.current = setTimeout(() => {
-                const buffered = [...messageBuffer.current]; 
+                const buffered = [...messageBuffer.current]; // need to get const buffered before setting react state with it.
                 console.log('set message queue state', buffered);
                 setMessageQueue(q =>
                   [...q, ...buffered].slice(-MSG_QUEUE_MAX)
