@@ -1,7 +1,6 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import websocketClient, { type WebSocketClient } from "../client/wsock";
 import type { WSMessage, WSTTTMessage } from "../types";
-import _ from 'lodash';
 
 type WebSocketContextType = {
   wsRef: React.RefObject<WebSocketClient | null>;
@@ -17,10 +16,15 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const wsRef = useRef<WebSocketClient | null>(null);
   const wsRefTTT = useRef<WebSocketClient | null>(null);
   const [messageQueue, setMessageQueue] = useState<{ seq: number, msg: WSMessage }[]>([]);
+  const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
+  const updateTimer = useRef<NodeJS.Timeout | null>(null);
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
   const [, setSeq] = useState(0);
   const [, setTTTSeq] = useState(0);
-
+  useEffect(() => {
+    console.log("PROVIDER messageQueue updated:", messageQueue);
+  }, [messageQueue]);
+  
   useEffect(() => {
     wsRef.current = websocketClient<WSMessage>(
       {
@@ -29,10 +33,18 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         onMessage: (msg) => {
           setSeq(prevSeq => {
             const nextSeq = prevSeq + 1;
-            setMessageQueue(
-              q => [..._.cloneDeep(q), { seq: nextSeq, msg }]
-                .slice(-MSG_QUEUE_MAX)
-            );
+            messageBuffer.current.push({ seq: nextSeq, msg });
+            if (!updateTimer.current) {
+              updateTimer.current = setTimeout(() => {
+                const buffered = [...messageBuffer.current]; 
+                console.log('set message queue state', buffered);
+                setMessageQueue(q =>
+                  [...q, ...buffered].slice(-MSG_QUEUE_MAX)
+                );
+                messageBuffer.current = [];
+                updateTimer.current = null;
+              }, 100); // update every 100ms
+            }
             return nextSeq;
           });
         },
@@ -40,7 +52,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       },
       (client) => { wsRef.current = client; }
     );
-    return () => wsRef.current?.close();
+    return () => {
+      wsRef.current?.close();
+      if (updateTimer.current) clearTimeout(updateTimer.current);
+
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -53,7 +69,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           setTTTSeq(prevSeq => {
             const nextSeq = prevSeq + 1;
             setTTTMessageQueue(
-              q => [..._.cloneDeep(q), { seq: nextSeq, msg }]
+              q => [...q, { seq: nextSeq, msg }]
                 .slice(-MSG_QUEUE_MAX)
             );
             return nextSeq;

@@ -43,7 +43,8 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
           <a title="link to home page" className="navbar-item" href={ROUTES.HOMEPAGE_ROUTE}>
             <img alt='RW' title="RWIcon" src={logo} width="32" height="32" />
           </a>
-          <div className='navbar-item'>{email}</div>
+          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link>
+          {email && (<Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.USER_ROUTE}>{email}</Link>)}
           <button title="menu icon" role="button" onClick={handleClickBurger}
             className={`navbar-burger ${burgerActive && 'is-active'}`} aria-label="menu" >
             <span aria-hidden="true"></span>

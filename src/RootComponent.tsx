@@ -17,12 +17,6 @@ import TTTPage from './pages/TTTPage'
 import CountdownPage from './pages/CountdownPage'
 import CountdownList from './components/CountdownList'
 import CountdownCreate from './components/CountdownCreate'
-//import FlipImagePage from './pages/FlipImagePage'
-
-// import CountdownCreate from './components/CountdownCreate'
-// import CountdownList from './components/CountdownList'
-// import SignOut from './components/SignOut'
-// import SignUp from './components/SignUp'
 
 const RootComponent: React.FC = () => {
   const { isLoggedIn, isLoading } = useSignedInAuthorize();
