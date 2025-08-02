@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import _ from 'lodash';
-import type { ClientCS, RequestCS, AcquireCS, ActionByIp, TokenAction, WSMessage } from "../../types";
+import type { RequestCS, AcquireCS, ActionByIp, TokenAction, WSMessage } from "../../types";
 import { format, parseISO } from "date-fns";
 import { useWebSocket } from "../../hooks/use-websocket-context";
 import styles from './ClientToken.module.scss'
@@ -19,10 +18,9 @@ type ClientTokenProps = {
 }
 
 const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
-  const { wsRef, messageQueue } = useWebSocket();
+  const { messageQueue, wsRef } = useWebSocket();
   const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
   const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
-  const [lastActivity, setLastActivity] = useState<TokenAction | undefined>(undefined);
 
   const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
   const updateTimer = useRef<NodeJS.Timeout | null>(null);
@@ -167,29 +165,25 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
           let newState = { ...state };
           for (const { seq, msg } of buffered) {
             console.log('buufer loop', seq, updatedSeq);
-            // if (seq > updatedSeq) {
-            // ...your existing logic for csToken_request and csToken_acquire...
-            // (copy your setClientActions logic here, updating newState)
             if (msg.subject === "csToken_acquire" && msg.payload.ip) {
               const event = msg.payload;
-              let clientForActivityIP: string = event.ip;
-
+              const clientForActivityIP: string = event.ip;
+              const newAction = {
+                parentIp: event.sourceIp,
+                timestamp: event.acquiredAt,
+                originalIp: event.ip,
+                action: event as AcquireCS
+              } as TokenAction;
               newState = {
-                ..._.cloneDeep(state),
+                ...structuredClone(state),
                 [clientForActivityIP]: {
-                  client: { ..._.cloneDeep(state[clientForActivityIP].client as ClientCS) },
-                  actions: [..._.cloneDeep(state[clientForActivityIP].actions),
-                  {
-                    parentIp: event.sourceIp,
-                    timestamp: event.acquiredAt,
-                    originalIp: event.ip,
-                    action: event as AcquireCS
-                  } as TokenAction
+                  client: structuredClone(state[clientForActivityIP].client),
+                  actions: [...structuredClone(state[clientForActivityIP].actions),
+                  newAction
                   ].slice(-10)
                 }
               } as ActionByIp;
             }
-            // }
           }
           return newState;
         });
@@ -217,11 +211,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
       let highlighted: string = "";
       let activityLabel: string = "";
       let activityDescription: string = "";
-      if (lastActivity && (lastActivity?.timestamp === activity.timestamp)) {
-        highlighted = styles.highlightedItem;
-      } else {
-        highlighted = styles.unhighlightedItem;
-      }
+      highlighted = styles.unhighlightedItem;
 
       let backgroundItem: string = "";
       // Use discriminated union by checking a unique property of each type
