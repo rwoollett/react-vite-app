@@ -43,7 +43,7 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
           <a title="link to home page" className="navbar-item" href={ROUTES.HOMEPAGE_ROUTE}>
             <img alt='RW' title="RWIcon" src={logo} width="32" height="32" />
           </a>
-          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link>
+          {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link> */}
           {email && (<Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.USER_ROUTE}>{email}</Link>)}
           <button title="menu icon" role="button" onClick={handleClickBurger}
             className={`navbar-burger ${burgerActive && 'is-active'}`} aria-label="menu" >
@@ -55,7 +55,7 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
         </div>
         <div onMouseLeave={handleMouseLeave} className={`navbar-menu ${burgerActive && 'is-active'}`}>
           <div className="navbar-start">
-            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link>
+            {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link> */}
             <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.FLIPIMAGEPAGE_ROUTE}>Flip Image</Link>
             <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.TTTPAGE_ROUTE}>Tic Tac Toe</Link>
             <div className="navbar-item has-dropdown is-hoverable">
