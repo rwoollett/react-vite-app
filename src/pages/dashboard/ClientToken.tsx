@@ -21,6 +21,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
   const { messageQueue } = useWebSocket();
   const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
   const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
+  const [lastActivity, setLastActivity] = useState<TokenAction | undefined>(undefined);
 
   const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
   const updateTimer = useRef<NodeJS.Timeout | null>(null);
@@ -41,6 +42,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
   useEffect(() => {
     let updatedSeq = lastProcessedSeq;
     console.log('updated messagequeue', lastProcessedSeq, messageQueue);
+
     // Buffer new messages
     for (const { seq, msg } of messageQueue) {
       console.log('client token', seq, ',', msg);
@@ -51,120 +53,51 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
     }
     console.log('after message buffer', updatedSeq);
 
-
-    // for (const { seq, msg } of messageQueue) {
-    //   if (seq > updatedSeq) {
-    //     if (msg.subject === "csToken_request") {
-    //       const event = msg.payload;
-    //       setLastActivity(() => {
-    //         if (event.sourceIp) {
-    //           return {
-    //             parentIp: event.parentIp,
-    //             timestamp: event.requestedAt,
-    //             originalIp: event.originalIp,
-    //             action: event as RequestCS
-    //           } as TokenAction
-    //         }
-    //       });
-
-    //       setClientActions((state) => {
-    //         if (event.sourceIp) {
-
-    //           let clientForActivityIP: string = "";
-    //           if (event.originalIp === event.sourceIp) {
-    //             clientForActivityIP = event.sourceIp;
-    //           } else {
-    //             clientForActivityIP = event.originalIp;
-    //           }
-
-    //           const newState = {
-    //             ..._.cloneDeep(state),
-    //             [clientForActivityIP]: {
-    //               client: { ..._.cloneDeep(state[clientForActivityIP].client as ClientCS) },
-    //               actions: [..._.cloneDeep(state[clientForActivityIP].actions),
-    //               {
-    //                 parentIp: event.parentIp,
-    //                 timestamp: event.requestedAt,
-    //                 originalIp: event.originalIp,
-    //                 action: event as RequestCS
-    //               } as TokenAction
-    //               ].slice(-10)
-    //             }
-    //           } as ActionByIp;
-
-    //           return newState;
-
-    //         } else {
-
-    //           return { ...state };
-    //         }
-    //       });
-
-    //     }
-    //     if (msg.subject === "csToken_acquire") {
-    //       const event = msg.payload;
-    //       setLastActivity(() => {
-    //         if (event.ip) {
-    //           return {
-    //             parentIp: event.sourceIp,
-    //             timestamp: event.acquiredAt,
-    //             originalIp: event.ip,
-    //             action: event as AcquireCS
-    //           } as TokenAction
-    //         }
-    //       });
-
-    //       setClientActions((state) => {
-    //         if (event.ip) {
-
-    //           let clientForActivityIP: string = event.ip;
-
-    //           const newState = {
-    //             ..._.cloneDeep(state),
-    //             [clientForActivityIP]: {
-    //               client: { ..._.cloneDeep(state[clientForActivityIP].client as ClientCS) },
-    //               actions: [..._.cloneDeep(state[clientForActivityIP].actions),
-    //               {
-    //                 parentIp: event.sourceIp,
-    //                 timestamp: event.acquiredAt,
-    //                 originalIp: event.ip,
-    //                 action: event as AcquireCS
-    //               } as TokenAction
-    //               ].slice(-10)
-    //             }
-    //           } as ActionByIp;
-
-    //           return newState;
-
-    //         } else {
-
-    //           return { ...state };
-    //         }
-    //       });
-    //     }
-    //     updatedSeq = seq;
-    //   }
-    // }
-    // if (updatedSeq !== lastProcessedSeq) {
-    //   setLastProcessedSeq(updatedSeq);
-    // }
-
     // Throttle state updates
-    console.log('what is', updateTimer.current);
     if (messageBuffer.current.length > 0 && !updateTimer.current) {
-      console.log('message buffer lenght > 0');
-
       updateTimer.current = setTimeout(() => {
         // Process buffered messages
-        //let localLastActivity = lastActivity;
+        let localLastActivity = lastActivity;
         const buffered = [...messageBuffer.current];
         console.log('Client token: set message queue state', buffered);
 
         setClientActions((state) => {
-
           let newState = { ...state };
+
           for (const { seq, msg } of buffered) {
-            console.log('buufer loop', seq, updatedSeq);
+            console.log('buffer loop', seq, updatedSeq, msg);
+
+            if (msg.subject === "csToken_request" && msg.payload.sourceIp) {
+              
+              const event = msg.payload;
+              let clientForActivityIP: string = "";
+              if (event.originalIp === event.sourceIp) {
+                clientForActivityIP = event.sourceIp;
+              } else {
+                clientForActivityIP = event.originalIp;
+              }
+              const newAction = {
+                parentIp: event.parentIp,
+                timestamp: event.requestedAt,
+                originalIp: event.originalIp,
+                action: event as RequestCS
+              } as TokenAction;
+              localLastActivity = newAction;
+
+              newState = {
+                ...structuredClone(newState),
+                [clientForActivityIP]: {
+                  client: structuredClone(newState[clientForActivityIP].client),
+                  actions: [...structuredClone(newState[clientForActivityIP].actions),
+                    newAction
+                  ].slice(-10)
+                }
+              } as ActionByIp;
+
+              console.log('request',newState);
+
+            }
+
             if (msg.subject === "csToken_acquire" && msg.payload.ip) {
               const event = msg.payload;
               const clientForActivityIP: string = event.ip;
@@ -174,19 +107,27 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
                 originalIp: event.ip,
                 action: event as AcquireCS
               } as TokenAction;
+              localLastActivity = newAction;
+
               newState = {
-                ...structuredClone(state),
+                ...structuredClone(newState),
                 [clientForActivityIP]: {
-                  client: structuredClone(state[clientForActivityIP].client),
-                  actions: [...structuredClone(state[clientForActivityIP].actions),
-                  newAction
+                  client: structuredClone(newState[clientForActivityIP].client),
+                  actions: [...structuredClone(newState[clientForActivityIP].actions),
+                    newAction
                   ].slice(-10)
                 }
               } as ActionByIp;
+
+              console.log('acquire',newState);
+
             }
+
           }
           return newState;
         });
+
+        setLastActivity(localLastActivity);
         setLastProcessedSeq(updatedSeq);
         messageBuffer.current = [];
         updateTimer.current = null;
@@ -211,7 +152,11 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
       let highlighted: string = "";
       let activityLabel: string = "";
       let activityDescription: string = "";
-      highlighted = styles.unhighlightedItem;
+      if (lastActivity && (lastActivity?.timestamp === activity.timestamp)) {
+        highlighted = styles.highlightedItem;
+      } else {
+        highlighted = styles.unhighlightedItem;
+      }
 
       let backgroundItem: string = "";
       // Use discriminated union by checking a unique property of each type
