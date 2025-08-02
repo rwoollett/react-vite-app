@@ -18,7 +18,7 @@ type ClientTokenProps = {
 }
 
 const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
-  const { messageQueue, wsRef } = useWebSocket();
+  const { messageQueue } = useWebSocket();
   const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
   const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
 
