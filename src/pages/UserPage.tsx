@@ -31,7 +31,7 @@ const UserPage: React.FC = () => {
   // };
 
   useEffect(() => {
-    console.log('userpage updated messagequeue', lastProcessedSeq, messageQueue);
+    //console.log('userpage updated messagequeue', lastProcessedSeq, messageQueue);
     for (const { seq, msg } of messageQueue) {
       if (seq > lastProcessedSeq.current) {
         setConnected(true);
