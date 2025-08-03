@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { type ActionByIp, type ClientCS } from "../../types";
 import ClientToken from "./ClientToken";
-//import NetworkList from "./NetworkList";
+import NetworkList from "./NetworkList";
 
 /**
  * Network list.  
@@ -41,9 +41,9 @@ const Dashboard: React.FC = () => {
     networkContent = (<div><p>Loading...</p></div>)
     clientContent = (<div><p>Loading...</p></div>)
   } else if (data) {
-    // networkContent = (<NetworkList
-    //   clientList={data.getClients as ClientCS[]}
-    //   range={range} />);
+    networkContent = (<NetworkList
+      clientList={data.getClients as ClientCS[]}
+      range={range} />);
     clientContent = (<ClientToken
       range={range}
       clientsByIp={(data.getClients as ClientCS[]).reduce((prev: ActionByIp, client) => {
