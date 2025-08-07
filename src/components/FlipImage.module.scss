@@ -1,11 +1,11 @@
-@import '../styles/mixins';
+@use '../styles/mixins';
 
 .flipImage {
   width: 600px;
   height: 500px;
   overflow: hidden;
   position: relative;
-  @include boxMargin;
+  @include mixins.boxMargin;
 
   .flipTools {
     width: 300px;
@@ -49,7 +49,7 @@
       perspective: 1000px;
       padding: 4px;
       float: left;
-      @include boxMargin;
+      @include mixins.boxMargin;
 
       & .flipBoxInner {
         position: relative;
@@ -58,7 +58,7 @@
         text-align: center;
         transition: transform 0.8s;
         transform-style: preserve-3d;
-        @include boxMargin;
+        @include mixins.boxMargin;
 
 
         & .flipBoxFront,
@@ -68,17 +68,17 @@
           height: 100%;
           -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
-          @include boxMargin;
+          @include mixins.boxMargin;
         }
 
         & .flipBoxFront {
-          @include boxMargin;
+          @include mixins.boxMargin;
         }
 
         & .flipBoxBack {
           //transform-origin: 100% 121px; /* half of height after padding and border*/
           //transform: rotateY(-180deg);
-          @include boxMargin;
+          @include mixins.boxMargin;
 
           & .imageMirrorY {
             transform: scaleY(-1);
@@ -94,7 +94,7 @@
       &:hover .flipBoxInner {
         //transform-origin: 100% 121px; /* half of height after padding and border*/
         //transform: rotateY(-180deg);
-        @include boxMargin;
+        @include mixins.boxMargin;
       }
 
       .leftFlip {
