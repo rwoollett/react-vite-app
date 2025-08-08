@@ -1,0 +1,95 @@
+.posts {
+  display: block;
+
+  & h2 {
+    margin-right: 10px;
+    font-weight: lighter;
+  }
+
+  & h3 {
+    color: rgba(55, 182, 134, 1);
+    margin-right: 10px;
+    font-weight: lighter;
+  }
+
+  & p {
+    font-weight: lighter;
+  }
+}
+
+.post {
+  flex-grow: 1;
+  text-align: left;
+
+  & h2 {
+    margin-right: 10px;
+    margin-bottom: 0px;
+    text-align: left;
+    font-weight: lighter;
+  }
+
+  & h2:first-child {
+    display: inline;
+  }
+
+  & .author {
+    display: inline;
+  }
+
+  & .timePosted {
+    display: inline;
+  }
+
+  & h3 {
+    color: rgba(55, 182, 134, 1);
+    margin-right: 10px;
+    font-weight: lighter;
+  }
+
+  & p {
+    font-weight: lighter;
+  }
+}
+
+.post-content {
+  text-align: left;
+}
+
+.posts-content {
+  display: flex;
+  justify-content: space-between;
+
+  & form {
+    flex: 0 0 190px;
+  }
+
+  & label,
+  input,
+  select,
+  textarea {
+    width: 100%;
+    color: rgba(0, 0, 0, 0.5);
+    margin: 10px 0px 10px;
+    height: calc(25px + 3vw / 2);
+  }
+
+  & textarea {
+    padding: 10px;
+    border-right: 1px solid;
+    /* resize  : none; */
+    overflow: auto;
+    height: calc(100px + 3vw / 2);
+  }
+
+  & label+textarea {
+    margin-top: 0px;
+  }
+}
+
+.posts-content .posts-list {
+  flex-grow: 1;
+}
+
+.posts-list {
+  display: block;
+}

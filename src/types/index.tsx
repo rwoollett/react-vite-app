@@ -3,6 +3,7 @@ import type { Game, PlayerMove } from "./ttt";
 
 export * from "./cstoken";
 export * from "./ttt";
+export * from "./livePosts";
 
 export type TokenAction = {
   parentIp: string;

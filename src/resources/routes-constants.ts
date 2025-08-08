@@ -6,5 +6,6 @@ export const ROUTES = {
   SIGNIN_ROUTE: '/signin',
   TTTPAGE_ROUTE: '/ttt',
   FLIPIMAGEPAGE_ROUTE: '/flipImage',
-  COUNTDOWNPAGE_ROUTE: '/countdown'
+  COUNTDOWNPAGE_ROUTE: '/countdown',
+  LIVEPOSTS_ROUTE: '/posts'
 }

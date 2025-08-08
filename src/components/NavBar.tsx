@@ -58,6 +58,7 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
             {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link> */}
             <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.FLIPIMAGEPAGE_ROUTE}>Flip Image</Link>
             <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.TTTPAGE_ROUTE}>Tic Tac Toe</Link>
+            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.LIVEPOSTS_ROUTE}>Posts</Link>
             <div className="navbar-item has-dropdown is-hoverable">
               <a className="navbar-link">Utility</a>
               <div className="navbar-dropdown">

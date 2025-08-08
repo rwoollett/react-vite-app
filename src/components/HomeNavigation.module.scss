@@ -1,0 +1,19 @@
+
+.home-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.home-nav .card {
+  flex: 0 0 40%;
+}
+
+.home-nav h3 {
+  color: rgba(55, 182, 134, 1);
+  margin-bottom: 15px;
+}
+
+.home-nav p {
+  color: rgba(0, 0, 0, 0.5);
+}
