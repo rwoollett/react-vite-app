@@ -4,7 +4,6 @@ import style from './PostsComponent.module.scss';
 
 const TimeAgo = ({ timeISO }: { timeISO:string }):JSX.Element => {
   let timeAgo = '';
-  console.log(timeISO);
   if (timeISO) {
     const date = parseISO(timeISO);
     const timePeriod = formatDistanceToNow(date);

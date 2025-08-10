@@ -8,11 +8,22 @@ export type LivePostPage = {
 
 export type Post = {
   id: string;
-  date: Date;
+  date: string;
   title: string;
   content: string;
   user: string;
   reactions: ReactionEmojiCount;
+}
+
+export type AddPost = {
+  title: string;
+  content: string;
+  user: string;
+}
+
+export type ReactPost = {
+  postId: string;
+  reaction: string;
 }
 
 export type FlashCard = {

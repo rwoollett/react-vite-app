@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
-//import { AppDispatch } from '../store/store';
-//import { useDispatch } from 'react-redux';
-//import { useTypedSelector } from '../features/rootReducer';
 import style from './PostsComponent.module.scss';
 import Button from './Button';
-//import { unwrapResult } from '@reduxjs/toolkit';
-//import { addNewPost } from '../features/posts/postsSlice';
-//import { selectAllUsers } from '../features/users/usersSlice';
+import { useAppDispatch } from '../store/reducers/store';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { addNewPost } from '../store/api/postsSlice';
 
 const AddPostForm: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [userId, setUserId] = useState('');
   const [addRequestStatus, setAddRequestStatus] = useState('idle');
-  //  const dispatch = useDispatch<AppDispatch>();
-
-  // const users = useTypedSelector(selectAllUsers);
+  const dispatch = useAppDispatch();
 
   const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);
@@ -31,10 +26,10 @@ const AddPostForm: React.FC = () => {
     if (canSave) {
       try {
         setAddRequestStatus('pending');
-        // const resultAction = await dispatch(
-        //   addNewPost({ title, content, user: userId })
-        // );
-        //        unwrapResult(resultAction);
+        const resultAction = await dispatch(
+          addNewPost({ title, content, user: userId })
+        );
+        unwrapResult(resultAction);
         setTitle('');
         setContent('');
         setUserId('');
@@ -54,6 +49,10 @@ const AddPostForm: React.FC = () => {
     {
       id: "300",
       name: "Natalie Emard",
+    },
+    {
+      id: "temp@hello.co.nz",
+      name: "User at Hello.co.nz"
     }
   ];
   const usersOptions = users.map(user => (

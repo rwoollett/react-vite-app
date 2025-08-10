@@ -48,7 +48,11 @@ const RootComponent: React.FC = () => {
           <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
           <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
           <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
-          <Route path={ROUTES.LIVEPOSTS_ROUTE} element={<LivePosts />} />
+          <Route path={ROUTES.LIVEPOSTS_ROUTE}
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <LivePosts />
+              </ProtectedRoute>} />
           <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
           <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
 

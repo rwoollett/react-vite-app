@@ -27,7 +27,7 @@ const SignIn: React.FC = () => {
   }
 
   const redirectToHomePage = () => {
-    navigate(ROUTES.HOMEPAGE_ROUTE)
+    navigate(ROUTES.LIVEPOSTS_ROUTE)
   }
 
   useEffect(() => {

@@ -23,7 +23,7 @@ const LivePosts: React.FC = () => {
     (async () => {
       try {
         const response = await http<LivePostPage>(
-          '/api/v1/homepage',
+          `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/homepage`,
           { method: "GET" });
 
         const { title, description, navCards, popularCards } = response;
