@@ -2,10 +2,9 @@ import React, { type JSX } from 'react';
 import style from './Card.module.scss';
 import { Link } from 'react-router-dom';
 import type { FlashCard } from '../types';
-  
 
 const Card: React.FC<FlashCard> = (
-    {title, catchPhrase, link, author, timeAgo, reactEmoji}
+    {title, catchPhrase, link, author, timeAgo}
   ): JSX.Element => {
   return (
     <div className={style.card}>
@@ -14,7 +13,7 @@ const Card: React.FC<FlashCard> = (
         { author ? author : '' }
         { timeAgo ? timeAgo : '' }
         <p>{catchPhrase}</p>
-        { reactEmoji ? reactEmoji : "" }
+        {/* { reactEmoji ? reactEmoji : "" } */}
         <div className={style['button-container']}>
           { link ? <Link to={link.to}>
             {link.text}
