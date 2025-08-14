@@ -1,6 +1,6 @@
 import { useEffect, type JSX } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useSignOutMutation } from '../store/api/usersApi';
+import { useSignOutMutation } from '../store/api/authenticatedUsersApi';
 import { setContents } from '../store/actions/data';
 import { useAppDispatch } from '../store/reducers/store';
 import { ROUTES } from '../resources/routes-constants';

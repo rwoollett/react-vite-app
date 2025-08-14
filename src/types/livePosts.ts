@@ -7,22 +7,28 @@ export type LivePostPage = {
 };
 
 export type Post = {
-  id: string;
+  id: number;
   date: string;
   title: string;
   content: string;
-  user: string;
+  userId: number;
   reactions: ReactionEmojiCount;
+}
+
+export type AuthorUser = {
+  userId: number;
+  authId: string;
+  name: string;
 }
 
 export type AddPost = {
   title: string;
   content: string;
-  user: string;
+  userId: number;
 }
 
 export type ReactPost = {
-  postId: string;
+  postId: number;
   reaction: string;
 }
 

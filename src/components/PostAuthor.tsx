@@ -3,7 +3,7 @@ import { type JSX } from 'react';
 //import {selectUserById } from '../features/users/usersSlice';
 import style from './PostsComponent.module.scss';
 
-const PostAuthor = ({ userId }: { userId:string}):JSX.Element => {
+const PostAuthor = ({ userId }: { userId:number}):JSX.Element => {
   //const author = useTypedSelector(state => selectUserById(state, userId));
   //console.log (userId);
   const author = {

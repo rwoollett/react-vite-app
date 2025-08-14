@@ -8,7 +8,7 @@ import type { Post, ReactPost } from '../../types';
 import { http } from '../../utility/fetchData';
 
 // Entity adaptor for normalised posts structure; ids end entities.
-export const postsAdapter = createEntityAdapter<Post, string>({
+export const postsAdapter = createEntityAdapter<Post, number>({
   selectId: post => post.id,
   sortComparer: (a, b) => {
     return b.date.localeCompare(a.date);

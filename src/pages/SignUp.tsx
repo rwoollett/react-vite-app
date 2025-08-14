@@ -1,6 +1,6 @@
 import { useEffect, type ChangeEvent, type FormEvent, type JSX } from 'react';
 import { useState } from 'react';
-import { useSignUpMutation } from '../store/api/usersApi';
+import { useSignUpMutation } from '../store/api/authenticatedUsersApi';
 import { type StatusErrors } from '../types/statusErrors';
 import { useNavigate } from 'react-router-dom';
 import StatusAlert from '../components/StatusAlert';

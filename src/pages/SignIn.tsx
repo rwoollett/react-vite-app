@@ -2,7 +2,7 @@ import React, { useEffect, useState, type ChangeEvent, type FormEvent, type JSX 
 import { setContents } from '../store/actions/data';
 import { ipApi } from '../store/api/ipApi';
 import { useAppDispatch } from '../store/reducers/store';
-import { useSignInMutation } from '../store/api/usersApi';
+import { useSignInMutation } from '../store/api/authenticatedUsersApi';
 import { type StatusErrors } from '../types/statusErrors';
 import StatusAlert from '../components/StatusAlert';
 import Button from '../components/Button';

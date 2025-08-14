@@ -5,7 +5,7 @@ import data from './data'
 import type { TypedUseSelectorHook } from 'react-redux'
 import { useDispatch, useSelector } from 'react-redux'
 import { ipApi } from '../api/ipApi'
-import { usersApi } from '../api/usersApi';
+import { usersApi } from '../api/authenticatedUsersApi';
 import { reducer as postsReducer, postsAdapter } from '../api/postsSlice';
 
 import { setupListeners } from '@reduxjs/toolkit/query'
@@ -21,7 +21,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage,
-    whitelist: ['data', 'ip', 'posts']
+    whitelist: ['data', 'ip']
   },
   rootReducer
 );
@@ -59,6 +59,6 @@ export const {
 
 // Memoized selector - input selectors+ to one selectors output.
 export const selectPostsByUser = createSelector(
-  [selectAllPosts, (_: RootState, userId: string) => userId],
-  (posts, userId) => posts.filter(post => post.user === userId)
+  [selectAllPosts, (_: RootState, userId: number) => userId],
+  (posts, userId) => posts.filter(post => post.userId === userId)
 );

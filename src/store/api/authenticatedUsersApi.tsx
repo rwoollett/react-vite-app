@@ -1,5 +1,5 @@
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
-import type { User, CurrentUserCheck } from '../../types/user';
+import type { AuthenticatedUser, CurrentUserCheck } from '../../types/authuser';
 import { baseAuthUrl } from '../../utility/functions';
 
 const usersApi = createApi({
@@ -16,7 +16,7 @@ const usersApi = createApi({
   tagTypes: ['Users', 'CurrentUser'],
   endpoints(builder) {
     return {
-      signUp: builder.mutation<User, Partial<User>>({
+      signUp: builder.mutation<AuthenticatedUser, Partial<AuthenticatedUser>>({
         invalidatesTags: (_result, _error, _user) => {
           return [{ type: 'Users' }, { type: 'CurrentUser' }];
         },
@@ -31,7 +31,7 @@ const usersApi = createApi({
           };
         }
       }),
-      signIn: builder.mutation<User, Partial<User>>({
+      signIn: builder.mutation<AuthenticatedUser, Partial<AuthenticatedUser>>({
         invalidatesTags: (_result, _error, _user) => {
           return [{ type: 'CurrentUser' }];
         },
@@ -46,7 +46,7 @@ const usersApi = createApi({
           };
         }
       }),
-      signOut: builder.mutation<User, void>({
+      signOut: builder.mutation<AuthenticatedUser, void>({
         invalidatesTags: (_result, _error, _arg) => {
           return [{ type: 'CurrentUser' }];
         },

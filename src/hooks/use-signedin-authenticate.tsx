@@ -1,4 +1,4 @@
-import { useCurrentUserQuery } from "../store/api/usersApi";
+import { useCurrentUserQuery } from "../store/api/authenticatedUsersApi";
 
 function useSignedInAuthorize(): {
   isLoggedIn: boolean;

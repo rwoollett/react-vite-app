@@ -12,7 +12,7 @@ import { selectPostById, selectPostIds, useAppDispatch, useAppSelector } from '.
 import { fetchPosts } from '../store/api/postsSlice';
 
 interface ExcerptProps {
-  postId: string;
+  postId: number;
 }
 
 let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
@@ -26,7 +26,7 @@ let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
   if (post) {
     postExcerpt = (<div className={postStyles.post}>
       <h3>{post.title}</h3>
-      <PostAuthor userId={post.user} />
+      <PostAuthor userId={post.userId} />
       <TimeAgo timeISO={post.date} />
       <p>{post.content}</p>
       <ReactionButtons post={post} />
