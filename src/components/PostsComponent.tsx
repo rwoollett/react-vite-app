@@ -5,7 +5,7 @@ import { ReactionButtons } from './ReactionButton';
 import { useNavigate } from 'react-router-dom';
 import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
-import AddPostForm from './AddPostForm';
+//import AddPostForm from './AddPostForm';
 import { ROUTES } from '../resources/routes-constants';
 import Button from './Button';
 import { selectPostById, selectPostIds, useAppDispatch, useAppSelector } from '../store/reducers/store';
@@ -76,20 +76,18 @@ function PostsComponent(): JSX.Element {
     content = <div>{error}</div>;
   }
 
-  const handleOnRefresh = () => {
-    dispatch(fetchPosts());
-  };
 
   // content = <PostExcerpt key="1234" postId="1234" />;
   return (<div className={postStyles.posts}>
-    <h2>Posts to Popular Laboratories</h2>
-    <Button type="button" onClick={handleOnRefresh} secondary>Refresh Posts</Button>
-    <p>Follow the posts made to Programming Laboratories</p>
     <div className={postStyles['posts-content']}>
-      <AddPostForm />
-      <div className={postStyles['posts-list']}>
-        {content}
-      </div>
+      {/* <div className={postStyles['posts-list']}> */}
+      {/* <div className={postStyles['posts-form']}>
+        <h2>Post to Popular Laboratories</h2>
+        <Button type="button" onClick={handleOnRefresh} secondary>Refresh Posts</Button>
+        <AddPostForm />
+      </div> */}
+      {content}
+      {/* </div> */}
     </div>
   </div>);
 }

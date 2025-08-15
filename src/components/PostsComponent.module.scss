@@ -55,12 +55,12 @@
   text-align: left;
 }
 
-.posts-content {
-  display: flex;
-  justify-content: space-between;
+.posts-content .posts-form {
+  flex-grow: 1;
+  text-align: left;
 
   & form {
-    flex: 0 0 190px;
+    flex: 1 1 190px;
   }
 
   & label,
@@ -84,12 +84,4 @@
   & label+textarea {
     margin-top: 0px;
   }
-}
-
-.posts-content .posts-list {
-  flex-grow: 1;
-}
-
-.posts-list {
-  display: block;
 }

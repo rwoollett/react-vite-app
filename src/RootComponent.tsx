@@ -52,7 +52,8 @@ const RootComponent: React.FC = () => {
             element={
               <ProtectedRoute isLoggedIn={isLoggedIn}>
                 <LivePosts />
-              </ProtectedRoute>} />
+              </ProtectedRoute>} >
+          </Route>
           <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
           <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
 
