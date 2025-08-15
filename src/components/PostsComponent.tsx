@@ -26,7 +26,7 @@ let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
   if (post) {
     postExcerpt = (<div className={postStyles.post}>
       <h3>{post.title}</h3>
-      <PostAuthor userId={post.userId} />
+      <PostAuthor author={post.userName} />
       <TimeAgo timeISO={post.date} />
       <p>{post.content}</p>
       <ReactionButtons post={post} />

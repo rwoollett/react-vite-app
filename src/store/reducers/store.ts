@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ipApi } from '../api/ipApi'
 import { usersApi } from '../api/authenticatedUsersApi';
 import { reducer as postsReducer, postsAdapter } from '../api/postsSlice';
+import { reducer as postUsersReducer, usersAdapter } from '../api/authorUsersSlice';
 
 import { setupListeners } from '@reduxjs/toolkit/query'
 
@@ -15,13 +16,14 @@ const rootReducer = combineReducers({
   [ipApi.reducerPath]: ipApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   posts: postsReducer,
+  postusers: postUsersReducer
 });
 
 const persistedReducer = persistReducer(
   {
     key: 'root',
     storage,
-    whitelist: ['data', 'ip']
+    whitelist: ['data', 'ip', 'postusers']
   },
   rootReducer
 );
@@ -49,7 +51,6 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 export const persistor = persistStore(store)
 
 // Posts selectors
-// Export the customized selectors for this adapter using `getSelectors`
 export const {
   selectAll: selectAllPosts,
   selectById: selectPostById,
@@ -62,3 +63,11 @@ export const selectPostsByUser = createSelector(
   [selectAllPosts, (_: RootState, userId: number) => userId],
   (posts, userId) => posts.filter(post => post.userId === userId)
 );
+
+// // Author Users selectors
+export const {
+  selectAll: selectAllUsers,
+  selectById: selectUserById
+} = usersAdapter.getSelectors<RootState>(state => state.postusers);
+
+

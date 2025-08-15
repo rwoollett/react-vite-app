@@ -12,11 +12,12 @@ export type Post = {
   title: string;
   content: string;
   userId: number;
+  userName: string;
   reactions: ReactionEmojiCount;
 }
 
 export type AuthorUser = {
-  userId: number;
+  id: number;
   authId: string;
   name: string;
 }
