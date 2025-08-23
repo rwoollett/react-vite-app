@@ -67,6 +67,18 @@ const usersApi = createApi({
             method: 'GET',
           };
         }
+      }),
+      refreshToken: builder.mutation<Partial<AuthenticatedUser>, void>({
+        invalidatesTags: (_result, _error, _arg) => {
+          return [{ type: 'CurrentUser' }];
+        },
+        query: () => {
+          return {
+            url: '/api/users/refreshtoken',
+            method: 'POST',
+            body: {}
+          };
+        }
       })
     };
   }
@@ -76,6 +88,7 @@ export const {
   useSignUpMutation,
   useSignInMutation,
   useSignOutMutation,
-  useCurrentUserQuery
+  useCurrentUserQuery,
+  useRefreshTokenMutation
 } = usersApi;
 export { usersApi };

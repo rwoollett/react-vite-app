@@ -3,6 +3,7 @@ interface FetchConfig {
   body?: string;
   method: string;
   headers?: { [key: string]: string; }
+  credentials?: RequestCredentials;
 }
 
 export async function http<T>(request: string, {

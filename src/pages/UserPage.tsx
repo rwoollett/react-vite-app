@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, type FormEvent } from 'react'
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
+import { useRefreshTokenMutation } from '../store/api/authenticatedUsersApi';
 import { useAppSelector } from '../store/reducers/store';
 import Greeting from '../components/Greeting';
 import { sayFarewell } from '../utility/functions';
@@ -7,16 +8,15 @@ import Button from '../components/Button';
 import { useWebSocket } from '../hooks/use-websocket-context';
 import Dashboard from './dashboard/Dashboard';
 
-
 const UserPage: React.FC = () => {
-  const [farewell, setFarewell] = useState("");
   const { isLoggedIn, email } = useSignedInAuthorize();
   const { wsRef, messageQueue } = useWebSocket();
+  const [farewell, setFarewell] = useState("");
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
-  //const latestTimestamp = 'something';
+  const [refreshToken] = useRefreshTokenMutation();
   const lastProcessedSeq = useRef(0);
-
+  
   const contents = useAppSelector((state) => {
     return state.data.contents;
   });
@@ -46,6 +46,7 @@ const UserPage: React.FC = () => {
   const onHandleGreet = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFarewell(sayFarewell(contents[0]));
+    await refreshToken().unwrap();
   };
 
   return (

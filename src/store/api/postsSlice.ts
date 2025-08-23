@@ -28,7 +28,10 @@ export const fetchPosts = createAsyncThunk(
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const response = await http<{ fetchPosts: Post[] }>(
       `${apiUrl}/api/v1/posts`,
-      { method: "GET" }
+      {
+        method: "GET",
+        credentials: "include"
+      }
     );
     return response.fetchPosts;
   });
