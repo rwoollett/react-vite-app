@@ -5,12 +5,14 @@ function useSignedInAuthorize(): {
   userId: string | undefined;
   email: string | undefined;
   isLoading: boolean;
+  expiry: number | undefined;
 } {
   const { data, isLoading } = useCurrentUserQuery();
   return {
     isLoggedIn: data?.currentUser ? true : false,
     userId: data?.currentUser?.id,
     email: data?.currentUser?.email,
+    expiry: data?.currentUser?.exp,
     isLoading
   };
 

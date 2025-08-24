@@ -9,7 +9,7 @@ import { useWebSocket } from '../hooks/use-websocket-context';
 import Dashboard from './dashboard/Dashboard';
 
 const UserPage: React.FC = () => {
-  const { isLoggedIn, email } = useSignedInAuthorize();
+  const { isLoggedIn, email, expiry } = useSignedInAuthorize();
   const { wsRef, messageQueue } = useWebSocket();
   const [farewell, setFarewell] = useState("");
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
@@ -56,7 +56,7 @@ const UserPage: React.FC = () => {
           {isLoggedIn && (
             <div className='mt-0 columns has-background-info-light'>
               <div className="column is-narrow">
-                <div className="is-size-6">Welcome, <b>{email}</b>!</div>
+                <div className="is-size-6">Welcome, <b>{email}</b>! {expiry && new Date(expiry * 1000).toLocaleString()}</div>
               </div>
               <div className="column is-narrow">
                 <span className={`tag ${connected ? 'is-success' : 'is-danger'}`}>
