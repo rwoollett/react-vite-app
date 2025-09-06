@@ -14,7 +14,7 @@ export const sayFarewell = (userName: string): string => {
 }
 
 export function baseAuthUrl() {
-  return `${import.meta.env.VITE_AUTH_URL}`;
+  return `${import.meta.env.VITE_AUTH_SERVER_URL}`;
 }
 
 
