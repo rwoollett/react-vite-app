@@ -5,7 +5,7 @@ Using a containerised web site on the main server for other apis in system.
 
 eval $(minikube docker-env)
 
-docker build -t cs-dashboard:v1.0 -f Dockerfile.prod .
+docker build -t netproc-dashboard:v1.0 -f Dockerfile.prod .
 
-docker run -p 3000:80 cs-dashboard:v1.0 
+docker run -p 3000:80 netproc-dashboard:v1.0 
 
