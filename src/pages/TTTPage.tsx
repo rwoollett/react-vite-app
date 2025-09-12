@@ -11,7 +11,8 @@ const CanvasComponent: React.FC = () => {
   const [createGameData, setCreateGameData] = useState<Game | null>(null);
   const createGame = async (userId: string) => {
     try {
-      const response = await fetch("http://localhost:3009/api/v1/game/create", {
+      //const response = await fetch("http://localhost:3009/api/v1/game/create", {
+      const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/create`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId })
@@ -31,7 +32,7 @@ const CanvasComponent: React.FC = () => {
   const [startGameData, setStartGameData] = useState<Game | null>(null);
   const startGame = async (gameId: string) => {
     try {
-      const response = await fetch("http://localhost:3009/api/v1/game/start", {
+      const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/start`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ gameId })
@@ -51,7 +52,7 @@ const CanvasComponent: React.FC = () => {
   const [boardMoveData, setBoardMoveData] = useState<PlayerMove | null>(null);
   const boardMove = async (gameId: string, player: number, moveCell: number, isOpponentStart: boolean) => {
     try {
-      const response = await fetch("http://localhost:3009/api/v1/game/move", {
+      const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/move`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ gameId, player, moveCell, isOpponentStart })

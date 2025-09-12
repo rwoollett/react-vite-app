@@ -27,7 +27,7 @@ export const fetchPosts = createAsyncThunk(
   async () => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const response = await http<{ fetchPosts: Post[] }>(
-      `${apiUrl}/api/v1/posts`,
+      `${apiUrl}/api/v1/liveposts/posts`,
       {
         method: "GET",
         credentials: "include"
@@ -45,7 +45,7 @@ export const addNewPost = createAsyncThunk(
       body: JSON.stringify({ title, content, user }),
       method: "PUT"
     };
-    const response = await http<{ createPost: Post }>(`${apiUrl}/api/v1/posts`, reqInit);
+    const response = await http<{ createPost: Post }>(`${apiUrl}/api/v1/liveposts/posts`, reqInit);
     return response.createPost;
   }
 );
@@ -63,7 +63,7 @@ export const addNewPost = createAsyncThunk(
 //       method: "PUT"
 //     };
 //     console.log('Response before put:', reqInit);
-//     const response = await http<Post>('/api/v1/posts', reqInit);
+//     const response = await http<Post>('/api/v1/liveposts/posts', reqInit);
 //     // The response includes the complete post object, including unique ID
 //     console.log('Response put:', response, typeof response);
 //     return response;

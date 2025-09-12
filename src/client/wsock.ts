@@ -17,18 +17,21 @@ export interface WebSocketClient {
   close: () => void;
 }
 
-const websockets = {
-  url: "ws://localhost",
-  //produrl: (process.env.NODE_ENV === 'production' && ENV.host && `ws://${ENV.host}`) || ""
-};
+// const websockets = {
+//   url: "ws://localhost",
+//   //produrl: (process.env.NODE_ENV === 'production' && ENV.host && `ws://${ENV.host}`) || ""
+// };
 
 const wsUrl = (service: string) => {
   if (service === 'TTT') {
-    return `${websockets.url}:3009`;
+    return `${import.meta.env.VITE_TTT_SERVER_WS}`;
+    //return `${websockets.url}:3009`;
   } else if (service === 'CSToken') {
-    return `${websockets.url}:3003`;
+    return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
+    //return `${websockets.url}:3003`;
   } else {
-    return `${websockets.url}:3003`;
+    return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
+    //return `${websockets.url}:3003`;
   }
 }
 

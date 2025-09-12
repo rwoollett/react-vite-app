@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${import.meta.env.VITE_CSTOKEN_SERVER_URL}/api/v1/clients/range/${range.from}/${range.to}`)
+    fetch(`${import.meta.env.VITE_CSTOKEN_SERVER_URL}/api/v1/cstoken/clients/range/${range.from}/${range.to}`)
       .then(res => res.json())
       .then(json => {
         if (!json || !Array.isArray(json.getClients)) {

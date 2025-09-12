@@ -22,7 +22,7 @@ const usersApi = createApi({
         },
         query: (user) => {
           return {
-            url: '/api/users/signup',
+            url: '/api/v1/users/signup',
             method: 'POST',
             body: {
               email: user.email,
@@ -37,7 +37,7 @@ const usersApi = createApi({
         },
         query: (user) => {
           return {
-            url: '/api/users/signin',
+            url: '/api/v1/users/signin',
             method: 'POST',
             body: {
               email: user.email,
@@ -52,7 +52,7 @@ const usersApi = createApi({
         },
         query: () => {
           return {
-            url: '/api/users/signout',
+            url: '/api/v1/users/signout',
             method: 'POST'
           };
         }
@@ -63,7 +63,7 @@ const usersApi = createApi({
         },
         query: () => {
           return {
-            url: '/api/users/currentuser',
+            url: '/api/v1/users/currentuser',
             method: 'GET',
           };
         }
@@ -74,7 +74,7 @@ const usersApi = createApi({
         },
         query: () => {
           return {
-            url: '/api/users/refreshtoken',
+            url: '/api/v1/users/refreshtoken',
             method: 'POST',
             body: {}
           };
