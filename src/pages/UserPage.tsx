@@ -50,7 +50,7 @@ const UserPage: React.FC = () => {
   };
 
   return (
-    <div className='hero is-fullheight-with-navbar'>
+    <div className='hero'>
       <div className='hero-head'>
         <header>
           {isLoggedIn && (

@@ -35,7 +35,7 @@ const HomePage: React.FC = () => {
 
   return (<>
     <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
-    <div className='hero is-fullheight-with-navbar'>
+    <div className='hero'>
       <div className='hero-head'>
         <header>
           {isLoggedIn && (

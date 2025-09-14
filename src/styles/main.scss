@@ -47,7 +47,8 @@ html,
 body,
 #root {
   height: 100%;
-
+  overflow-y: hidden;
+  overflow-x: hidden;
   @media (prefers-color-scheme: dark) {}
 }
 
@@ -57,6 +58,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overflow-y: auto;
   // --bulma-scheme-main: #(variables.$main-background-color);
   // --bulma-background: #{variables.$main-background-color};
   // --bulma-body-background: #{variables.$main-background-color};
@@ -73,6 +75,8 @@ code {
   top: 52px;
   left: 0px;
   right: 0px;
+  // bottom: 0px;
+  overflow: hidden;
 }
 
 .sign-in-skeleton {

@@ -60,7 +60,7 @@ const LivePosts: React.FC = () => {
       <div>Fetching home page ...</div> :
       <>
         <Banner title={title} desc={description} />
-        <div className='hero is-fullheight-with-navbar'>
+        <div className='hero'>
           <div className='hero-head'>
             <HomeNavigation cards={navCards} />
 
