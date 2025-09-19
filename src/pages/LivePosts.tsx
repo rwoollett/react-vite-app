@@ -10,6 +10,7 @@ import { useAppDispatch } from '../store/reducers/store';
 import { fetchPosts } from '../store/api/postsSlice';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
+import { refetchUserByID } from '../store/api/authorUsersSlice';
 
 const LivePosts: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -52,7 +53,8 @@ const LivePosts: React.FC = () => {
   };
 
   const toAddPostPage = () => {
-    navigate(ROUTES.LIVEPOSTS_ROUTE)
+    dispatch(refetchUserByID());
+    navigate(`${ROUTES.LIVEPOSTS_ROUTE}/create`)
   }
 
   return (

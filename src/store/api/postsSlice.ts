@@ -38,12 +38,13 @@ export const fetchPosts = createAsyncThunk(
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPostStatus',
-  async ({ title, content, user }:
-    { title: string, content: string, user: string }) => {
+  async ({ title, content, userId }:
+    { title: string, content: string, userId: number }) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const reqInit = {
-      body: JSON.stringify({ title, content, user }),
-      method: "PUT"
+      body: JSON.stringify({ title, content, userId }),
+      method: "PUT",
+      credentials: "include" as const
     };
     const response = await http<{ createPost: Post }>(`${apiUrl}/api/v1/liveposts/posts`, reqInit);
     return response.createPost;
@@ -111,7 +112,7 @@ export const postsSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(addNewPost.fulfilled, (state, action) => {
-      return postsAdapter.addOne(state, action);
+      return postsAdapter.addOne(state, action.payload);
     });
     // builder.addCase(updatePost.fulfilled, (state, action) => {
     //   const { id, title, content } = action.payload;

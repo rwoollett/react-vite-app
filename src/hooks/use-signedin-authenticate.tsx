@@ -3,7 +3,7 @@ import { useCurrentUserQuery } from "../store/api/authenticatedUsersApi";
 function useSignedInAuthorize(): {
   isLoggedIn: boolean;
   userId: string | undefined;
-  email: string | undefined;
+  email: string;
   isLoading: boolean;
   expiry: number | undefined;
 } {
@@ -11,7 +11,7 @@ function useSignedInAuthorize(): {
   return {
     isLoggedIn: data?.currentUser ? true : false,
     userId: data?.currentUser?.id,
-    email: data?.currentUser?.email,
+    email: data?.currentUser?.email ? data?.currentUser?.email : '',
     expiry: data?.currentUser?.exp,
     isLoading
   };

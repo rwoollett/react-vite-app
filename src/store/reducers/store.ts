@@ -23,7 +23,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage,
-    whitelist: ['data', 'ip', 'postusers']
+    whitelist: ['data', 'ip']
   },
   rootReducer
 );
@@ -50,6 +50,8 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 export const persistor = persistStore(store)
 
+
+export const createAppSelector = createSelector.withTypes<RootState>();
 // Posts selectors
 export const {
   selectAll: selectAllPosts,
@@ -59,15 +61,20 @@ export const {
 } = postsAdapter.getSelectors<RootState>(state => state.posts);
 
 // Memoized selector - input selectors+ to one selectors output.
-export const selectPostsByUser = createSelector(
+export const selectPostsByUser = createAppSelector(
   [selectAllPosts, (_: RootState, userId: number) => userId],
   (posts, userId) => posts.filter(post => post.userId === userId)
 );
 
-// // Author Users selectors
+// Author Users selectors
 export const {
   selectAll: selectAllUsers,
   selectById: selectUserById
 } = usersAdapter.getSelectors<RootState>(state => state.postusers);
+
+export const selectIdByAuth = createAppSelector(
+  [selectAllUsers, (_: RootState, authId: string) => authId],
+  (users, authId) => users.filter(user => user.authId === authId)
+);
 
 
