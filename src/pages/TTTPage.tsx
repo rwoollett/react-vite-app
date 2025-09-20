@@ -58,10 +58,12 @@ const CanvasComponent: React.FC = () => {
         body: JSON.stringify({ gameId, player, moveCell, isOpponentStart })
       });
       const data = await response.json();
+      //console.log(data);
       if (!data || !isMove(data.boardMove)) {
         throw new Error("Invalid response format");
       } else {
-        setBoardMoveData(data.startGame);
+        //console.log(data.boardMove);
+        setBoardMoveData(data.boardMove);
       }
     } catch (error) {
       console.error("Failed to create game:", error);
@@ -215,7 +217,6 @@ const CanvasComponent: React.FC = () => {
       startGame(gameId);
       setStartButtonText('Start Game');
       setPlayMessage(isOpponentStart ? "Opponent started. Good luck!" : "You make first move.")
-      //setGameActive(true);
 
       // Depending an wanting opponent (AI) to start first would wait for AI move before
       // boardUpdated on Start playing game.
@@ -225,6 +226,7 @@ const CanvasComponent: React.FC = () => {
 
       } else {
         setBoardUpdated(true);
+        // setHasMovedBoard(false);
       }
     }
   };
