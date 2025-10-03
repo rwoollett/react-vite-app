@@ -63,10 +63,10 @@ export type RequestParent = {
 
 
 export type WSMessage =
-  | { subject: "clientCS_Connected"; payload: ConnectedClient }
-  | { subject: "clientCS_Disconnected"; payload: DisconnectedClient }
-  | { subject: "csToken_acquire"; payload: AcquireCS }
-  | { subject: "csToken_request"; payload: RequestCS };
+  | { subject: "cstoken_client_Connected"; payload: ConnectedClient }
+  | { subject: "cstoken_client_Disconnected"; payload: DisconnectedClient }
+  | { subject: "cstoken_token_Acquire"; payload: AcquireCS }
+  | { subject: "cstoken_token_Request"; payload: RequestCS };
 
 
 // export type Subscription = {

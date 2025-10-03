@@ -67,7 +67,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
           for (const { msg } of buffered) {
             //console.log('buffer loop', seq, updatedSeq, msg);
 
-            if (msg.subject === "csToken_request" && msg.payload.sourceIp) {
+            if (msg.subject === "cstoken_token_Request" && msg.payload.sourceIp) {
               
               const event = msg.payload;
               let clientForActivityIP: string = "";
@@ -98,7 +98,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
 
             }
 
-            if (msg.subject === "csToken_acquire" && msg.payload.ip) {
+            if (msg.subject === "cstoken_token_Acquire" && msg.payload.ip) {
               const event = msg.payload;
               const clientForActivityIP: string = event.ip;
               const newAction = {

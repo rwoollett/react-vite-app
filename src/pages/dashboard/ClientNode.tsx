@@ -17,13 +17,13 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
     let updatedSeq = lastProcessedSeq;
     for (const { seq, msg } of messageQueue) {
       if (seq > updatedSeq) {
-        if (msg.subject === "clientCS_Connected" && client.ip === msg.payload.sourceIp) {
+        if (msg.subject === "cstoken_client_Connected" && client.ip === msg.payload.sourceIp) {
           //console.log('client', client.ip, updatedSeq, seq, msg);
           setConnectedAt(msg.payload.connectedAt);
           setConnected(true);
         }
 
-        if (msg.subject === "clientCS_Disconnected" && client.ip === msg.payload.sourceIp) {
+        if (msg.subject === "cstoken_client_Disconnected" && client.ip === msg.payload.sourceIp) {
           //console.log('client', client.ip, updatedSeq, seq, msg);
           setDisconnectedAt(msg.payload.disconnectedAt);
           setConnected(false);

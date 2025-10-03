@@ -108,7 +108,7 @@ const CanvasComponent: React.FC = () => {
     let updatedSeq = lastProcessedSeq;
     for (const { seq, msg } of tttMessageQueue) {
       if (seq > updatedSeq) {
-        if (msg.subject === "game_Update" && msg.payload.gameId === gameId) {
+        if (msg.subject === "ttt_game_Update" && msg.payload.gameId === gameId) {
           //console.log('client', updatedSeq, seq, msg);
           const newBoard = msg.payload.board.split(",");
           setBoard(newBoard.map((cell) => parseInt(cell)));

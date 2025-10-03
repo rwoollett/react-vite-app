@@ -38,5 +38,5 @@ export type BoardOutput = {
   result: string;
 };
 
-export type WSTTTMessage = { subject: "game_Update"; payload: BoardOutput };
+export type WSTTTMessage = { subject: "ttt_game_Update"; payload: BoardOutput };
 
