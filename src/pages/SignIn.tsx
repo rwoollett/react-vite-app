@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type ChangeEvent, type FormEvent, type JSX } from 'react'
+import React, { useState, type ChangeEvent, type FormEvent, type JSX } from 'react'
 import { setContents } from '../store/actions/data';
 import { ipApi } from '../store/api/ipApi';
 import { useAppDispatch } from '../store/reducers/store';
@@ -20,7 +20,7 @@ const SignIn: React.FC = () => {
   const [signIn, results] = useSignInMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
-  const { isLoggedIn, isLoading } = useSignedInAuthorize();
+  const { isLoading } = useSignedInAuthorize();
 
   if (isLoading) {
     return <Skeleton times={1} className="sign-in-skeleton" />
@@ -29,12 +29,6 @@ const SignIn: React.FC = () => {
   const redirectToHomePage = () => {
     navigate(ROUTES.LIVEPOSTS_ROUTE)
   }
-
-  useEffect(() => {
-    if (isLoggedIn && !isLoading) {
-      navigate(ROUTES.USER_ROUTE);
-    }
-  }, [isLoggedIn, isLoading, navigate]);
 
   const onHandleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -59,9 +53,17 @@ const SignIn: React.FC = () => {
       dispatch(setContents([email]));
     } catch (error) {
       const statusErrors = error as Partial<StatusErrors>;
+      // if (error.status === 401) {
+      //   setErrorMessage('Unauthorized: Invalid email or password.');
+      // } else {
+      //   setErrorMessage('An unexpected error occurred. Please try again.');
+      // }
+      console.error('Sign-in failed:', error);
       setErrors(<StatusAlert statusErrors={statusErrors} />);
+
     }
 
+    navigate(ROUTES.HOMEPAGE_ROUTE);
   };
 
   return (<>
