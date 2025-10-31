@@ -1,3 +1,4 @@
+import { baseAuthUrl } from "./functions";
 
 interface FetchConfig {
   body?: string;
@@ -20,6 +21,19 @@ export async function http<T>(request: string, {
   };
   try {
     const response = await fetch(request, config);
+    if (response.status === 401) {
+      // Try refreshing token
+      const refreshRes = await fetch(`${baseAuthUrl()}/api/v1/users/refreshtoken`, {
+        method: 'POST',
+        credentials: 'include', // send cookie
+      });
+
+      console.log('fetchData refresh ', refreshRes);
+      if (!refreshRes.ok) throw new Error('Refresh failed');
+
+      // Retry original request
+      return (await fetch(request, config)).json();
+    }
     return response.json();
   } catch (err) {
     const error = err as Error;

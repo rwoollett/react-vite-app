@@ -1,18 +1,10 @@
-import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from '../services/baseQueryWithReauth';
 import type { AuthenticatedUser, CurrentUserCheck } from '../../types/authuser';
-import { baseAuthUrl } from '../../utility/functions';
 
 const usersApi = createApi({
   reducerPath: 'users',
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseAuthUrl(),
-    fetchFn: async (...args) => {
-      //DEV ONLY
-      //await BundleEnv.pause(10);
-      return fetch(...args);
-    },
-    credentials: "include"
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ['Users', 'CurrentUser'],
   endpoints(builder) {
     return {

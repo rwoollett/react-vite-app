@@ -19,6 +19,7 @@ interface PostAdaptorProp {
   status: string;
   error?: string
 }
+
 const initialState = postsAdapter.getInitialState(
   { status: 'idle' } as PostAdaptorProp);
 

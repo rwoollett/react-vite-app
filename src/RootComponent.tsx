@@ -21,8 +21,7 @@ import AddPostForm from './components/AddPostForm'
 import LivePostsPage from './pages/LivePostsPage'
 
 const RootComponent: React.FC = () => {
-  const { isLoggedIn, email, isLoading, isError } = useSignedInAuthorize();
-  console.log(isError);
+  const { isLoggedIn, email, isLoading } = useSignedInAuthorize();
   if (isLoading) {
     return (
       <div className='main-content'>
