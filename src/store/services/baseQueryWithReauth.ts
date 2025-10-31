@@ -15,10 +15,9 @@ export const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQue
       api,
       extraOptions
     );
-    console.log('auth baseapi refrsh data ', refreshResult );
     if (refreshResult.meta?.response?.ok) {
       console.log('is refrshed');
-        // Retry original query with new token
+      // Retry original query with new token
       result = await baseQuery(args, api, extraOptions);
     } else {
       console.log('signout dispatch');

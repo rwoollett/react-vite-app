@@ -28,7 +28,6 @@ export async function http<T>(request: string, {
         credentials: 'include', // send cookie
       });
 
-      console.log('fetchData refresh ', refreshRes);
       if (!refreshRes.ok) throw new Error('Refresh failed');
 
       // Retry original request
