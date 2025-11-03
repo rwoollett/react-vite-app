@@ -61,12 +61,14 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
         const buffered = [...messageBuffer.current];
         //console.log('Client token: set message queue state', buffered);
 
+        let seqArray:number[] = [];
         setClientActions((state) => {
           let newState = { ...state };
 
-          for (const { msg } of buffered) {
+          for (const { seq, msg } of buffered) {
+            if (seqArray.includes(seq)) { continue };
             //console.log('buffer loop', seq, updatedSeq, msg);
-
+            seqArray.push(seq);
             if (msg.subject === "cstoken_token_Request" && msg.payload.sourceIp) {
               
               const event = msg.payload;
@@ -174,7 +176,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
       } else if ('acquiredAt' in activity.action) {
         // This is an AcquireCS
         backgroundItem = styles.acquiredItem;
-        activityLabel = 'Acquire';
+        activityLabel = (activity.action as AcquireCS).sourceIp === ip ? 'Held' : 'Acquire';
         activityDescription = `${activity.originalIp} <-- P:${activity.parentIp}`;
       }
 

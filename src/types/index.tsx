@@ -1,4 +1,4 @@
-import type { ClientCS, AcquireCS, RequestCS } from "./cstoken";
+import type { ClientCS, AcquireCS, RequestCS, ProcSvc } from "./cstoken";
 import type { Game, PlayerMove } from "./ttt";
 
 export * from "./cstoken";
@@ -9,7 +9,7 @@ export type TokenAction = {
   parentIp: string;
   timestamp: string;
   originalIp: string;
-  action: AcquireCS | RequestCS;
+  action: AcquireCS | RequestCS | ProcSvc;
 }
 
 export interface Notification {

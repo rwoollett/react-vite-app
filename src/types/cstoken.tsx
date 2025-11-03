@@ -6,6 +6,12 @@ export type AcquireCS = {
   sourceIp: string;
 };
 
+export type ProcSvc = {
+  acquiredAt: string;
+  ip: string;
+  message: string;
+};
+
 /** Clients to request and acquire the single token for CS */
 export type ClientCS = {
   connected: boolean;
@@ -61,12 +67,12 @@ export type RequestParent = {
   id: number;
 };
 
-
 export type WSMessage =
   | { subject: "cstoken_client_Connected"; payload: ConnectedClient }
   | { subject: "cstoken_client_Disconnected"; payload: DisconnectedClient }
   | { subject: "cstoken_token_Acquire"; payload: AcquireCS }
-  | { subject: "cstoken_token_Request"; payload: RequestCS };
+  | { subject: "cstoken_token_Request"; payload: RequestCS }
+  | { subject: "cstoken_process_Service"; payload: ProcSvc };
 
 
 // export type Subscription = {

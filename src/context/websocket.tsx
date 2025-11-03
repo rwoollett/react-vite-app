@@ -32,9 +32,13 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         queryParams: { type: "all" },
         service: "CSToken",
         onMessage: (msg) => {
+          //console.log('cs message1: ', msg);
+          let lastseq = 0;
           setSeq(prevSeq => {
             const nextSeq = prevSeq + 1;
-            messageBuffer.current.push({ seq: nextSeq, msg });
+            //console.log('cs message: ', lastseq, nextSeq, msg);
+            nextSeq !== lastseq && messageBuffer.current.push({ seq: nextSeq, msg });
+            lastseq = nextSeq;
             if (!updateTimer.current) {
               updateTimer.current = setTimeout(() => {
                 const buffered = [...messageBuffer.current]; // need to get const buffered before setting react state with it.
