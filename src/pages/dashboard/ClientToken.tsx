@@ -22,7 +22,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
   const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
   const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
   const [lastActivity, setLastActivity] = useState<TokenAction | undefined>(undefined);
-
+  const sizeList = 3;
   const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
   const updateTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -92,7 +92,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
                   client: structuredClone(newState[clientForActivityIP].client),
                   actions: [...structuredClone(newState[clientForActivityIP].actions),
                     newAction
-                  ].slice(-10)
+                  ].slice(-sizeList)
                 }
               } as ActionByIp;
 
@@ -117,7 +117,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
                   client: structuredClone(newState[clientForActivityIP].client),
                   actions: [...structuredClone(newState[clientForActivityIP].actions),
                     newAction
-                  ].slice(-10)
+                  ].slice(-sizeList)
                 }
               } as ActionByIp;
 
@@ -142,7 +142,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
                   client: structuredClone(newState[clientForActivityIP].client),
                   actions: [...structuredClone(newState[clientForActivityIP].actions),
                     newAction
-                  ].slice(-10)
+                  ].slice(-sizeList)
                 }
               } as ActionByIp;
 
