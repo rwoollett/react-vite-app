@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import type { RequestCS, AcquireCS, ActionByIp, TokenAction, WSMessage } from "../../types";
+import type { RequestCS, AcquireCS, ActionByIp, TokenAction, WSMessage, ProcSvc } from "../../types";
 import { format, parseISO } from "date-fns";
 import { useWebSocket } from "../../hooks/use-websocket-context";
 import styles from './ClientToken.module.scss'
@@ -125,6 +125,31 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
 
             }
 
+            if (msg.subject === "cstoken_process_Service" && msg.payload.ip) {
+              const event = msg.payload;
+              const clientForActivityIP: string = event.ip;
+              const newAction = {
+                parentIp: 'N/A',
+                timestamp: event.processedAt,
+                originalIp: event.ip,
+                action: event as ProcSvc
+              } as TokenAction;
+              localLastActivity = newAction;
+
+              newState = {
+                ...structuredClone(newState),
+                [clientForActivityIP]: {
+                  client: structuredClone(newState[clientForActivityIP].client),
+                  actions: [...structuredClone(newState[clientForActivityIP].actions),
+                    newAction
+                  ].slice(-10)
+                }
+              } as ActionByIp;
+
+              //console.log('procsvc',newState);
+
+            }
+
           }
           return newState;
         });
@@ -161,6 +186,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
       }
 
       let backgroundItem: string = "";
+      let widthItem: string = "";
       // Use discriminated union by checking a unique property of each type
       if ('requestedAt' in activity.action) {
         // This is a RequestCS
@@ -173,25 +199,34 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
           activityLabel = 'Request';
           activityDescription = `${ip} --> P:${activity.parentIp}`;
         }
+        widthItem = styles.smallActivity;
       } else if ('acquiredAt' in activity.action) {
         // This is an AcquireCS
         backgroundItem = styles.acquiredItem;
         activityLabel = (activity.action as AcquireCS).sourceIp === ip ? 'Held' : 'Acquire';
         activityDescription = `${activity.originalIp} <-- P:${activity.parentIp}`;
+        widthItem = styles.smallActivity;
+      } else if ('processedAt' in activity.action) {
+        // This is an AcquireCS
+        backgroundItem = styles.processedItem;
+        activityLabel = 'Processed Service';
+        activityDescription = `${(activity.action as ProcSvc).serviceMessage}`;
+        widthItem = styles.largeActivity;
       }
-
+      console.log(activity);
       return (
-        <div key={`${index}${ip}`} className={`columns is-gapless mb-0 ${backgroundItem} ${highlighted} ${styles.activityItem}`}>
-          <div className="column is-narrow p-0" style={{ width: "min-content" }}>
-            <div className="is-size-7" >
-              <label className="has-background-info-light pl-0">Time stamp<br /></label>
-              {`${format(parseISO(activity.timestamp), 'P hh:mm:ss:SSS ')}`}
-            </div>
-          </div>
+        <div key={`${index}${ip}`} className={`columns is-gapless mb-0 ${backgroundItem} ${highlighted} ${styles.activityItem} ${widthItem}`}>
           <div className="column p-0" >
             <div className="ml-1 is-size-7">
               <label className="has-background-info-light pl-0">{activityLabel}<br /></label>
               {activityDescription}
+            </div>
+          </div>
+          <div className="column is-narrow p-0" style={{ width: "min-content" }}>
+            <div className="is-size-7" >
+              <label className="has-background-info-light pl-0">Time stamp<br /></label>
+              {`${format(parseISO(activity.timestamp), ' hh:mm:ss:SSS ')}`}
+              {/* {`${format(parseISO(activity.timestamp), 'P hh:mm:ss:SSS ')}`} */}
             </div>
           </div>
         </div>

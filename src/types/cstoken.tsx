@@ -1,3 +1,17 @@
+/**
+ * A request for CS from a client source ip to its currently known parent ip in the distributed tree
+ * If relayed Request, it is because a parentIP was not the root, or is unreachable.
+ * The originalIp is the real client wanting to enter CS and acquire token.
+ * And when relayed, the sourceIp was the parent ip of the previous relayed sourceIp.
+ *
+ */
+export type RequestCS = {
+  originalIp: string;
+  parentIp: string;
+  relayed: boolean;
+  requestedAt: string;
+  sourceIp: string;
+};
 
 /** A client ip takes ownership of CS token from the sourceIp */
 export type AcquireCS = {
@@ -6,10 +20,11 @@ export type AcquireCS = {
   sourceIp: string;
 };
 
+/** A client processes a service when allocated under CS lock */
 export type ProcSvc = {
-  acquiredAt: string;
+  processedAt: string;
   ip: string;
-  message: string;
+  serviceMessage: string;
 };
 
 /** Clients to request and acquire the single token for CS */
@@ -46,20 +61,6 @@ export type RangePort = {
   to: number;
 };
 
-/**
- * A request for CS from a client source ip to its currently known parent ip in the distributed tree
- * If relayed Request, it is because a parentIP was not the root, or is unreachable.
- * The originalIp is the real client wanting to enter CS and acquire token.
- * And when relayed, the sourceIp was the parent ip of the previous relayed sourceIp.
- *
- */
-export type RequestCS = {
-  originalIp: string;
-  parentIp: string;
-  relayed: boolean;
-  requestedAt: string;
-  sourceIp: string;
-};
 
 /** Clients to request and acquire the single token for CS */
 export type RequestParent = {
