@@ -28,7 +28,10 @@ export const fetchUserByAuthId = createAsyncThunk(
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const response = await http<{ fetchUserByAuthId: AuthorUser[] }>(
       `${apiUrl}/api/v1/liveposts/user/fetchbyauthid/${authId}`,
-      { method: "GET" }
+      { 
+        method: "GET",
+        credentials: "include" as const
+      }
     );
     return response.fetchUserByAuthId;
   });

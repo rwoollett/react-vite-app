@@ -38,6 +38,11 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     authUser.length && postUsersNewUserStatus && setAuthor(authUser[0].name);
   }, [author, authUser, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch]);
 
+  console.log('postUserByAuthIdStatus', postUserByAuthIdStatus);
+  if (postUserByAuthIdStatus === 'failed') {
+    navigate(ROUTES.LIVEPOSTS_ROUTE);
+  }
+
   if (postUserByAuthIdStatus === 'idle' || postUserByAuthIdStatus === 'loading') {
     return (
       <div className='panel'>

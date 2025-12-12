@@ -31,7 +31,11 @@ export async function http<T>(request: string, {
       if (!refreshRes.ok) throw new Error('Refresh failed');
 
       // Retry original request
-      return (await fetch(request, config)).json();
+      const response2 = await fetch(request, config);
+      if (response2.status !== 200) {
+        throw new Error('Not authorised');
+      }
+      return response2.json();
     }
     return response.json();
   } catch (err) {
