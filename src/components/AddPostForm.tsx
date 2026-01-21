@@ -155,7 +155,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
               <PostAuthor author={author} />
               <TimeAgo timeISO={new Date().toISOString()} />
               <p>{content}</p>
-              <ReactionButtons post={{ reactions: {}, id: 0, title, userId: 5, userName: author, content, date: new Date().toISOString() }} />
+              <ReactionButtons post={{ reactions: {}, slug:"unknown", id: 0, title, userId: 5, userName: author, content, date: new Date().toISOString() }} />
               <Button secondary outline type="button">
                 View Post
               </Button>
