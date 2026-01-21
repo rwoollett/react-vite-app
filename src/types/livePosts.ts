@@ -13,6 +13,7 @@ export type Post = {
   content: string;
   userId: number;
   userName: string;
+  slug: string;
   reactions: ReactionEmojiCount;
 }
 

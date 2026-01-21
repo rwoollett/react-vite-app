@@ -7,5 +7,5 @@ export const ROUTES = {
   TTTPAGE_ROUTE: '/ttt',
   FLIPIMAGEPAGE_ROUTE: '/flipImage',
   COUNTDOWNPAGE_ROUTE: '/countdown',
-  LIVEPOSTS_ROUTE: '/posts'
+  LIVEPOSTS_ROUTE: '/liveposts'
 }

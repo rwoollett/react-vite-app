@@ -24,7 +24,7 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
   };
 
   const userBar = [
-    { show: isLoggedIn, to: "/posts", label: "Posts" },
+    { show: isLoggedIn, to: "/liveposts", label: "Posts" },
     { show: !isLoggedIn, to: "/signin", label: "Sign In" },
     { show: !isLoggedIn, to: "/signup", label: "Sign Up" },
     { show: isLoggedIn, to: "/signout", label: "Sign Out" } 

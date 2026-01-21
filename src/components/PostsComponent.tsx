@@ -2,11 +2,8 @@ import React, { memo, useEffect, type JSX } from 'react';
 import styles from './Card.module.scss';
 import postStyles from './PostsComponent.module.scss';
 import { ReactionButtons } from './ReactionButton';
-import { useNavigate } from 'react-router-dom';
 import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
-//import AddPostForm from './AddPostForm';
-import { ROUTES } from '../resources/routes-constants';
 import Button from './Button';
 import { selectPostById, selectPostIds, useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { fetchPosts } from '../store/api/postsSlice';
@@ -17,10 +14,6 @@ interface ExcerptProps {
 
 let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
   const post = useAppSelector(state => selectPostById(state, p));
-  const navigate = useNavigate();
-  const toPostPage = () => {
-    navigate(ROUTES.LIVEPOSTS_ROUTE)
-  }
 
   let postExcerpt;
   if (post) {
@@ -30,9 +23,11 @@ let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
       <TimeAgo timeISO={post.date} />
       <p>{post.content}</p>
       <ReactionButtons post={post} />
-      <Button secondary outline type="button" onClick={() => toPostPage()}>
-        View Post
-      </Button>
+      <a href={`/posts/${post.slug}/`} style={{ textDecoration: 'none' }}>
+        <Button secondary outline type="button">
+          View Post
+        </Button>
+      </a>
     </div>
     );
   } else {
