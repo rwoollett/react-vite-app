@@ -11,6 +11,8 @@ import { fetchPosts } from '../store/api/postsSlice';
 interface ExcerptProps {
   postId: number;
 }
+const staticPostUrl = (slug: string) =>
+  `${import.meta.env.VITE_LIVEPOSTS_STATIC_URL}/${slug}/`;
 
 let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
   const post = useAppSelector(state => selectPostById(state, p));
@@ -23,7 +25,7 @@ let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
       <TimeAgo timeISO={post.date} />
       <p>{post.content}</p>
       <ReactionButtons post={post} />
-      <a href={`/posts/${post.slug}/`} style={{ textDecoration: 'none' }}>
+      <a href={staticPostUrl(post.slug)} style={{ textDecoration: 'none' }}>
         <Button secondary outline type="button">
           View Post
         </Button>

@@ -37,7 +37,7 @@ const RootComponent: React.FC = () => {
       <NavBar isLoggedIn={isLoggedIn} />
       <section className='main-content'>
         <Routes>
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/posts/*" element={null} />
           <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
           <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
           <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
@@ -59,6 +59,7 @@ const RootComponent: React.FC = () => {
           </Route>
 
           {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </section>
     </Router>
