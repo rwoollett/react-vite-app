@@ -35,7 +35,7 @@ const CanvasComponent: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/start`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId })
+        body: JSON.stringify({ gameId, userId })
       });
       const data = await response.json();
       if (!data || !isGame(data.startGame)) {
@@ -55,7 +55,7 @@ const CanvasComponent: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/move`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId, player, moveCell, isOpponentStart })
+        body: JSON.stringify({ gameId, userId, player, moveCell, isOpponentStart })
       });
       const data = await response.json();
       //console.log(data);
@@ -91,6 +91,7 @@ const CanvasComponent: React.FC = () => {
   ];
 
   // GameID is required before any ui activity on the page
+  const [userId, setUserId] = useState<string>("EMPTY");
   const [gameId, setGameId] = useState<string>("EMPTY");
   const [gameActive, setGameActive] = useState(false);
 
@@ -108,6 +109,9 @@ const CanvasComponent: React.FC = () => {
     let updatedSeq = lastProcessedSeq;
     for (const { seq, msg } of tttMessageQueue) {
       if (seq > updatedSeq) {
+        if (msg.subject === "ws_user_Connected") {
+          setUserId(msg.payload.userId);
+        } 
         if (msg.subject === "ttt_game_Update" && msg.payload.gameId === gameId) {
           //console.log('client', updatedSeq, seq, msg);
           const newBoard = msg.payload.board.split(",");
@@ -143,8 +147,8 @@ const CanvasComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    createGame("99999999");
-  }, [player]);
+    userId !== "EMPTY" && createGame(userId);
+  }, [player, userId]);
 
   useEffect(() => {
     if (createGameData) {

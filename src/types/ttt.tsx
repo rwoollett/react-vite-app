@@ -38,5 +38,11 @@ export type BoardOutput = {
   result: string;
 };
 
-export type WSTTTMessage = { subject: "ttt_game_Update"; payload: BoardOutput };
+export type WSUserConnect = {
+  userId: string;
+};
+
+export type WSTTTMessage = 
+| { subject: "ttt_game_Update"; payload: BoardOutput }
+| { subject: "ws_user_Connected"; payload: WSUserConnect };
 

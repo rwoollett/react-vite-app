@@ -17,7 +17,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const wsRefTTT = useRef<WebSocketClient | null>(null);
   const [messageQueue, setMessageQueue] = useState<{ seq: number, msg: WSMessage }[]>([]);
   const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
-  const updateTimer = useRef<NodeJS.Timeout | null>(null);
+  //const updateTimer = useRef<NodeJS.Timeout | null>(null);
+  const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
   const [, setSeq] = useState(0);
   const [, setTTTSeq] = useState(0);
