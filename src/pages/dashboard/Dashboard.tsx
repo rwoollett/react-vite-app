@@ -10,7 +10,7 @@ import NetworkList from "./NetworkList";
  */
 
 const Dashboard: React.FC = () => {
-  const range = { from: 5000, to: 7040 };
+  const range = { from: 5000, to: 7080 };
 
   const [data, setData] = useState<{ getClients: ClientCS[] } | null>(null);
   const [loading, setLoading] = useState(true);
