@@ -1,3 +1,5 @@
+import { type WSUserConnect } from "./wsuser";
+
 export type LivePostPage = {
   title: string;
   description: string;
@@ -15,6 +17,11 @@ export type Post = {
   userName: string;
   slug: string;
   reactions: ReactionEmojiCount;
+}
+
+export type PostStage = {
+  id: number;
+  slug: string;
 }
 
 export type AuthorUser = {
@@ -63,3 +70,8 @@ declare global {
     ENV?: ReactEnv;
   }
 }
+
+export type WSLivePostMessage = 
+| { subject: "liveposts_post_Stage"; payload: PostStage }
+| { subject: "ws_user_Connected"; payload: WSUserConnect };
+

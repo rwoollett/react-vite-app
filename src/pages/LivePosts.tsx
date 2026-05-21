@@ -11,8 +11,12 @@ import { fetchPosts } from '../store/api/postsSlice';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
+import { useWebSocket } from "../hooks/use-websocket-context";
+
 
 const LivePosts: React.FC = () => {
+  const { livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [navCards, setNavCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
@@ -20,6 +24,30 @@ const LivePosts: React.FC = () => {
   const [isFetching, setIsFetching] = useState(true);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
+
+  useEffect(() => {
+    let updatedSeq = lastProcessedLivePostSeq;
+    console.log('\n**client lastProcessedLivePostSeq', updatedSeq);
+    for (const { seq, msg } of livePostMessageQueue) {
+      if (seq > updatedSeq) {
+        // if (msg.subject === "ws_user_Connected") {
+        //   setUserId(msg.payload.userId);
+        // }
+        if (msg.subject === "liveposts_post_Stage") {
+          console.log('client', updatedSeq, seq, msg);
+
+        }
+        updatedSeq = seq;
+      }
+    }
+    console.log('client looped livepost updatesSeq', updatedSeq, lastProcessedLivePostSeq);
+    if (updatedSeq !== lastProcessedLivePostSeq) {
+      console.log('lastProcessedLivePostSeq', updatedSeq);
+      setLastProcessedLivePostSeq(updatedSeq);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [livePostMessageQueue]);
 
   useEffect(() => {
     (async () => {

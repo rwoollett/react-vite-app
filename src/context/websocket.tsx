@@ -1,12 +1,18 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import websocketClient, { type WebSocketClient } from "../client/wsock";
-import type { WSMessage, WSTTTMessage } from "../types";
+import type { WSMessage, WSTTTMessage, WSLivePostMessage } from "../types";
 
 type WebSocketContextType = {
   wsRef: React.RefObject<WebSocketClient | null>;
   wsRefTTT: React.RefObject<WebSocketClient | null>;
+  wsRefLivePost: React.RefObject<WebSocketClient | null>;
   messageQueue: { seq: number, msg: WSMessage }[];
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
+  livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
+  lastProcessedLivePostSeq: number;
+  setLastProcessedLivePostSeq: React.Dispatch<React.SetStateAction<number>>;
+  lastProcessedTTTSeq: number;
+  setLastProcessedTTTSeq: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const MSG_QUEUE_MAX = 150;
@@ -15,19 +21,25 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(undefin
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const wsRef = useRef<WebSocketClient | null>(null);
   const wsRefTTT = useRef<WebSocketClient | null>(null);
+  const wsRefLivePost = useRef<WebSocketClient | null>(null);
   const [messageQueue, setMessageQueue] = useState<{ seq: number, msg: WSMessage }[]>([]);
   const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
   //const updateTimer = useRef<NodeJS.Timeout | null>(null);
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
+  const [livePostMessageQueue, setLivePostMessageQueue] = useState<{ seq: number, msg: WSLivePostMessage }[]>([]);
   const [, setSeq] = useState(0);
   const [, setTTTSeq] = useState(0);
+  const [, setLivePostSeq] = useState(0);
+  const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
+  const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
+
 
   // useEffect(() => {
   //   console.log("PROVIDER messageQueue updated:", messageQueue);
   // }, [messageQueue]);
-  
+
   useEffect(() => {
     wsRef.current = websocketClient<WSMessage>(
       {
@@ -90,8 +102,42 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    wsRefLivePost.current = websocketClient<WSLivePostMessage>(
+      {
+        queryParams: { type: "all" },
+        service: "LivePost",
+        onMessage: (msg) => {
+          setLivePostSeq(prevSeq => {
+            const nextSeq = prevSeq + 1;
+            setLivePostMessageQueue(
+              q => [...q, { seq: nextSeq, msg }]
+                .slice(-MSG_QUEUE_MAX)
+            );
+            return nextSeq;
+          });
+        },
+        onDisconnect: () => { },
+      },
+      (client) => { wsRefLivePost.current = client; }
+    );
+    return () => wsRefLivePost.current?.close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <WebSocketContext.Provider value={{ wsRef, wsRefTTT, messageQueue, tttMessageQueue }}>
+    <WebSocketContext.Provider value={{
+      wsRef,
+      wsRefTTT,
+      wsRefLivePost,
+      messageQueue,
+      tttMessageQueue,
+      lastProcessedTTTSeq,
+      setLastProcessedTTTSeq,
+      livePostMessageQueue,
+      lastProcessedLivePostSeq,
+      setLastProcessedLivePostSeq
+    }}>
       {children}
     </WebSocketContext.Provider>
   );

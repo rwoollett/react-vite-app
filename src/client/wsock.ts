@@ -29,6 +29,9 @@ const wsUrl = (service: string) => {
   } else if (service === 'CSToken') {
     return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
     //return `${websockets.url}:3003`;
+  } else if (service === 'LivePost') {
+    return `${import.meta.env.VITE_LIVEPOSTS_WSL}`;
+    //return `${websockets.url}:3003`;
   } else {
     return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
     //return `${websockets.url}:3003`;

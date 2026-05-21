@@ -4,11 +4,14 @@ import { type BoardBounds, boardTraverse, drawPlayer, drawWinResult } from '../u
 import { useWebSocket } from "../hooks/use-websocket-context";
 import { type Game, isGame, isMove, type PlayerMove } from '../types';
 import Button from '../components/Button';
+import { useAppDispatch, useAppSelector } from '../store/reducers/store';
+import { setCurrentGame, clearCurrentGame, setCurrentGameUser } from '../store/actions/data';
 
 const CanvasComponent: React.FC = () => {
-  const { tttMessageQueue } = useWebSocket();
+  const { tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
+  const dispatch = useAppDispatch();
 
-  const [createGameData, setCreateGameData] = useState<Game | null>(null);
+  //const [createGameData, setCreateGameData] = useState<Game | null>(null);
   const createGame = async (userId: string) => {
     try {
       //const response = await fetch("http://localhost:3009/api/v1/game/create", {
@@ -21,11 +24,13 @@ const CanvasComponent: React.FC = () => {
       if (!data || !isGame(data.createGame)) {
         throw new Error("Invalid response format");
       } else {
-        setCreateGameData(data.createGame);
+        dispatch(setCurrentGame(data.createGame));
+        //setCreateGameData(data.createGame);
       }
     } catch (error) {
       console.error("Failed to create game:", error);
-      setCreateGameData(null);
+      //setCreateGameData(null);
+      dispatch(clearCurrentGame());
     }
   };
 
@@ -35,9 +40,10 @@ const CanvasComponent: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/start`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId, userId })
+        body: JSON.stringify({ gameId, userId: gameUser })
       });
       const data = await response.json();
+      console.log('start game', data);
       if (!data || !isGame(data.startGame)) {
         throw new Error("Invalid response format");
       } else {
@@ -55,7 +61,7 @@ const CanvasComponent: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/move`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId, userId, player, moveCell, isOpponentStart })
+        body: JSON.stringify({ gameId, userId: gameUser, player, moveCell, isOpponentStart })
       });
       const data = await response.json();
       //console.log(data);
@@ -91,7 +97,7 @@ const CanvasComponent: React.FC = () => {
   ];
 
   // GameID is required before any ui activity on the page
-  const [userId, setUserId] = useState<string>("EMPTY");
+  //const [userId, setUserId] = useState<string>("EMPTY");
   const [gameId, setGameId] = useState<string>("EMPTY");
   const [gameActive, setGameActive] = useState(false);
 
@@ -103,17 +109,23 @@ const CanvasComponent: React.FC = () => {
   const [startButtonText, setStartButtonText] = useState('Start Game');
   const [hasMovedBoard, setHasMovedBoard] = useState(false);
 
-  const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
+  const game = useAppSelector(state => state.data.currentGame);
+  const gameUser = useAppSelector(state => state.data.currentGameUser);
+
+  //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
 
   useEffect(() => {
-    let updatedSeq = lastProcessedSeq;
+    let updatedSeq = lastProcessedTTTSeq;
+    console.log('\n**client lastProcessedTTTSeq', updatedSeq);
+
     for (const { seq, msg } of tttMessageQueue) {
       if (seq > updatedSeq) {
         if (msg.subject === "ws_user_Connected") {
-          setUserId(msg.payload.userId);
-        } 
+          dispatch(setCurrentGameUser(msg.payload.userId));
+          //setUserId(msg.payload.userId);
+        }
+        console.log('client', updatedSeq, seq, msg);
         if (msg.subject === "ttt_game_Update" && msg.payload.gameId === gameId) {
-          //console.log('client', updatedSeq, seq, msg);
           const newBoard = msg.payload.board.split(",");
           setBoard(newBoard.map((cell) => parseInt(cell)));
           setPlayMessage("Your turn.");
@@ -138,8 +150,10 @@ const CanvasComponent: React.FC = () => {
         updatedSeq = seq;
       }
     }
-    if (updatedSeq !== lastProcessedSeq) {
-      setLastProcessedSeq(updatedSeq);
+    console.log('client looped ttt updatesSeq', updatedSeq, lastProcessedTTTSeq);
+    if (updatedSeq !== lastProcessedTTTSeq) {
+      console.log('lastProcessedTTTSeq', updatedSeq);
+      setLastProcessedTTTSeq(updatedSeq);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tttMessageQueue, gameId]);
@@ -147,17 +161,18 @@ const CanvasComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    userId !== "EMPTY" && createGame(userId);
-  }, [player, userId]);
+    gameUser && createGame(gameUser);
+  }, [player, gameUser]);
 
   useEffect(() => {
-    if (createGameData) {
-      setGameId(createGameData.id);
+    if (game) {
+      setGameId(game.id);
     }
-  }, [createGameData]);
+  }, [game]);
 
   useEffect(() => {
     if (startGameData) {
+      console.log('set board', 'gameUser', gameUser);
       setBoard(() => {
         let newBoard: number[] = startGameData.board.split(",").map((cell) => parseInt(cell));
         return newBoard;

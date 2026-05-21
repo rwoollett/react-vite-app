@@ -1,4 +1,4 @@
-
+import { type WSUserConnect } from "./wsuser";
 // /** A board update of tictactoe */
 // export type BoardOutput = {
 //   __typename?: 'BoardOutput';
@@ -36,10 +36,6 @@ export type BoardOutput = {
   board: string;
   gameId: string;
   result: string;
-};
-
-export type WSUserConnect = {
-  userId: string;
 };
 
 export type WSTTTMessage = 
