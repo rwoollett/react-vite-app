@@ -161,8 +161,8 @@ const CanvasComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    gameUser && createGame(gameUser);
-  }, [player, gameUser]);
+    !game && gameUser && createGame(gameUser);
+  }, [player, gameUser, game]);
 
   useEffect(() => {
     if (game) {

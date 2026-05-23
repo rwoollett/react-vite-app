@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
-import type { Post, ReactPost } from '../../types';
+import type { Post, PostStage, ReactPost } from '../../types';
 import { http } from '../../utility/fetchData';
 
 // Entity adaptor for normalised posts structure; ids end entities.
@@ -84,6 +84,14 @@ export const postsSlice = createSlice({
         existingPost.reactions[reaction]++;
       }
     },
+    postStage(state, action: PayloadAction<PostStage>) {
+      const { id, slug } = action.payload;
+      const existingPost = state.entities[id];
+      if (existingPost) {
+        existingPost.slug = slug;
+        console.log (existingPost);
+      }
+    },
     upsertPost: (state, action: PayloadAction<Post>) => {
       return postsAdapter.upsertOne(state, action.payload);
     },
@@ -127,6 +135,6 @@ export const postsSlice = createSlice({
   }
 });
 //postUpdated,
-export const { reactionAdded } = postsSlice.actions;
+export const { reactionAdded, postStage } = postsSlice.actions;
 export const { reducer } = postsSlice;
 
