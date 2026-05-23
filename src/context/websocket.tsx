@@ -9,6 +9,8 @@ type WebSocketContextType = {
   messageQueue: { seq: number, msg: WSMessage }[];
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
   livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
+  lastProcessedCSSeq: number;
+  setLastProcessedCSSeq: React.Dispatch<React.SetStateAction<number>>;
   lastProcessedLivePostSeq: number;
   setLastProcessedLivePostSeq: React.Dispatch<React.SetStateAction<number>>;
   lastProcessedTTTSeq: number;
@@ -32,6 +34,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [, setSeq] = useState(0);
   const [, setTTTSeq] = useState(0);
   const [, setLivePostSeq] = useState(0);
+  const [lastProcessedCSSeq, setLastProcessedCSSeq] = useState(0);
   const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
 
@@ -131,6 +134,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       wsRefTTT,
       wsRefLivePost,
       messageQueue,
+      lastProcessedCSSeq,
+      setLastProcessedCSSeq,
       tttMessageQueue,
       lastProcessedTTTSeq,
       setLastProcessedTTTSeq,

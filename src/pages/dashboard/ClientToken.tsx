@@ -18,13 +18,14 @@ type ClientTokenProps = {
 }
 
 const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
-  const { messageQueue } = useWebSocket();
-  const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
+  const { messageQueue, lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
+  //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
   const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
   const [lastActivity, setLastActivity] = useState<TokenAction | undefined>(undefined);
   const sizeList = 3;
   const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
-  const updateTimer = useRef<NodeJS.Timeout | null>(null);
+  //const updateTimer = useRef<NodeJS.Timeout | null>(null);
+  const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
@@ -40,8 +41,8 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
   // }, [messageQueue]);
 
   useEffect(() => {
-    let updatedSeq = lastProcessedSeq;
-    //console.log('updated messagequeue', lastProcessedSeq, messageQueue);
+    let updatedSeq = lastProcessedCSSeq;
+    console.log('\n**client lastProcessedCSSeq', updatedSeq);
 
     // Buffer new messages
     for (const { seq, msg } of messageQueue) {
@@ -51,7 +52,6 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
         updatedSeq = seq;
       }
     }
-    //console.log('after message buffer', updatedSeq);
 
     // Throttle state updates
     if (messageBuffer.current.length > 0 && !updateTimer.current) {
@@ -61,7 +61,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
         const buffered = [...messageBuffer.current];
         //console.log('Client token: set message queue state', buffered);
 
-        let seqArray:number[] = [];
+        let seqArray: number[] = [];
         setClientActions((state) => {
           let newState = { ...state };
 
@@ -70,7 +70,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
             //console.log('buffer loop', seq, updatedSeq, msg);
             seqArray.push(seq);
             if (msg.subject === "cstoken_token_Request" && msg.payload.sourceIp) {
-              
+
               const event = msg.payload;
               let clientForActivityIP: string = "";
               if (event.originalIp === event.sourceIp) {
@@ -155,11 +155,17 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
         });
 
         setLastActivity(localLastActivity);
-        setLastProcessedSeq(updatedSeq);
+        //setLastProcessedSeq(updatedSeq);
         messageBuffer.current = [];
         updateTimer.current = null;
         //console.log('update timer nulled');
       }, 100); // update every 100ms
+    }
+
+    console.log('client looped cstoken updatesSeq', updatedSeq, lastProcessedCSSeq);
+    if (updatedSeq !== lastProcessedCSSeq) {
+      console.log('lastProcessedCSSeq', updatedSeq);
+      setLastProcessedCSSeq(updatedSeq);
     }
 
     return () => {
