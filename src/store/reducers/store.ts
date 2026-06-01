@@ -2,6 +2,7 @@ import { combineReducers, configureStore, createSelector } from '@reduxjs/toolki
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage
 import data from './data'
+import ttt from './ttt'
 import type { TypedUseSelectorHook } from 'react-redux'
 import { useDispatch, useSelector } from 'react-redux'
 import { ipApi } from '../api/ipApi'
@@ -13,6 +14,7 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 
 const rootReducer = combineReducers({
   data,
+  ttt,
   [ipApi.reducerPath]: ipApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   posts: postsReducer,

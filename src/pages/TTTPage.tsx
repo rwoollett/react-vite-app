@@ -5,7 +5,7 @@ import { useWebSocket } from "../hooks/use-websocket-context";
 import { type Game, isGame, isMove, type PlayerMove } from '../types';
 import Button from '../components/Button';
 import { useAppDispatch, useAppSelector } from '../store/reducers/store';
-import { setCurrentGame, clearCurrentGame, setCurrentGameUser } from '../store/actions/data';
+import { setCurrentGame, clearCurrentGame, setCurrentGameUser } from '../store/actions/ttt';
 
 const CanvasComponent: React.FC = () => {
   const { tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
@@ -109,8 +109,8 @@ const CanvasComponent: React.FC = () => {
   const [startButtonText, setStartButtonText] = useState('Start Game');
   const [hasMovedBoard, setHasMovedBoard] = useState(false);
 
-  const game = useAppSelector(state => state.data.currentGame);
-  const gameUser = useAppSelector(state => state.data.currentGameUser);
+  const game = useAppSelector(state => state.ttt.currentGame);
+  const gameUser = useAppSelector(state => state.ttt.currentGameUser);
 
   //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
 
