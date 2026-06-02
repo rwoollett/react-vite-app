@@ -7,7 +7,7 @@ import HomeNavigation from '../components/HomeNavigation';
 import PostsComponent from '../components/PostsComponent';
 import Button from '../components/Button';
 import { useAppDispatch } from '../store/reducers/store';
-import { fetchPosts, postStage } from '../store/api/postsSlice';
+import { fetchPosts } from '../store/api/postsSlice';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
@@ -36,7 +36,7 @@ const LivePosts: React.FC = () => {
         // }
         if (msg.subject === "liveposts_post_Stage") {
           console.log('client', updatedSeq, seq, msg);
-          dispatch(postStage(msg.payload));
+          dispatch(fetchPosts());
 
         }
         updatedSeq = seq;
