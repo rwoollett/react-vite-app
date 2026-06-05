@@ -24,10 +24,10 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
   };
 
   const userBar = [
-    { show: isLoggedIn, to: "/liveposts", label: "Posts" },
+    // { show: isLoggedIn, to: "/liveposts", label: "Posts" },
     { show: !isLoggedIn, to: "/signin", label: "Sign In" },
     { show: !isLoggedIn, to: "/signup", label: "Sign Up" },
-    { show: isLoggedIn, to: "/signout", label: "Sign Out" } 
+    { show: isLoggedIn, to: "/signout", label: "Sign Out" }
   ]
     .filter(linkConfig => linkConfig.show)
     .map(({ label, to }: { label: string; to: string }) => {
@@ -40,37 +40,29 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
     // 
     <nav className="navbar" role="navigation" aria-label="main navigation">
       {/* <div className='container'> */}
-        <div className="navbar-brand">
-          <a title="link to home page" className="navbar-item" href={ROUTES.HOMEPAGE_ROUTE}>
-            <img alt='RW' title="RWIcon" src={logo} width="32" height="32" />
-          </a>
-          {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link> */}
-          {email && (<Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.USER_ROUTE}>{email}</Link>)}
-          <button title="menu icon" role="button" onClick={handleClickBurger}
-            className={`navbar-burger ${burgerActive && 'is-active'}`} aria-label="menu" >
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-          </button>
+      <div className="navbar-brand">
+        <a title="link to home page" className="navbar-item" href={ROUTES.HOMEPAGE_ROUTE}>
+          <img alt='RW' title="RWIcon" src={logo} width="32" height="32" />
+        </a>
+        {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link> */}
+        {email && (<Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.USER_ROUTE}>{email}</Link>)}
+        <button title="menu icon" role="button" onClick={handleClickBurger}
+          className={`navbar-burger ${burgerActive && 'is-active'}`} aria-label="menu" >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div onMouseLeave={handleMouseLeave} className={`navbar-menu ${burgerActive && 'is-active'}`}>
+        <div className="navbar-start">
+          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.TTTPAGE_ROUTE}>Tic Tac Toe</Link>
+          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.LIVEPOSTS_ROUTE}>Live Posts</Link>
+          <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.COUNTDOWNPAGE_ROUTE} state={{ tableMode: TABLE_VIEW }}>Countdown Timer</Link>
         </div>
-        <div onMouseLeave={handleMouseLeave} className={`navbar-menu ${burgerActive && 'is-active'}`}>
-          <div className="navbar-start">
-            {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.HOMEPAGE_ROUTE}>Home</Link> */}
-            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.FLIPIMAGEPAGE_ROUTE}>Flip Image</Link>
-            <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.TTTPAGE_ROUTE}>Tic Tac Toe</Link>
-            {/* <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.LIVEPOSTS_ROUTE}>Posts</Link> */}
-            <div className="navbar-item has-dropdown is-hoverable">
-              <a className="navbar-link">Utility</a>
-              <div className="navbar-dropdown">
-                <a className="navbar-item">About</a>
-                <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.COUNTDOWNPAGE_ROUTE} state={{ tableMode: TABLE_VIEW }}>Countdown Timer</Link>
-              </div>
-            </div>
-          </div>
-          <div className="navbar-end">
-            {userBar}
-          </div>
+        <div className="navbar-end">
+          {userBar}
+        </div>
         {/* </div> */}
       </div>
     </nav>

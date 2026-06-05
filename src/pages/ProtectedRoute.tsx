@@ -1,17 +1,26 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 interface ProtectedRouteProps {
   isLoggedIn: boolean;
-//  children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ isLoggedIn }) => {
+  const location = useLocation();
+
   if (!isLoggedIn) {
-    return <Navigate to="/signin" replace={true} />;
+    return (
+      <Navigate
+        to="/signin"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    );
   }
-  return <Outlet/>;
-//  return <>{children}</>;
+
+  return <Outlet />;
 };
+
 
 export default ProtectedRoute;

@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent, type FormEvent, type JSX } from 'react'
+import React, { useEffect, useState, type ChangeEvent, type FormEvent, type JSX } from 'react'
 import { setContents } from '../store/actions/data';
 import { ipApi } from '../store/api/ipApi';
 import { useAppDispatch } from '../store/reducers/store';
@@ -6,7 +6,7 @@ import { useSignInMutation } from '../store/api/authenticatedUsersApi';
 import { type StatusErrors } from '../types/statusErrors';
 import StatusAlert from '../components/StatusAlert';
 import Button from '../components/Button';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../resources/routes-constants';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import Skeleton from '../components/Skeleton';
@@ -18,13 +18,18 @@ const SignIn: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [errors, setErrors] = useState<JSX.Element | null>(null);
   const [signIn, results] = useSignInMutation();
-  const dispatch = useAppDispatch();
+  const { isLoggedIn, isLoading } = useSignedInAuthorize();
+  const location = useLocation();
   const navigate = useNavigate()
-  const { isLoading } = useSignedInAuthorize();
+  const dispatch = useAppDispatch();
 
-  if (isLoading) {
-    return <Skeleton times={1} className="sign-in-skeleton" />
-  }
+  const from = location.state?.from || "/";
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(from, { replace: true });
+    }
+  }, [isLoggedIn]);
 
   const redirectToHomePage = () => {
     navigate(ROUTES.LIVEPOSTS_ROUTE)
@@ -62,9 +67,11 @@ const SignIn: React.FC = () => {
       setErrors(<StatusAlert statusErrors={statusErrors} />);
 
     }
-
-    navigate(ROUTES.HOMEPAGE_ROUTE);
   };
+
+  if (isLoading) {
+    return <Skeleton times={1} className="sign-in-skeleton" />
+  }
 
   return (<>
     <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />

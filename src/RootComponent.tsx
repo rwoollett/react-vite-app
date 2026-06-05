@@ -48,14 +48,16 @@ const RootComponent: React.FC = () => {
             <Route path="create" element={<CountdownCreate />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
+          <Route path={`${ROUTES.LIVEPOSTS_ROUTE}`} element={<LivePostsPage />}>
+            <Route index element={<LivePosts />} />
+            <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+              <Route path="create" element={<AddPostForm email={email} />} />
+            </Route>
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
 
           <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
             <Route path={`${ROUTES.USER_ROUTE}`} element={<UserPage />} />
-            <Route path={`${ROUTES.LIVEPOSTS_ROUTE}`} element={<LivePostsPage />}>
-              <Route index element={<LivePosts />} />
-              <Route path="create" element={<AddPostForm email={email} />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Route>
           </Route>
 
           {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
