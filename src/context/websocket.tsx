@@ -1,12 +1,12 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import websocketClient, { type WebSocketClient } from "../client/wsock";
-import type { WSMessage, WSTTTMessage, WSLivePostMessage } from "../types";
+import type { WSCSTokenMessage, WSTTTMessage, WSLivePostMessage } from "../types";
 
 type WebSocketContextType = {
-  wsRef: React.RefObject<WebSocketClient | null>;
+  wsRefCSToken: React.RefObject<WebSocketClient | null>;
   wsRefTTT: React.RefObject<WebSocketClient | null>;
   wsRefLivePost: React.RefObject<WebSocketClient | null>;
-  messageQueue: { seq: number, msg: WSMessage }[];
+  csTokenMessageQueue: { seq: number, msg: WSCSTokenMessage }[];
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
   livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
   lastProcessedCSSeq: number;
@@ -21,11 +21,11 @@ const MSG_QUEUE_MAX = 150;
 const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const wsRef = useRef<WebSocketClient | null>(null);
+  const wsRefCSToken = useRef<WebSocketClient | null>(null);
   const wsRefTTT = useRef<WebSocketClient | null>(null);
   const wsRefLivePost = useRef<WebSocketClient | null>(null);
-  const [messageQueue, setMessageQueue] = useState<{ seq: number, msg: WSMessage }[]>([]);
-  const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
+  const [csTokenMessageQueue, setCSTokenMessageQueue] = useState<{ seq: number, msg: WSCSTokenMessage }[]>([]);
+  const messageBuffer = useRef<{ seq: number, msg: WSCSTokenMessage }[]>([]);
   //const updateTimer = useRef<NodeJS.Timeout | null>(null);
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -44,7 +44,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // }, [messageQueue]);
 
   useEffect(() => {
-    wsRef.current = websocketClient<WSMessage>(
+    wsRefCSToken.current = websocketClient<WSCSTokenMessage>(
       {
         queryParams: { type: "all" },
         service: "CSToken",
@@ -60,7 +60,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               updateTimer.current = setTimeout(() => {
                 const buffered = [...messageBuffer.current]; // need to get const buffered before setting react state with it.
                 //console.log('set message queue state', buffered);
-                setMessageQueue(q =>
+                setCSTokenMessageQueue(q =>
                   [...q, ...buffered].slice(-MSG_QUEUE_MAX)
                 );
                 messageBuffer.current = [];
@@ -72,10 +72,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         },
         onDisconnect: () => { },
       },
-      (client) => { wsRef.current = client; }
+      (client) => { wsRefCSToken.current = client; }
     );
     return () => {
-      wsRef.current?.close();
+      wsRefCSToken.current?.close();
       if (updateTimer.current) clearTimeout(updateTimer.current);
 
     }
@@ -130,10 +130,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   return (
     <WebSocketContext.Provider value={{
-      wsRef,
+      wsRefCSToken,
       wsRefTTT,
       wsRefLivePost,
-      messageQueue,
+      csTokenMessageQueue,
       lastProcessedCSSeq,
       setLastProcessedCSSeq,
       tttMessageQueue,

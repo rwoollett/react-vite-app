@@ -10,7 +10,7 @@ import Dashboard from './dashboard/Dashboard';
 
 const UserPage: React.FC = () => {
   const { isLoggedIn, email, expiry } = useSignedInAuthorize();
-  const { wsRef, messageQueue } = useWebSocket();
+  const { wsRefCSToken: wsRef, csTokenMessageQueue: messageQueue } = useWebSocket();
   const [farewell, setFarewell] = useState("");
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);

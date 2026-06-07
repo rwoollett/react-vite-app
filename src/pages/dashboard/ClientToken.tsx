@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import type { RequestCS, AcquireCS, ActionByIp, TokenAction, WSMessage, ProcSvc } from "../../types";
+import type { RequestCS, AcquireCS, ActionByIp, TokenAction, WSCSTokenMessage, ProcSvc } from "../../types";
 import { format, parseISO } from "date-fns";
 import { useWebSocket } from "../../hooks/use-websocket-context";
 import styles from './ClientToken.module.scss'
@@ -18,12 +18,12 @@ type ClientTokenProps = {
 }
 
 const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
-  const { messageQueue, lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
+  const { csTokenMessageQueue, lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
   //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
   const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
   const [lastActivity, setLastActivity] = useState<TokenAction | undefined>(undefined);
   const sizeList = 3;
-  const messageBuffer = useRef<{ seq: number, msg: WSMessage }[]>([]);
+  const messageBuffer = useRef<{ seq: number, msg: WSCSTokenMessage }[]>([]);
   //const updateTimer = useRef<NodeJS.Timeout | null>(null);
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -45,7 +45,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
     console.log('\n**client lastProcessedCSSeq', updatedSeq);
 
     // Buffer new messages
-    for (const { seq, msg } of messageQueue) {
+    for (const { seq, msg } of csTokenMessageQueue) {
       //console.log('client token', seq, ',', msg);
       if (seq > updatedSeq) {
         messageBuffer.current.push({ seq, msg });
@@ -175,7 +175,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messageQueue]);
+  }, [csTokenMessageQueue]);
 
 
   const clientsList = Object.entries(clientActions).map(([ip, action]) => {

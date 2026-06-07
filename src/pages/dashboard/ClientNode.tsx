@@ -10,7 +10,7 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
   const [connected, setConnected] = useState<boolean>(client.connected);
   const [connectedAt, setConnectedAt] = useState<string>(client.connectedAt);
   const [disconnectedAt, setDisconnectedAt] = useState<string>(client.disconnectedAt || new Date().toISOString());
-  const { messageQueue } = useWebSocket();
+  const { csTokenMessageQueue: messageQueue } = useWebSocket();
   const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
 
   useEffect(() => {

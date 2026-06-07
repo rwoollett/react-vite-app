@@ -6,7 +6,7 @@ import Banner from '../components/Banner';
 
 const HomePage: React.FC = () => {
   const { isLoggedIn, email } = useSignedInAuthorize();
-  const { wsRef, messageQueue } = useWebSocket();
+  const { wsRefCSToken: wsRef, csTokenMessageQueue: messageQueue } = useWebSocket();
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
   //const latestTimestamp = 'something';

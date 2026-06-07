@@ -70,7 +70,7 @@ export type RequestParent = {
   id: number;
 };
 
-export type WSMessage =
+export type WSCSTokenMessage =
   | { subject: "cstoken_client_Connected"; payload: ConnectedClient }
   | { subject: "cstoken_client_Disconnected"; payload: DisconnectedClient }
   | { subject: "cstoken_token_Acquire"; payload: AcquireCS }

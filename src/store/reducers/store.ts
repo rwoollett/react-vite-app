@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ipApi } from '../api/ipApi'
 import { usersApi } from '../api/authenticatedUsersApi';
 import { reducer as postsReducer, postsAdapter } from '../api/postsSlice';
+import { reducer as csTokenActionsReducer, csTokenActionsAdapter} from '../api/cstokenSlice';
 import { reducer as postUsersReducer, usersAdapter } from '../api/authorUsersSlice';
 
 import { setupListeners } from '@reduxjs/toolkit/query'
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   [ipApi.reducerPath]: ipApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   posts: postsReducer,
-  postusers: postUsersReducer
+  postusers: postUsersReducer,
+  csTokenActions: csTokenActionsReducer
 });
 
 const persistedReducer = persistReducer(
@@ -52,14 +54,17 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
 
 export const persistor = persistStore(store)
 
-
 export const createAppSelector = createSelector.withTypes<RootState>();
+
+export const {
+  selectAll: selectAllTokenActions
+} = csTokenActionsAdapter.getSelectors<RootState>(state => state.csTokenActions);
+
 // Posts selectors
 export const {
   selectAll: selectAllPosts,
   selectById: selectPostById,
   selectIds: selectPostIds
-  // Pass in a selector that returns the posts slice of state
 } = postsAdapter.getSelectors<RootState>(state => state.posts);
 
 // Memoized selector - input selectors+ to one selectors output.
