@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, type FormEvent } from 'react'
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useRefreshTokenMutation } from '../store/api/authenticatedUsersApi';
-import { useAppSelector } from '../store/reducers/store';
+import { selectAllTokenActions, useAppSelector } from '../store/reducers/store';
 import Greeting from '../components/Greeting';
 import { sayFarewell } from '../utility/functions';
 import Button from '../components/Button';
@@ -10,13 +10,17 @@ import Dashboard from './dashboard/Dashboard';
 
 const UserPage: React.FC = () => {
   const { isLoggedIn, email, expiry } = useSignedInAuthorize();
-  const { wsRefCSToken: wsRef, csTokenMessageQueue: messageQueue } = useWebSocket();
+  const { wsRefCSToken: wsRef } = useWebSocket();
   const [farewell, setFarewell] = useState("");
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
   const [refreshToken] = useRefreshTokenMutation();
   const lastProcessedSeq = useRef(0);
-  
+
+  const allActions = useAppSelector(state =>
+    selectAllTokenActions(state)
+  );
+
   const contents = useAppSelector((state) => {
     return state.data.contents;
   });
@@ -29,19 +33,20 @@ const UserPage: React.FC = () => {
   //     console.log('WebSocket is not connected');
   //   }
   // };
-
   useEffect(() => {
-    //console.log('userpage updated messagequeue', lastProcessedSeq, messageQueue);
-    for (const { seq, msg } of messageQueue) {
-      if (seq > lastProcessedSeq.current) {
+    if (allActions.length === 0) return;
+
+    for (const action of allActions) {
+      if (action.seqNo > lastProcessedSeq.current) {
         setConnected(true);
         setReceived(prev => {
-          return [...prev].concat(msg.payload as unknown as string);
+          return [...prev].concat(action.seqNo as unknown as string);
         });
-        lastProcessedSeq.current = seq;
+        lastProcessedSeq.current = action.seqNo;
       }
     }
-  }, [messageQueue]);
+
+  }, [allActions]);
 
   const onHandleGreet = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

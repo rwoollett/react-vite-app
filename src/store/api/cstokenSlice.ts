@@ -5,13 +5,15 @@ export type CSTokenAction = {
   id: string;              // compound ID
   clientIp: string;
   seqNo: number;
+  timestamp: string;
   subject: WSCSTokenMessage["subject"];
   payload: WSCSTokenMessage["payload"];
 };
 
 // Entity adaptor for normalised posts structure; ids end entities.
 export const csTokenActionsAdapter = createEntityAdapter<CSTokenAction>({
-  sortComparer: (a, b) => b.seqNo - a.seqNo
+  //sortComparer: (a, b) => b.seqNo - a.seqNo
+  sortComparer: (a, b) => b.timestamp.localeCompare(a.timestamp)
 });
 
 export const csTokenActionsSlice = createSlice({
@@ -31,5 +33,6 @@ export const csTokenActionsSlice = createSlice({
   }
 });
 
+export const { actionReceived, truncateClient } = csTokenActionsSlice.actions;
 export const { reducer } = csTokenActionsSlice;
 

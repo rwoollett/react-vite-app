@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import type { RequestCS, AcquireCS, ActionByIp, TokenAction, WSCSTokenMessage, ProcSvc } from "../../types";
+import React from "react";
+import type { RequestCS, AcquireCS, ActionByIp, ProcSvc } from "../../types";
 import { format, parseISO } from "date-fns";
-import { useWebSocket } from "../../hooks/use-websocket-context";
 import styles from './ClientToken.module.scss'
+import { selectAllTokenActions, useAppSelector } from "../../store/reducers/store";
+import type { CSTokenAction } from "../../store/api/cstokenSlice";
 
 /**
  * Client Token activity on CSToken Network.
@@ -17,207 +18,90 @@ type ClientTokenProps = {
   clientsByIp: ActionByIp;
 }
 
+
 const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
-  const { csTokenMessageQueue, lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
-  //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
-  const [clientActions, setClientActions] = useState<ActionByIp>(clientsByIp);
-  const [lastActivity, setLastActivity] = useState<TokenAction | undefined>(undefined);
-  const sizeList = 3;
-  const messageBuffer = useRef<{ seq: number, msg: WSCSTokenMessage }[]>([]);
-  //const updateTimer = useRef<NodeJS.Timeout | null>(null);
-  const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const allActions = useAppSelector(selectAllTokenActions);
 
-  useEffect(() => {
-    return () => {
-      if (updateTimer.current) {
-        clearTimeout(updateTimer.current);
-        updateTimer.current = null;
+  const visibleIps = React.useMemo(
+    () => new Set(Object.keys(clientsByIp)),
+    [clientsByIp]
+  );
+
+  const latestVisibleAction = React.useMemo(
+    () => allActions.find(a => visibleIps.has(a.clientIp)) ?? null,
+    [allActions, visibleIps]
+  );
+
+  //const latestGlobalAction = allActions[0];
+  const actionsByClient = React.useMemo(() => {
+    const map = new Map<string, CSTokenAction[]>();
+    for (const action of allActions) {
+      if (!map.has(action.clientIp)) {
+        map.set(action.clientIp, []);
       }
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   console.log("CONSUMER sees messageQueue:", messageQueue);
-  // }, [messageQueue]);
-
-  useEffect(() => {
-    let updatedSeq = lastProcessedCSSeq;
-    console.log('\n**client lastProcessedCSSeq', updatedSeq);
-
-    // Buffer new messages
-    for (const { seq, msg } of csTokenMessageQueue) {
-      //console.log('client token', seq, ',', msg);
-      if (seq > updatedSeq) {
-        messageBuffer.current.push({ seq, msg });
-        updatedSeq = seq;
-      }
+      map.get(action.clientIp)!.push(action);
     }
 
-    // Throttle state updates
-    if (messageBuffer.current.length > 0 && !updateTimer.current) {
-      updateTimer.current = setTimeout(() => {
-        // Process buffered messages
-        let localLastActivity = lastActivity;
-        const buffered = [...messageBuffer.current];
-        //console.log('Client token: set message queue state', buffered);
-
-        let seqArray: number[] = [];
-        setClientActions((state) => {
-          let newState = { ...state };
-
-          for (const { seq, msg } of buffered) {
-            if (seqArray.includes(seq)) { continue };
-            //console.log('buffer loop', seq, updatedSeq, msg);
-            seqArray.push(seq);
-            if (msg.subject === "cstoken_token_Request" && msg.payload.sourceIp) {
-
-              const event = msg.payload;
-              let clientForActivityIP: string = "";
-              if (event.originalIp === event.sourceIp) {
-                clientForActivityIP = event.sourceIp;
-              } else {
-                clientForActivityIP = event.originalIp;
-              }
-              const newAction = {
-                parentIp: event.parentIp,
-                timestamp: event.requestedAt,
-                originalIp: event.originalIp,
-                action: event as RequestCS
-              } as TokenAction;
-              localLastActivity = newAction;
-
-              newState = {
-                ...structuredClone(newState),
-                [clientForActivityIP]: {
-                  client: structuredClone(newState[clientForActivityIP].client),
-                  actions: [...structuredClone(newState[clientForActivityIP].actions),
-                    newAction
-                  ].slice(-sizeList)
-                }
-              } as ActionByIp;
-
-              //console.log('request',newState);
-
-            }
-
-            if (msg.subject === "cstoken_token_Acquire" && msg.payload.ip) {
-              const event = msg.payload;
-              const clientForActivityIP: string = event.ip;
-              const newAction = {
-                parentIp: event.sourceIp,
-                timestamp: event.acquiredAt,
-                originalIp: event.ip,
-                action: event as AcquireCS
-              } as TokenAction;
-              localLastActivity = newAction;
-
-              newState = {
-                ...structuredClone(newState),
-                [clientForActivityIP]: {
-                  client: structuredClone(newState[clientForActivityIP].client),
-                  actions: [...structuredClone(newState[clientForActivityIP].actions),
-                    newAction
-                  ].slice(-sizeList)
-                }
-              } as ActionByIp;
-
-              //console.log('acquire',newState);
-
-            }
-
-            if (msg.subject === "cstoken_process_Service" && msg.payload.ip) {
-              const event = msg.payload;
-              const clientForActivityIP: string = event.ip;
-              const newAction = {
-                parentIp: 'N/A',
-                timestamp: event.processedAt,
-                originalIp: event.ip,
-                action: event as ProcSvc
-              } as TokenAction;
-              localLastActivity = newAction;
-
-              newState = {
-                ...structuredClone(newState),
-                [clientForActivityIP]: {
-                  client: structuredClone(newState[clientForActivityIP].client),
-                  actions: [...structuredClone(newState[clientForActivityIP].actions),
-                    newAction
-                  ].slice(-sizeList)
-                }
-              } as ActionByIp;
-
-              //console.log('procsvc',newState);
-
-            }
-
-          }
-          return newState;
-        });
-
-        setLastActivity(localLastActivity);
-        //setLastProcessedSeq(updatedSeq);
-        messageBuffer.current = [];
-        updateTimer.current = null;
-        //console.log('update timer nulled');
-      }, 100); // update every 100ms
+    for (const [_ip, list] of map) {
+      list.sort((a, b) => b.seqNo - a.seqNo);
     }
 
-    console.log('client looped cstoken updatesSeq', updatedSeq, lastProcessedCSSeq);
-    if (updatedSeq !== lastProcessedCSSeq) {
-      console.log('lastProcessedCSSeq', updatedSeq);
-      setLastProcessedCSSeq(updatedSeq);
-    }
+    return map;
+  }, [allActions]);
 
-    return () => {
-      if (updateTimer.current) {
-        clearTimeout(updateTimer.current);
-        updateTimer.current = null;
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [csTokenMessageQueue]);
+  const latestSeq = latestVisibleAction?.seqNo;
+  const latestIp = latestVisibleAction?.clientIp;
 
+  const clientsList = Object.entries(clientsByIp).map(([ip, clientForActions]) => {
+    const actions = actionsByClient.get(ip) ?? [];
 
-  const clientsList = Object.entries(clientActions).map(([ip, action]) => {
-    const activity = action.actions.map((activity, index) => {
+    const activity = actions.map((activity, index) => {
+      // const isHighlighted =
+      //   latestGlobalAction?.clientIp === ip &&
+      //   latestGlobalAction?.seqNo === activity.seqNo;
+      const isHighlighted =
+        latestIp === ip && latestSeq === activity.seqNo;
 
-      // Highlight last activity in the table of client token activity.
-      let highlighted: string = "";
+      const highlighted = isHighlighted
+        ? styles.highlightedItem
+        : styles.unhighlightedItem;
+
       let activityLabel: string = "";
       let activityDescription: string = "";
-      if (lastActivity && (lastActivity?.timestamp === activity.timestamp)) {
-        highlighted = styles.highlightedItem;
-      } else {
-        highlighted = styles.unhighlightedItem;
-      }
-
       let backgroundItem: string = "";
       let widthItem: string = "";
+      let timestamp: string = "";
       // Use discriminated union by checking a unique property of each type
-      if ('requestedAt' in activity.action) {
+      if ('requestedAt' in activity.payload) {
         // This is a RequestCS
-        if ((activity.action as RequestCS).sourceIp !== ip) {
+        if ((activity.payload as RequestCS).sourceIp !== ip) {
           backgroundItem = styles.relayedItem;
           activityLabel = 'Relay';
-          activityDescription = `${(activity.action as RequestCS).sourceIp} --> P:${(activity.action as RequestCS).parentIp}`;
+          activityDescription = `${(activity.payload as RequestCS).sourceIp} --> P:${(activity.payload as RequestCS).parentIp}`;
         } else {
           backgroundItem = styles.requestedItem;
           activityLabel = 'Request';
-          activityDescription = `${ip} --> P:${activity.parentIp}`;
+          activityDescription = `${ip} --> P:${activity.payload.parentIp}`;
         }
         widthItem = styles.smallActivity;
-      } else if ('acquiredAt' in activity.action) {
+        timestamp = activity.payload.requestedAt;
+
+      } else if ('acquiredAt' in activity.payload) {
         // This is an AcquireCS
         backgroundItem = styles.acquiredItem;
-        activityLabel = (activity.action as AcquireCS).sourceIp === ip ? 'Held' : 'Acquire';
-        activityDescription = `${activity.originalIp} <-- P:${activity.parentIp}`;
+        activityLabel = (activity.payload as AcquireCS).sourceIp === ip ? 'Held' : 'Acquire';
+        activityDescription = `${activity.payload.ip} <-- P:${activity.payload.sourceIp}`;
         widthItem = styles.smallActivity;
-      } else if ('processedAt' in activity.action) {
+        timestamp = activity.payload.acquiredAt;
+
+      } else if ('processedAt' in activity.payload) {
         // This is an AcquireCS
         backgroundItem = styles.processedItem;
         activityLabel = 'Processed Service';
-        activityDescription = `${(activity.action as ProcSvc).serviceMessage}`;
+        activityDescription = `${(activity.payload as ProcSvc).serviceMessage}`;
         widthItem = styles.largeActivity;
+        timestamp = activity.payload.processedAt;
+
       }
       console.log(activity);
       return (
@@ -231,8 +115,8 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
           <div className="column is-narrow p-0" style={{ width: "min-content" }}>
             <div className="is-size-7" >
               <label className="has-background-info-light pl-0">Time stamp<br /></label>
-              {`${format(parseISO(activity.timestamp), ' hh:mm:ss:SSS ')}`}
-              {/* {`${format(parseISO(activity.timestamp), 'P hh:mm:ss:SSS ')}`} */}
+              {`${format(parseISO(timestamp), ' hh:mm:ss:SSS ')}`}
+              {/* {`${format(parseISO(timestamp), 'P hh:mm:ss:SSS ')}`} */}
             </div>
           </div>
         </div>
@@ -240,7 +124,7 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
     });
 
     return (
-      <tr className="" key={`${action.client.host}_${action.client.ip}`}>
+      <tr className="" key={`${clientForActions.client.host}_${clientForActions.client.ip}`}>
         <td>
           {ip}
         </td>

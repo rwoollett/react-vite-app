@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ipApi } from '../api/ipApi'
 import { usersApi } from '../api/authenticatedUsersApi';
 import { reducer as postsReducer, postsAdapter } from '../api/postsSlice';
-import { reducer as csTokenActionsReducer, csTokenActionsAdapter} from '../api/cstokenSlice';
+import { reducer as csTokenActionsReducer, csTokenActionsAdapter, type CSTokenAction} from '../api/cstokenSlice';
 import { reducer as postUsersReducer, usersAdapter } from '../api/authorUsersSlice';
 
 import { setupListeners } from '@reduxjs/toolkit/query'
@@ -56,9 +56,44 @@ export const persistor = persistStore(store)
 
 export const createAppSelector = createSelector.withTypes<RootState>();
 
+// CSToken action event selectors
 export const {
   selectAll: selectAllTokenActions
 } = csTokenActionsAdapter.getSelectors<RootState>(state => state.csTokenActions);
+
+export const selectActionsByClient = createAppSelector(
+  [selectAllTokenActions,  (_: RootState, clientIp: string) => clientIp],
+  (actions, clientIp) => actions.filter(a => a.clientIp === clientIp)
+);
+
+export const selectNewActionsForClient = createAppSelector(
+  [selectActionsByClient, (_state, _clientIp: string, lastSeq: number) => lastSeq],
+  (actions, lastSeq) => actions.filter(a => a.seqNo > lastSeq)
+);
+
+export const selectClientWithLatestAction = createAppSelector(
+  selectAllTokenActions,
+  (actions) => actions.length ? actions[0].clientIp : null
+);
+
+export const selectLatestGlobalAction = createAppSelector(
+  selectAllTokenActions,
+  (actions) => actions.length ? actions[0] : null
+);
+
+export const selectActionsGroupedByClient = createAppSelector(
+  selectAllTokenActions,
+  (actions) => {
+    const map = new Map<string, CSTokenAction[]>();
+    for (const action of actions) {
+      if (!map.has(action.clientIp)) {
+        map.set(action.clientIp, []);
+      }
+      map.get(action.clientIp)!.push(action);
+    }
+    return map;
+  }
+);
 
 // Posts selectors
 export const {

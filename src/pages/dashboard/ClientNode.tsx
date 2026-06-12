@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { type ClientCS } from "../../types";
+import { type ClientCS, type ConnectedClient, type DisconnectedClient } from "../../types";
 import { parseISO, format } from 'date-fns';
 import { useWebSocket } from "../../hooks/use-websocket-context";
+import { selectNewActionsForClient, useAppSelector } from "../../store/reducers/store";
 
 type ClientNodeProps = {
   client: ClientCS;
@@ -10,32 +11,35 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
   const [connected, setConnected] = useState<boolean>(client.connected);
   const [connectedAt, setConnectedAt] = useState<string>(client.connectedAt);
   const [disconnectedAt, setDisconnectedAt] = useState<string>(client.disconnectedAt || new Date().toISOString());
-  const { csTokenMessageQueue: messageQueue } = useWebSocket();
-  const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
+  const { lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
+
+  const newActions = useAppSelector(state =>
+    selectNewActionsForClient(state, client.ip, lastProcessedCSSeq)
+  );
 
   useEffect(() => {
-    let updatedSeq = lastProcessedSeq;
-    for (const { seq, msg } of messageQueue) {
-      if (seq > updatedSeq) {
-        if (msg.subject === "cstoken_client_Connected" && client.ip === msg.payload.sourceIp) {
-          //console.log('client', client.ip, updatedSeq, seq, msg);
-          setConnectedAt(msg.payload.connectedAt);
-          setConnected(true);
-        }
+    if (newActions.length === 0) return;
 
-        if (msg.subject === "cstoken_client_Disconnected" && client.ip === msg.payload.sourceIp) {
-          //console.log('client', client.ip, updatedSeq, seq, msg);
-          setDisconnectedAt(msg.payload.disconnectedAt);
-          setConnected(false);
-        }
-        updatedSeq = seq;
+    let updatedSeq = lastProcessedCSSeq;
+
+    for (const action of newActions) {
+      if (action.subject === "cstoken_client_Connected") {
+        const payload = action.payload as ConnectedClient;
+        setConnectedAt(payload.connectedAt);
+        setConnected(true);
       }
+
+      if (action.subject === "cstoken_client_Disconnected") {
+        const payload = action.payload as DisconnectedClient;
+        setDisconnectedAt(payload.disconnectedAt);
+        setConnected(false);
+      }
+
+      updatedSeq = action.seqNo;
     }
-    if (updatedSeq !== lastProcessedSeq) {
-      setLastProcessedSeq(updatedSeq);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messageQueue, client.ip]);
+
+    setLastProcessedCSSeq(updatedSeq);
+  }, [newActions, client.ip]);
 
   return (
     <div className="card">

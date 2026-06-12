@@ -1,12 +1,13 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import websocketClient, { type WebSocketClient } from "../client/wsock";
 import type { WSCSTokenMessage, WSTTTMessage, WSLivePostMessage } from "../types";
+import { useAppDispatch } from "../store/reducers/store";
+import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 
 type WebSocketContextType = {
   wsRefCSToken: React.RefObject<WebSocketClient | null>;
   wsRefTTT: React.RefObject<WebSocketClient | null>;
   wsRefLivePost: React.RefObject<WebSocketClient | null>;
-  csTokenMessageQueue: { seq: number, msg: WSCSTokenMessage }[];
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
   livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
   lastProcessedCSSeq: number;
@@ -21,55 +22,67 @@ const MSG_QUEUE_MAX = 150;
 const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const dispatch = useAppDispatch();
+
   const wsRefCSToken = useRef<WebSocketClient | null>(null);
   const wsRefTTT = useRef<WebSocketClient | null>(null);
   const wsRefLivePost = useRef<WebSocketClient | null>(null);
-  const [csTokenMessageQueue, setCSTokenMessageQueue] = useState<{ seq: number, msg: WSCSTokenMessage }[]>([]);
-  const messageBuffer = useRef<{ seq: number, msg: WSCSTokenMessage }[]>([]);
-  //const updateTimer = useRef<NodeJS.Timeout | null>(null);
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
   const [livePostMessageQueue, setLivePostMessageQueue] = useState<{ seq: number, msg: WSLivePostMessage }[]>([]);
-  const [, setSeq] = useState(0);
   const [, setTTTSeq] = useState(0);
   const [, setLivePostSeq] = useState(0);
   const [lastProcessedCSSeq, setLastProcessedCSSeq] = useState(0);
   const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
 
-
-  // useEffect(() => {
-  //   console.log("PROVIDER messageQueue updated:", messageQueue);
-  // }, [messageQueue]);
-
   useEffect(() => {
+    const handleWSMessage = (msg: WSCSTokenMessage) => {
+      const clientIp =
+        msg.subject === "cstoken_client_Connected" ? msg.payload.sourceIp :
+          msg.subject === "cstoken_client_Disconnected" ? msg.payload.sourceIp :
+            msg.subject === "cstoken_token_Acquire" ? msg.payload.ip :
+              msg.subject === "cstoken_token_Request" ? msg.payload.sourceIp :
+                msg.subject === "cstoken_process_Service" ? msg.payload.ip :
+                  undefined;
+
+      const seqNo =
+        msg.subject === "cstoken_client_Connected" ? msg.payload.seqNo :
+          msg.subject === "cstoken_client_Disconnected" ? msg.payload.seqNo :
+            msg.subject === "cstoken_token_Acquire" ? msg.payload.seqNo :
+              msg.subject === "cstoken_token_Request" ? msg.payload.seqNo :
+                msg.subject === "cstoken_process_Service" ? msg.payload.seqNo :
+                  undefined;
+
+      const timestamp =
+        'requestedAt' in msg.payload ? msg.payload.requestedAt :
+          'acquiredAt' in msg.payload ? msg.payload.acquiredAt :
+            'processedAt' in msg.payload ? msg.payload.processedAt :
+              'connectedAt' in msg.payload ? msg.payload.connectedAt :
+                'disconnectedAt' in msg.payload ? msg.payload.disconnectedAt :
+                  null;
+
+      if (!seqNo || !clientIp || !timestamp) return;
+
+      dispatch(actionReceived({
+        id: `${clientIp}_${seqNo}`,
+        clientIp,
+        seqNo,
+        timestamp,
+        subject: msg.subject,
+        payload: msg.payload
+      }));
+
+      dispatch(truncateClient(clientIp));
+    }
+
+
     wsRefCSToken.current = websocketClient<WSCSTokenMessage>(
       {
         queryParams: { type: "all" },
         service: "CSToken",
-        onMessage: (msg) => {
-          //console.log('cs message1: ', msg);
-          let lastseq = 0;
-          setSeq(prevSeq => {
-            const nextSeq = prevSeq + 1;
-            //console.log('cs message: ', lastseq, nextSeq, msg);
-            nextSeq !== lastseq && messageBuffer.current.push({ seq: nextSeq, msg });
-            lastseq = nextSeq;
-            if (!updateTimer.current) {
-              updateTimer.current = setTimeout(() => {
-                const buffered = [...messageBuffer.current]; // need to get const buffered before setting react state with it.
-                //console.log('set message queue state', buffered);
-                setCSTokenMessageQueue(q =>
-                  [...q, ...buffered].slice(-MSG_QUEUE_MAX)
-                );
-                messageBuffer.current = [];
-                updateTimer.current = null;
-              }, 100); // update every 100ms
-            }
-            return nextSeq;
-          });
-        },
+        onMessage: handleWSMessage,
         onDisconnect: () => { },
       },
       (client) => { wsRefCSToken.current = client; }
@@ -133,7 +146,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       wsRefCSToken,
       wsRefTTT,
       wsRefLivePost,
-      csTokenMessageQueue,
       lastProcessedCSSeq,
       setLastProcessedCSSeq,
       tttMessageQueue,

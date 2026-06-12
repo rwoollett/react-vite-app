@@ -2,16 +2,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useWebSocket } from '../hooks/use-websocket-context';
 import Banner from '../components/Banner';
-
+import { selectAllTokenActions, useAppSelector } from "../store/reducers/store";
 
 const HomePage: React.FC = () => {
   const { isLoggedIn, email } = useSignedInAuthorize();
-  const { wsRefCSToken: wsRef, csTokenMessageQueue: messageQueue } = useWebSocket();
+  const { wsRefCSToken: wsRef } = useWebSocket();
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
-  //const latestTimestamp = 'something';
   const lastProcessedSeq = useRef(0);
 
+  const allActions = useAppSelector(state =>
+    selectAllTokenActions(state)
+  );
   // const handleSendMessage = () => {
   //   const { payload } = { payload: latestTimestamp };
   //   if (wsRef.current && connected) {
@@ -22,16 +24,19 @@ const HomePage: React.FC = () => {
   // };
 
   useEffect(() => {
-    for (const { seq, msg } of messageQueue) {
-      if (seq > lastProcessedSeq.current) {
+    if (allActions.length === 0) return;
+
+    for (const action of allActions) {
+      if (action.seqNo > lastProcessedSeq.current) {
         setConnected(true);
         setReceived(prev => {
-          return [...prev].concat(msg.payload as unknown as string);
+          return [...prev].concat(action.seqNo as unknown as string);
         });
-        lastProcessedSeq.current = seq;
+        lastProcessedSeq.current = action.seqNo;
       }
     }
-  }, [messageQueue]);
+
+  }, [allActions]);
 
   return (<>
     <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />

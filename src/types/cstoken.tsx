@@ -8,6 +8,7 @@ import type { WSUserConnect } from "./wsuser";
  *
  */
 export type RequestCS = {
+  seqNo: number;
   originalIp: string;
   parentIp: string;
   relayed: boolean;
@@ -17,6 +18,7 @@ export type RequestCS = {
 
 /** A client ip takes ownership of CS token from the sourceIp */
 export type AcquireCS = {
+  seqNo: number;
   acquiredAt: string;
   ip: string;
   sourceIp: string;
@@ -24,6 +26,7 @@ export type AcquireCS = {
 
 /** A client processes a service when allocated under CS lock */
 export type ProcSvc = {
+  seqNo: number;
   processedAt: string;
   ip: string;
   serviceMessage: string;
@@ -45,6 +48,7 @@ export type ClientCS = {
 
 /** Connected client to an ip on network CS */
 export type ConnectedClient = {
+  seqNo: number;
   connectedAt: string;
   processId: string;
   sourceIp: string;
@@ -52,6 +56,7 @@ export type ConnectedClient = {
 
 /** Disconnected client from an ip on network CS */
 export type DisconnectedClient = {
+  seqNo: number;
   disconnectedAt: string;
   sourceIp: string;
 };
