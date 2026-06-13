@@ -7,9 +7,9 @@ const PopularCards: React.FC<{cards: FlashCard[]}> = (
      {cards}): JSX.Element => {
 
   return (<div className={style.popular}>
-    <h2>Popular Laboratories</h2>
+    {/* <h2>Popular Laboratories</h2>
     <p>Select a laboratory and explore the algorithm 
-      with the program and input data.</p>
+      with the program and input data.</p> */}
     <div className={style['popular-labs']}>
       {
         cards.map( (card: FlashCard, i:number):JSX.Element => 

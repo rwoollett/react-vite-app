@@ -22,6 +22,7 @@
   text-align: left;
 
   & h2 {
+    color: rgba(55, 182, 134, 1);
     margin-right: 10px;
     margin-bottom: 0px;
     text-align: left;
@@ -30,6 +31,11 @@
 
   & h2:first-child {
     display: inline;
+  }
+
+  & h3:first-child {
+    display: inline;
+    font-size: large;
   }
 
   & .author {
@@ -48,6 +54,10 @@
 
   & p {
     font-weight: lighter;
+  }
+
+  & a {
+    color: inherit;
   }
 }
 

@@ -1,10 +1,8 @@
 import React, { memo, useEffect, type JSX } from 'react';
 import styles from './Card.module.scss';
 import postStyles from './PostsComponent.module.scss';
-import { ReactionButtons } from './ReactionButton';
 import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
-import Button from './Button';
 import { selectPostById, selectPostIds, useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { fetchPosts } from '../store/api/postsSlice';
 
@@ -20,15 +18,13 @@ let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
   let postExcerpt;
   if (post) {
     postExcerpt = (<div className={postStyles.post}>
-      <h3>{post.title}</h3>
-      <PostAuthor author={post.userName} />
-      <TimeAgo timeISO={post.date} />
-      <p>{post.content}</p>
-      <ReactionButtons post={post} />
       <a href={staticPostUrl(post.slug)} style={{ textDecoration: 'none' }}>
-        <Button secondary outline type="button">
+        <h3>{post.title}&nbsp;</h3>
+        <PostAuthor author={post.userName} />
+        <TimeAgo timeISO={post.date} />
+        {/* <Button secondary outline type="button">
           View Post
-        </Button>
+        </Button> */}
       </a>
     </div>
     );
@@ -73,18 +69,9 @@ function PostsComponent(): JSX.Element {
     content = <div>{error}</div>;
   }
 
-
-  // content = <PostExcerpt key="1234" postId="1234" />;
   return (<div className={postStyles.posts}>
     <div className={postStyles['posts-content']}>
-      {/* <div className={postStyles['posts-list']}> */}
-      {/* <div className={postStyles['posts-form']}>
-        <h2>Post to Popular Laboratories</h2>
-        <Button type="button" onClick={handleOnRefresh} secondary>Refresh Posts</Button>
-        <AddPostForm />
-      </div> */}
       {content}
-      {/* </div> */}
     </div>
   </div>);
 }

@@ -1,16 +1,22 @@
 {
-  "homepage" :
-    { 
-      "title": "Laboratory of Web",
-      "description": "Posts sample with emoji ratings",
-      "navCards": [
-        {"title": "Laboratory Collection", "catchPhrase": "Explore the laboratories of algorithms implemented with the JavaScript/Typescript computer programming language."},
-        {"title": "Algorithm Topics", "catchPhrase": "Understand the computer algorithms used in the laboratories."}
-      ],
-      "popularCards": [
-        {"title": "Passing Cars", "catchPhrase": "Time complexity of algorithm is how fast it perform the algorithm. Fast solutions are O(n), slow solutions are O(n2) or greater."},
-        {"title": "Tape Equlibrium", "catchPhrase": "Use a variable to add up and sum all values in an array.  Counting elements can be done for values in array m and kept in array of size n"},
-        {"title": "Fibonacci Iteration", "catchPhrase": "Use iteration and fibonacci algorithm"}
-      ]
-    } 
+  "homepage": {
+    "title": "LivePosts",
+    "description": "Live posts made by users",
+    "navCards": [
+      {
+        "title": "The live post index",
+        "catchPhrase": "The posts made are made by users."
+      }
+    ],
+    "popularCards": [
+      {
+        "title": "A real time figs",
+        "catchPhrase": "Their bird was, in this moment that composed."
+      },
+      {
+        "title": "my new stage post",
+        "catchPhrase": "Hello world"
+      }
+    ]
+  }
 }

@@ -3,7 +3,6 @@ import type { LivePostPage } from '../types';
 import homepage from '../homepage.json';
 import { http } from '../utility/fetchData';
 import Banner from '../components/Banner';
-import HomeNavigation from '../components/HomeNavigation';
 import PostsComponent from '../components/PostsComponent';
 import Button from '../components/Button';
 import { useAppDispatch } from '../store/reducers/store';
@@ -12,7 +11,6 @@ import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
 import { useWebSocket } from "../hooks/use-websocket-context";
-import PopularCards from '../components/PopularCards';
 
 
 const LivePosts: React.FC = () => {
@@ -20,12 +18,11 @@ const LivePosts: React.FC = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [navCards, setNavCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
-  const [popularCards, setPopularCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
+  // const [navCards, setNavCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
+  // const [popularCards, setPopularCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
 
   useEffect(() => {
     let updatedSeq = lastProcessedLivePostSeq;
@@ -61,8 +58,8 @@ const LivePosts: React.FC = () => {
         const { title, description, navCards, popularCards } = response;
         setTitle(title);
         setDescription(description);
-        setNavCards(navCards);
-        setPopularCards(popularCards);
+        // setNavCards(navCards);
+        // setPopularCards(popularCards);
         setIsFetching(false);
       } catch (err) {
         const error = err as Error;
@@ -71,16 +68,16 @@ const LivePosts: React.FC = () => {
         console.log("Message page :", title);
         setTitle(title);
         setDescription(description);
-        setNavCards(navCards);
-        setPopularCards(popularCards);
+        // setNavCards(navCards);
+        // setPopularCards(popularCards);
         setIsFetching(false);
       }
     })();
   }, []);
 
-  const handleOnRefresh = () => {
-    dispatch(fetchPosts());
-  };
+  // const handleOnRefresh = () => {
+  //   dispatch(fetchPosts());
+  // };
 
   const toAddPostPage = () => {
     dispatch(refetchUserByID());
@@ -94,19 +91,8 @@ const LivePosts: React.FC = () => {
         <Banner title={title} desc={description} />
         <div className='hero'>
           <div className='hero-head'>
-            <HomeNavigation cards={navCards} />
-            <PopularCards cards={popularCards} />
-
-          </div>
-
-          <div className='hero-body p-0'>
-            <div className="columns is-mobile is-justify-content-start" >
-              <div className="column is-flex-grow-0 is-size-7">
-                <Button type="button" onClick={handleOnRefresh} secondary outline>Refresh Posts</Button>
-              </div>
-              <div className="column is-flex-grow-0 is-size-7">
-                <Button type="button" onClick={() => toAddPostPage()} secondary outline>Create Post</Button>
-              </div>
+            <div className="column is-flex-grow-0 is-size-7">
+              <Button type="button" onClick={() => toAddPostPage()} secondary outline>Create Post</Button>
             </div>
           </div>
           <div className='hero-body p-0'>
