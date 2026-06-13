@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
 import { useWebSocket } from "../hooks/use-websocket-context";
+import PopularCards from '../components/PopularCards';
 
 
 const LivePosts: React.FC = () => {
@@ -20,7 +21,7 @@ const LivePosts: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [navCards, setNavCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
-  //const [popularCards, setPopularCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
+  const [popularCards, setPopularCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -54,24 +55,24 @@ const LivePosts: React.FC = () => {
     (async () => {
       try {
         const response = await http<LivePostPage>(
-          `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/liveposts/homepage`,
+          `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/livxxeposts/homepage`,
           { method: "GET" });
 
-        const { title, description, navCards } = response;
+        const { title, description, navCards, popularCards } = response;
         setTitle(title);
         setDescription(description);
         setNavCards(navCards);
-        // setPopularCards(popularCards);
+        setPopularCards(popularCards);
         setIsFetching(false);
       } catch (err) {
         const error = err as Error;
         console.log(error.message);
-        const { title, description, navCards } = homepage.homepage;
+        const { title, description, navCards, popularCards } = homepage.homepage;
         console.log("Message page :", title);
         setTitle(title);
         setDescription(description);
         setNavCards(navCards);
-        //  setPopularCards(popularCards);
+        setPopularCards(popularCards);
         setIsFetching(false);
       }
     })();
@@ -94,6 +95,7 @@ const LivePosts: React.FC = () => {
         <div className='hero'>
           <div className='hero-head'>
             <HomeNavigation cards={navCards} />
+            <PopularCards cards={popularCards} />
 
           </div>
 
@@ -109,7 +111,6 @@ const LivePosts: React.FC = () => {
           </div>
           <div className='hero-body p-0'>
             <PostsComponent />
-            {/* <PopularCards cards={popularCards} /> */}
           </div>
         </div>
       </>);

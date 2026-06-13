@@ -32,12 +32,21 @@ export async function http<T>(request: string, {
 
       // Retry original request
       const response2 = await fetch(request, config);
+      if (!response2.ok) throw new Error(`Retry failed: ${response2.status}`);
       if (response2.status !== 200) {
         throw new Error('Not authorised');
       }
-      return response2.json();
+
+      return await response2.json();
     }
-    return response.json();
+
+    // Handle other HTTP errors (404, 500, etc.)
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+
+    return await response.json();
+    
   } catch (err) {
     const error = err as Error;
     return Promise.reject(error.message ? error.message : "");
