@@ -11,10 +11,11 @@ import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
 import { useWebSocket } from "../hooks/use-websocket-context";
-
+import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 
 const LivePosts: React.FC = () => {
   const { livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
+  const { isLoggedIn } = useSignedInAuthorize();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -55,7 +56,7 @@ const LivePosts: React.FC = () => {
           `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/livxxeposts/homepage`,
           { method: "GET" });
 
-        const { title, description, navCards, popularCards } = response;
+        const { title, description } = response;
         setTitle(title);
         setDescription(description);
         // setNavCards(navCards);
@@ -64,7 +65,7 @@ const LivePosts: React.FC = () => {
       } catch (err) {
         const error = err as Error;
         console.log(error.message);
-        const { title, description, navCards, popularCards } = homepage.homepage;
+        const { title, description } = homepage.homepage;
         console.log("Message page :", title);
         setTitle(title);
         setDescription(description);
@@ -91,9 +92,10 @@ const LivePosts: React.FC = () => {
         <Banner title={title} desc={description} />
         <div className='hero'>
           <div className='hero-head'>
-            <div className="column is-flex-grow-0 is-size-7">
-              <Button type="button" onClick={() => toAddPostPage()} secondary outline>Create Post</Button>
-            </div>
+            {isLoggedIn &&
+              <div className="column is-flex-grow-0 is-size-7">
+                <Button type="button" onClick={() => toAddPostPage()} secondary outline>Create Post</Button>
+              </div>}
           </div>
           <div className='hero-body p-0'>
             <PostsComponent />
