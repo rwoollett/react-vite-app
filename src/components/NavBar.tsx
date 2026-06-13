@@ -5,6 +5,8 @@ import logo from '../styles/favicon-32x32.png'
 import './NavBar.module.scss';
 import { TABLE_VIEW } from './Table';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
+import { useAppDispatch } from '../store/reducers/store';
+import { refetchUserByID } from '../store/api/authorUsersSlice';
 
 
 interface NavBarProps {
@@ -14,6 +16,7 @@ interface NavBarProps {
 function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
   const [burgerActive, setBurgerActive] = useState(false);
   const { email } = useSignedInAuthorize();
+  const dispatch = useAppDispatch();
 
   const handleClickBurger = () => {
     setBurgerActive((prev) => !prev);
@@ -61,6 +64,18 @@ function NavBar({ isLoggedIn }: NavBarProps): JSX.Element {
           <Link onClick={() => setBurgerActive(false)} className="navbar-item" to={ROUTES.COUNTDOWNPAGE_ROUTE} state={{ tableMode: TABLE_VIEW }}>Countdown Timer</Link>
         </div>
         <div className="navbar-end">
+          {isLoggedIn && (
+            <Link
+              className="navbar-item"
+              to={`${ROUTES.LIVEPOSTS_ROUTE}/create`}
+              onClick={() => {
+                setBurgerActive(false);
+                dispatch(refetchUserByID());
+              }}
+            >
+              Create Post
+            </Link>
+          )}
           {userBar}
         </div>
         {/* </div> */}
