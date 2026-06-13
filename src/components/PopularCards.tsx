@@ -6,7 +6,6 @@ import type { FlashCard } from '../types';
 const PopularCards: React.FC<{cards: FlashCard[]}> = (
      {cards}): JSX.Element => {
 
-      console.log(cards);
   return (<div className={style.popular}>
     <h2>Popular Laboratories</h2>
     <p>Select a laboratory and explore the algorithm 
