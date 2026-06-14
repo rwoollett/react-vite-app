@@ -1,39 +1,52 @@
 .tableLayout {
-  table-layout: auto;
-  border-spacing: 0.5rem 0.5rem;
+  table-layout: fixed;
+  border-spacing: 0;//.5rem 0.5rem;
 
-  thead tr {
+  & thead tr {
     border-bottom-width: 2px;
   }
 
-  tbody tr {
+  & tbody tr {
     border-bottom-width: 1px;
   }
 
-  td {
+  & td {
     padding: 4px;
   }
 
-  td,
+  & td,
   th {
     vertical-align: middle;
+    text-align: left; 
   }
 }
 
-.editCell {
-  //flex: 25%;
-  //vertical-align: middle;
-  padding: 0;
+.selectorColumn {
+  width: 36px !important;
 }
 
-.editCellPlaceholder {
-  width: 26px;
-  vertical-align: middle;
-  padding: 0;
+.selectorColumn input[type="checkbox"] {
+  display: block;
+  margin: 0 auto;
 }
 
-.editCellPlaceholder input[type="checkbox"],
-.editCellPlaceholder input[type="radio"] {
+th.editCellPlaceholder,
+td.editCellPlaceholder,
+th.editCell,
+td.editCell {
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  padding: 0;
+  margin: 0;
+  // text-align: center;
+  box-sizing: border-box;
+}
+
+th.editCellPlaceholder input[type="checkbox"],
+td.editCellPlaceholder input[type="checkbox"],
+th.editCell input[type="checkbox"],
+td.editCell input[type="checkbox"] {
   margin: 0 auto;
   display: block;
 }
@@ -51,15 +64,41 @@
   display: flex;
   gap: 10px;
   align-items: center;
+
+  &  span {
+    font-weight: 600;
+    margin-right: 1rem;
+  }
+
 }
 
-.control {
-  cursor: pointer;
-  color: var(--bulma-arrow-color);
+.selectorHeader {
   display: flex;
-  margin: auto;
   align-items: center;
+  justify-content: center;
+  padding: 6px 3px;
+  gap: 4px;
 }
+
+.selectedCount {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bulma-text-strong);
+  user-select: none;
+}
+
+// .control {
+//   display: flex;
+//   margin: auto;
+//   align-items: center;
+// }
+
+// .control {
+//   cursor: pointer;
+//   color: var(--bulma-arrow-color);
+//   display: flex;
+//   align-items: center;
+// }
 
 .rowSelect {
   cursor: pointer;
