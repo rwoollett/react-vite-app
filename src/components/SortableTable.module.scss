@@ -1,10 +1,27 @@
 @use '../styles/variables';
 
+.sortableHeaderActive {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .sortableHeader {
+  user-select: none;
+  /* Prevent text selection */
   cursor: pointer;
+  /* Show pointer cursor */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  /* Optional: make the click target feel nicer */
+  padding: 6px 3px;
 
   &:hover {
-    background-color: var(--bulma-highlight-background-color);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   .control {
@@ -16,14 +33,18 @@
       display: block;
       flex: 1 1 auto;
     }
+
     .arrowItem {
       display: block;
       flex: 1 1 auto;
       font-size: xx-small;
     }
+
     .arrowContainer {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      gap: 2px;
       flex: 1 1 auto;
     }
   }

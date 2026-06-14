@@ -86,7 +86,8 @@ function Table<T>({ data, config, keyFn }: {
   });
 
   const editClasses = className({
-    [style.editCell]: edit
+    [style.editCell]: edit,
+    [style.editCellPlaceholder]: true
   });
 
   const renderedRows = data.map((rowData) => {
@@ -98,33 +99,35 @@ function Table<T>({ data, config, keyFn }: {
       );
     });
 
-    const selector = <td key={`selector_${keyFn(rowData)}`}
-      className={editClasses}>
-      <div>
-        {!selectIndex[keyFn(rowData)] && <Button type="button" onClick={() => handleSelectIndex(keyFn(rowData))} className={style.control}>+</Button>}
-        {selectIndex[keyFn(rowData)] && <Button type="button" onClick={() => handleSelectIndex(keyFn(rowData))} className={style.control}>-</Button>}
-      </div>
-    </td>;
+    const selector = <td key={`selector_${keyFn(rowData)}`} className={editClasses}>
+      {edit && <input
+        type="checkbox"
+        checked={!!selectIndex[keyFn(rowData)]}
+        onChange={() => handleSelectIndex(keyFn(rowData))}
+      />}
+    </td>
 
     const classes = className({
-      [style.editRowSelect]: edit
+      [style.rowSelect]: !edit,
+      [style.editCellPlaceholder]: true
     });
 
     return (
       <tr className={classes}
-        onClick={() => handleSelectIndex(keyFn(rowData))}
         key={keyFn(rowData)}>
-        {edit && selector}{renderedCells}
+        {selector}
+        {renderedCells}
       </tr>
     );
   });
 
   const selectorAll = <th key={`selectorAll`}
     className={editClasses}>
-    <div>
-      {!selectAll && <Button type="button" onClick={handleSelectAll} className={style.control}>+</Button>}
-      {selectAll && <Button type="button" onClick={handleSelectAll} className={style.control}>-</Button>}
-    </div>
+    {edit && <input
+      type="checkbox"
+      checked={selectAll}
+      onChange={() => handleSelectAll()}
+    />}
   </th>;
 
   const handleEdit = () => {
@@ -137,7 +140,7 @@ function Table<T>({ data, config, keyFn }: {
 
   const renderEditCancelButton = edit === false
     ? <Button type="button" onClick={handleEdit} secondary outline>Edit</Button>
-    : <Button type="button" onClick={handleCancel} primary>Cancel</Button>;
+    : <></>
 
   const isSelectedEdit = Object.values(selectIndex)
     .reduce((prev, curr) => curr === true ? true : prev, false);
@@ -164,17 +167,26 @@ function Table<T>({ data, config, keyFn }: {
 
   return (
     <div>
-      <div>
-        {editable && renderEditCancelButton}
-      </div>
       <table className={style.tableLayout}>
         <thead>
-          <tr>{edit && selectorAll}{renderedHeader}</tr>
+          <tr>
+            {selectorAll}
+            {renderedHeader}
+            <th className={style.editButtonCell}>
+              {editable && renderEditCancelButton}
+            </th>
+          </tr>
         </thead>
         <tbody>{renderedRows}</tbody>
       </table>
       <div>
-        {edit && <table><tbody><tr>{renderedAction}<td/>{isSelectedEdit && renderedEditable}</tr></tbody></table>}
+        {edit && (
+          <div className={style.editFooter}>
+            {renderedAction}
+            {isSelectedEdit && renderedEditable}
+            <Button type="button" onClick={handleCancel} primary>Cancel</Button>
+          </div>
+        )}
       </div>
     </div>
   );

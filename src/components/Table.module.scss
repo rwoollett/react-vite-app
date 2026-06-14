@@ -1,4 +1,3 @@
-
 .tableLayout {
   table-layout: auto;
   border-spacing: 0.5rem 0.5rem;
@@ -22,8 +21,36 @@
 }
 
 .editCell {
-  //display: block;
-  flex: 25%;
+  //flex: 25%;
+  //vertical-align: middle;
+  padding: 0;
+}
+
+.editCellPlaceholder {
+  width: 26px;
+  vertical-align: middle;
+  padding: 0;
+}
+
+.editCellPlaceholder input[type="checkbox"],
+.editCellPlaceholder input[type="radio"] {
+  margin: 0 auto;
+  display: block;
+}
+
+.editButtonCell {
+  text-align: right;
+  user-select: none;
+}
+
+.editFooter {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f7f7f7;
+  border-radius: 4px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .control {
@@ -34,7 +61,7 @@
   align-items: center;
 }
 
-.editRowSelect {
+.rowSelect {
   cursor: pointer;
 
   &:hover {
@@ -53,20 +80,27 @@
 
 }
 
-@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px) {
+@media only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px) {
+
   /* Force table to not be like tables anymore */
-  table, thead, tbody, th, td{
+  table,
+  thead,
+  tbody,
+  th,
+  td {
     display: block;
   }
 
-  
+
   /* Hide table headers (but not display: none;, for accessibility) */
   thead tr {
     display: flex;
     //position: absolute;
-   // top: -9999px;
-   // left: -9999px;
+    // top: -9999px;
+    // left: -9999px;
   }
+
   tr {
     display: flex;
     flex-direction: column;
