@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState, type JSX } from "react";
+import { useLocation } from "react-router-dom";
 import style from './Table.module.scss';
 //import { RxCircle, RxCheckCircled } from 'react-icons/rx';
 import Button from "./Button";
@@ -36,12 +37,22 @@ function Table<T>({ data, config, keyFn }: {
   keyFn: (item: T) => string | number;
 }) {
 
-  const [tableMode, setTableMode] = useState(TABLE_VIEW);
+  const location = useLocation();
+  const initialMode = location.state?.tableMode ?? TABLE_VIEW;
+
+  const [tableMode, setTableMode] = useState(initialMode);
   const [edit, setEdit] = useState(false);
   const [editable, setEditable] = useState(false);
   const [selectAll, setSelectedAll] = useState(false);
   const [selectIndex, setSelectIndex] = useState<{ [key: string | number]: boolean }>({});
   const selectedCount = Object.values(selectIndex).filter(Boolean).length;
+
+  useEffect(() => {
+    if (location.state?.tableMode) {
+      setTableMode(location.state.tableMode);
+      setEdit(location.state.tableMode === TABLE_EDIT);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     setEditable(config.edit.length > 0);

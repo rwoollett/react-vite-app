@@ -5,7 +5,8 @@ import { useAppDispatch } from '../store/reducers/store';
 import { addCountdown } from '../store/actions/data';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { TABLE_VIEW } from './Table';
+import { TABLE_EDIT, TABLE_VIEW } from './Table';
+import Button from './Button';
 
 function CountdownCreate() {
   const [name, setName] = useState("");
@@ -35,7 +36,7 @@ function CountdownCreate() {
     }
   };
   const onHandleCancel = () => {
-    navigate('/countdown', { state: { tableMode: TABLE_VIEW } });
+    navigate('/countdown', { state: { tableMode: TABLE_EDIT } });
   };
 
   return (
@@ -79,10 +80,11 @@ function CountdownCreate() {
 
       <div className="field is-grouped">
         <div className="control">
-          <button type="submit" className="button is-primary">Create</button>
+          {/* <button type="submit" className="button is-primary">Create</button> */}
+          <Button type="submit" secondary outline>Create</Button>
         </div>
         <div className="control">
-          <button type="button" onClick={() => onHandleCancel()} className="button is-primary">Cancel</button>
+          <Button type="button" onClick={() => onHandleCancel()} secondary outline>Cancel</Button>
         </div>
       </div>
 
