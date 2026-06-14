@@ -22,7 +22,7 @@
 }
 
 .selectorColumn {
-  width: 36px !important;
+  width: 26px !important;
 }
 
 .selectorColumn input[type="checkbox"] {
@@ -34,12 +34,8 @@ th.editCellPlaceholder,
 td.editCellPlaceholder,
 th.editCell,
 td.editCell {
-  // display: flex;
-  // align-items: center;
-  // justify-content: center;
   padding: 0;
   margin: 0;
-  // text-align: center;
   box-sizing: border-box;
 }
 
@@ -72,33 +68,24 @@ td.editCell input[type="checkbox"] {
 
 }
 
-.selectorHeader {
+.selectorContainer {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 6px 3px;
-  gap: 4px;
+  gap: 1px;
 }
 
 .selectedCount {
-  font-size: 0.8rem;
-  font-weight: 600;
+  display: inline-block;
+  width: 14px;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600; 
   color: var(--bulma-text-strong);
   user-select: none;
 }
-
-// .control {
-//   display: flex;
-//   margin: auto;
-//   align-items: center;
-// }
-
-// .control {
-//   cursor: pointer;
-//   color: var(--bulma-arrow-color);
-//   display: flex;
-//   align-items: center;
-// }
 
 .rowSelect {
   cursor: pointer;

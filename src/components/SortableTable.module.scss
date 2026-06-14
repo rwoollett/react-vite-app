@@ -24,21 +24,20 @@
     background-color: rgba(0, 0, 0, 0.1);
   }
 
-  .control {
+  & .control {
     display: flex;
     align-items: center;
-    // height: 24px;
 
     .columnName {
       display: block;
       flex: 1 1 auto;
     }
 
-    .arrowItem {
-      display: block;
-      flex: 1 1 auto;
-      font-size: xx-small;
-    }
+    // .arrowItem {
+    //   display: block;
+    //   flex: 1 1 auto;
+    //   font-size: xx-small;
+    // }
 
     .arrowContainer {
       display: flex;

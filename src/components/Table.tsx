@@ -109,11 +109,14 @@ function Table<T>({ data, config, keyFn }: {
     });
 
     const selector = <td key={`selector_${keyFn(rowData)}`} className={editClasses}>
-      {edit && <input
-        type="checkbox"
-        checked={!!selectIndex[keyFn(rowData)]}
-        onChange={() => handleSelectIndex(keyFn(rowData))}
-      />}
+      <div className={style.selectorContainer}>
+        {edit && <input
+          type="checkbox"
+          checked={!!selectIndex[keyFn(rowData)]}
+          onChange={() => handleSelectIndex(keyFn(rowData))}
+        />}
+        {edit && <i className={style.selectedCount}>&nbsp;</i>}
+      </div>
     </td>
 
     const classes = className({
@@ -129,14 +132,15 @@ function Table<T>({ data, config, keyFn }: {
     );
   });
 
-  const selectorAll = <th key={`selectorAll`}
-    className={editClasses}>
-    <div className={style.selectorHeader}>
+  const selectorAll = <th key={`selectorAll`} className={editClasses}>
+    <div className={style.selectorContainer}>
       {edit && <input
         type="checkbox"
         checked={selectAll}
         onChange={() => handleSelectAll()}
       />}
+      {edit && selectedCount > 0 && <i className={style.selectedCount}>{selectedCount}</i>}
+      {edit && selectedCount == 0 && <i className={style.selectedCount}>&nbsp;</i>}
     </div>
   </th>;
 
@@ -157,33 +161,33 @@ function Table<T>({ data, config, keyFn }: {
 
   const renderedEditable = config.edit.map((command) => {
     return (
-      <td key={command.label}><Button type="button" onClick={() => {
+      <div key={command.label}><Button type="button" onClick={() => {
         data.forEach((rowData) => {
           selectIndex[keyFn(rowData)] === true && command.execute(rowData);
         });
         setTableMode(TABLE_VIEW);
-      }} secondary outline>{command.label}</Button></td>
+      }} secondary >{command.label} {selectedCount}</Button></div>
     );
   });
 
   const renderedAction = config.action.map((command) => {
     return (
-      <td key={command.label}><Button type="button" onClick={() => {
+      <div key={command.label}><Button type="button" onClick={() => {
         command.execute();
         setTableMode(TABLE_VIEW);
-      }} secondary outline>{command.label}</Button></td>
+      }} secondary outline>{command.label}</Button></div>
     );
   });
 
   return (
     <div>
       <table className={style.tableLayout}>
-        {/* <colgroup>
+        <colgroup>
           <col className={style.selectorColumn} />
           {config.columns.map((col) => (
             <col key={col.label} />
           ))}
-        </colgroup> */}
+        </colgroup>
         <thead>
           <tr>
             {selectorAll}
@@ -198,9 +202,9 @@ function Table<T>({ data, config, keyFn }: {
       <div>
         {edit && (
           <div className={style.editFooter}>
-            <span>Selected: {selectedCount}</span>
-            {renderedAction}
+            {/* <span>Selected: {selectedCount}</span> */}
             {isSelectedEdit && renderedEditable}
+            {renderedAction}
             <Button type="button" onClick={handleCancel} secondary outline>Exit Edit</Button>
           </div>
         )}

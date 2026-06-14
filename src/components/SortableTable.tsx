@@ -1,8 +1,7 @@
 import Table, { type ConfigTable } from "./Table";
-//import { GoArrowUp, GoArrowDown } from "react-icons/go";
 import useSort from "../hooks/use-sort";
 import style from './SortableTable.module.scss';
-//
+
 function SortableTable<T>(props: {
   data: T[];
   config: ConfigTable<T>,
