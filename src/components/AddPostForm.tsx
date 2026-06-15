@@ -35,7 +35,6 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     authUser.length && postUsersNewUserStatus && setAuthor(authUser[0].name);
   }, [author, authUser, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch]);
 
-  //console.log('postUserByAuthIdStatus', postUserByAuthIdStatus);
   if (postUserByAuthIdStatus === 'failed') {
     navigate(ROUTES.LIVEPOSTS_ROUTE);
   }
@@ -89,6 +88,8 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
               <div className="control">
                 <input
                   className="input"
+                  id="postTitle"
+                  name="postTitle"
                   type="text"
                   value={title}
                   onChange={onTitleChanged}
@@ -101,8 +102,11 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
               <div className="control">
                 <input
                   className="input is-static"
+                  id="postAuthor"
+                  name="postAuthor"
                   type="text"
                   value={author}
+                  onChange={onAuthorChanged}
                   readOnly
                 />
               </div>
@@ -117,6 +121,8 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
                 <textarea
                   className="textarea has-fixed-size"
                   rows={14}
+                  id="postContent"
+                  name="postContent"
                   value={content}
                   onChange={onContentChanged}
                 />
