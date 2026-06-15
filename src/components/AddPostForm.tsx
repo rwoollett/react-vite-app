@@ -1,13 +1,10 @@
 import React, { useEffect, useState, type FormEvent } from 'react';
-import style from './PostsComponent.module.scss';
+import style from './AddPostForm.module.scss';
 import Button from './Button';
 import { selectIdByAuth, useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { addNewPost } from '../store/api/postsSlice';
 import { addNewUser } from '../store/api/authorUsersSlice';
-import PostAuthor from './PostAuthor';
-import TimeAgo from './TimeAgo';
-import { ReactionButtons } from './ReactionButton';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../resources/routes-constants';
 import Skeleton from './Skeleton';
@@ -79,92 +76,66 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
   };
 
   const formOption = (formTitle: string, buttonText: string) => (
-    <div className='panel ml-3'>
+    <div className="panel ml-3 mb-4">
       <p className="panel-heading mb-4 is-size-7">{formTitle}</p>
-      <div className='panel-block'>
-        <form onSubmit={onSavePostClicked}>
 
-          <div className="field">
-            <div className="control">
-              <label className='label' htmlFor="postTitle">Post Title</label>
-              <input
-                className='input'
-                type="text"
-                id="postTitle"
-                name="postTitle"
-                value={title}
-                onChange={onTitleChanged}
-              />
+      <div className="panel-block is-block">
+        <form onSubmit={onSavePostClicked} className={style.postFormGrid}>
+
+          {/* LEFT SIDE */}
+          <div className={style.leftSide}>
+            <div className="field">
+              <label className="label">Post Title</label>
+              <div className="control">
+                <input
+                  className="input"
+                  type="text"
+                  value={title}
+                  onChange={onTitleChanged}
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label className="label">Author</label>
+              <div className="control">
+                <input
+                  className="input is-static"
+                  type="text"
+                  value={author}
+                  readOnly
+                />
+              </div>
             </div>
           </div>
 
-          <div className="field">
-            <div className="control">
-              <label className='label' htmlFor="postAuthor">Author</label>
-              <input
-                className='input is-static'
-                type="text"
-                id="postAuthor"
-                name="postAuthor"
-                value={author}
-                onChange={onAuthorChanged}
-                readOnly
-              />
+          {/* RIGHT SIDE */}
+          <div className={style.rightSide}>
+            <div className="field">
+              <label className="label">Content</label>
+              <div className="control">
+                <textarea
+                  className="textarea has-fixed-size"
+                  rows={14}
+                  value={content}
+                  onChange={onContentChanged}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="field">
-            <div className="control">
-              <label className='label' htmlFor="postContent">Content</label>
-              <textarea
-                className='textarea has-fixed-size'
-                rows={12}
-                id="postContent"
-                name="postContent"
-                value={content}
-                onChange={onContentChanged}
-                placeholder='Textarea'
-              />
-            </div>
+          {/* FOOTER BUTTONS */}
+          <div className="form-footer">
+            <Button secondary outline type="submit">{buttonText}</Button>
           </div>
 
-          <div className="field is-grouped">
-            <div className="control">
-              <Button secondary outline type="submit">{buttonText}</Button>
-            </div>
-          </div>
         </form>
       </div>
     </div>
   );
 
-  return (
-    <div className="panel">
-      {/* <p className="panel-heading mb-4">Post to LivePosts {gameActive && hasMovedBoard && "Move made"} {gameActive && (hasMovedBoard || "Make a move")}</p> */}
-      <p className="panel-heading mb-4 is-size-5">Live Posts</p>
-      <div className='panel-block mb-2  '>
-        <div className="columns">
-          <div className="column">
-            {/* {gameActive || gameOption('Select Game Options', startButtonText, true)}
-            {gameActive && gameOption('Playing Tic Tac Toe!', 'Finish Game', false)} */}
-            {formOption('Create a Post', 'Create')}
-          </div>
-          <div className="column">
-            <div className={style.post}>
-              <h3>{title}</h3>
-              <PostAuthor author={author} />
-              <TimeAgo timeISO={new Date().toISOString()} />
-              <p>{content}</p>
-              <ReactionButtons post={{ reactions: {}, slug:"unknown", id: 0, title, userId: 5, userName: author, content, date: new Date().toISOString() }} />
-              <Button secondary outline type="button">
-                View Post
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return formOption('Live Posts - Create Post', 'Create');
+
 };
 
 export default AddPostForm;

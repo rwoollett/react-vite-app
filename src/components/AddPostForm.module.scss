@@ -1,0 +1,30 @@
+.postFormGrid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+
+  //& .left-side
+  //& .right-side
+  /* Footer spans full width */
+  & .formFooter {
+    grid-column: 1 / -1;
+  }
+
+  & textarea {
+    min-height: 300px;
+    font-family: "Inter", sans-serif;
+  }
+
+  & textarea {
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+}
+
+/* Mobile collapse */
+@media (max-width: 768px) {
+  .postFormGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -53,7 +53,7 @@ const LivePosts: React.FC = () => {
     (async () => {
       try {
         const response = await http<LivePostPage>(
-          `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/livxxeposts/homepage`,
+          `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/liveposts/homepage`,
           { method: "GET" });
 
         const { title, description } = response;
