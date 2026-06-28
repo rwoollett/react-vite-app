@@ -29,6 +29,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const wsRefLivePost = useRef<WebSocketClient | null>(null);
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const wsRefGateway = useRef<WebSocketClient | null>(null);
+
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
   const [livePostMessageQueue, setLivePostMessageQueue] = useState<{ seq: number, msg: WSLivePostMessage }[]>([]);
   const [, setTTTSeq] = useState(0);
@@ -37,6 +39,66 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
 
+  // NetWS Gateway
+  useEffect(() => {
+    const handleWSMessage = (msg: WSCSTokenMessage) => {
+      const clientIp =
+        msg.subject === "cstoken_client_Connected" ? msg.payload.sourceIp :
+          msg.subject === "cstoken_client_Disconnected" ? msg.payload.sourceIp :
+            msg.subject === "cstoken_token_Acquire" ? msg.payload.ip :
+              msg.subject === "cstoken_token_Request" ? msg.payload.sourceIp :
+                msg.subject === "cstoken_process_Service" ? msg.payload.ip :
+                  undefined;
+
+      const seqNo =
+        msg.subject === "cstoken_client_Connected" ? msg.payload.seqNo :
+          msg.subject === "cstoken_client_Disconnected" ? msg.payload.seqNo :
+            msg.subject === "cstoken_token_Acquire" ? msg.payload.seqNo :
+              msg.subject === "cstoken_token_Request" ? msg.payload.seqNo :
+                msg.subject === "cstoken_process_Service" ? msg.payload.seqNo :
+                  undefined;
+
+      const timestamp =
+        'requestedAt' in msg.payload ? msg.payload.requestedAt :
+          'acquiredAt' in msg.payload ? msg.payload.acquiredAt :
+            'processedAt' in msg.payload ? msg.payload.processedAt :
+              'connectedAt' in msg.payload ? msg.payload.connectedAt :
+                'disconnectedAt' in msg.payload ? msg.payload.disconnectedAt :
+                  null;
+
+      if (!seqNo || !clientIp || !timestamp) return;
+
+      dispatch(actionReceived({
+        id: `${clientIp}_${seqNo}`,
+        clientIp,
+        seqNo,
+        timestamp,
+        subject: msg.subject,
+        payload: msg.payload
+      }));
+
+      dispatch(truncateClient(clientIp));
+    }
+
+
+    wsRefGateway.current = websocketClient<WSCSTokenMessage>(
+      {
+        queryParams: { type: "all" },
+        service: "NetWSGateway",
+        onMessage: handleWSMessage,
+        onDisconnect: () => { },
+      },
+      (client) => { wsRefGateway.current = client; }
+    );
+    return () => {
+      wsRefGateway.current?.close();
+      //if (updateTimer.current) clearTimeout(updateTimer.current);
+
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // CSTokenSvc websocket
   useEffect(() => {
     const handleWSMessage = (msg: WSCSTokenMessage) => {
       const clientIp =

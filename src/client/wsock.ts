@@ -25,16 +25,14 @@ export interface WebSocketClient {
 const wsUrl = (service: string) => {
   if (service === 'TTT') {
     return `${import.meta.env.VITE_TTT_SERVER_WS}`;
-    //return `${websockets.url}:3009`;
   } else if (service === 'CSToken') {
     return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
-    //return `${websockets.url}:3003`;
   } else if (service === 'LivePost') {
     return `${import.meta.env.VITE_LIVEPOSTS_WSL}`;
-    //return `${websockets.url}:3003`;
+  } else if (service === 'NetWSGateway') {
+    return `${import.meta.env.VITE_GATEWAY_WSL}`;
   } else {
     return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
-    //return `${websockets.url}:3003`;
   }
 }
 
