@@ -5,6 +5,7 @@ import { useAppDispatch } from "../store/reducers/store";
 import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 
 type WebSocketContextType = {
+  wsRefGateway: React.RefObject<WebSocketClient | null>;
   wsRefTTT: React.RefObject<WebSocketClient | null>;
   wsRefLivePost: React.RefObject<WebSocketClient | null>;
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
@@ -144,6 +145,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   return (
     <WebSocketContext.Provider value={{
+      wsRefGateway,
       wsRefTTT,
       wsRefLivePost,
       lastProcessedCSSeq,

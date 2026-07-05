@@ -6,7 +6,7 @@ import { selectAllTokenActions, useAppSelector } from "../store/reducers/store";
 
 const HomePage: React.FC = () => {
   const { isLoggedIn, email } = useSignedInAuthorize();
-  const { wsRefCSToken: wsRef } = useWebSocket();
+  const { wsRefGateway: wsRef } = useWebSocket();
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
   const lastProcessedSeq = useRef(0);
