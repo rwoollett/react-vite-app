@@ -17,11 +17,6 @@ export interface WebSocketClient {
   close: () => void;
 }
 
-// const websockets = {
-//   url: "ws://localhost",
-//   //produrl: (process.env.NODE_ENV === 'production' && ENV.host && `ws://${ENV.host}`) || ""
-// };
-
 const wsUrl = (service: string) => {
   if (service === 'TTT') {
     return `${import.meta.env.VITE_TTT_SERVER_WS}`;
@@ -40,7 +35,7 @@ const websocketClient = <T>(
   options: WebSocketClientOptions<T> = {},
   onConnect: (client: WebSocketClient) => void
 ): WebSocketClient => {
-  let url = wsUrl("CSToken");
+  let url = wsUrl("NetWSGateway");
   if (options.service) {
     url = wsUrl(options.service)
   }
