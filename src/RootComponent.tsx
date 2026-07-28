@@ -30,10 +30,7 @@ const RootComponent: React.FC = () => {
     )
   }
   return (
-    <Router future={{
-      v7_startTransition: true,
-      v7_relativeSplatPath: true
-    }}>
+    <Router>
       <NavBar isLoggedIn={isLoggedIn} />
       <section className='main-content'>
         <Routes>
