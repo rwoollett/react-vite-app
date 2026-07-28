@@ -24,25 +24,24 @@ export interface Notification {
 
 export type ActionByIp = Record<string, { client: ClientCS; actions: TokenAction[]; }>;
 
-
-export function isGame(obj: any): obj is Game {
+export function isGame(obj: unknown): obj is Game {
   return (
-    obj &&
     typeof obj === "object" &&
-    typeof obj.id === "string" &&
-    typeof obj.board === "string" &&
-    typeof obj.createdAt === "string"
+    obj !== null &&
+    typeof (obj as Game).id === "string" &&
+    typeof (obj as Game).board === "string" &&
+    typeof (obj as Game).createdAt === "string"
   );
 }
 
-export function isMove(obj: any): obj is PlayerMove {
+export function isMove(obj: unknown): obj is PlayerMove {
   return (
-    obj &&
     typeof obj === "object" &&
-    typeof obj.id === "string" &&
-    typeof obj.gameId === "string" &&
-    typeof obj.player === "number" &&
-    typeof obj.moveCell === "number"
+    obj !== null &&
+    typeof (obj as PlayerMove).id === "string" &&
+    typeof (obj as PlayerMove).gameId === "string" &&
+    typeof (obj as PlayerMove).player === "number" &&
+    typeof (obj as PlayerMove).moveCell === "number"
   );
 }
 

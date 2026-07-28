@@ -1,4 +1,8 @@
-import { fetchBaseQuery, type BaseQueryApi, type FetchArgs } from '@reduxjs/toolkit/query/react';
+import {
+  fetchBaseQuery,
+  type BaseQueryApi,
+  type FetchArgs,
+} from '@reduxjs/toolkit/query/react';
 import { baseAuthUrl } from '../../utility/functions';
 
 const baseQuery = fetchBaseQuery({
@@ -6,7 +10,7 @@ const baseQuery = fetchBaseQuery({
   credentials: 'include', // send cookies (for refresh token)
 });
 
-export const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: {}) => {
+export const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: Record<string, unknown> = {}) => {
   let result = await baseQuery(args, api, extraOptions);
   if (result.error?.status === 401) {
     const refreshResult = await baseQuery(
@@ -20,3 +24,4 @@ export const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQue
   }
   return result;
 };
+

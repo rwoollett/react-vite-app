@@ -9,10 +9,16 @@ export default function ModeratedTextarea() {
   const [message, setMessage] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
 
-  function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
-    let timer: any;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timer);
+  function debounce<A extends unknown[], R>(
+    fn: (...args: A) => R,
+    delay: number
+  ) {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    return (...args: A) => {
+      if (timer !== null) {
+        clearTimeout(timer);
+      }
       timer = setTimeout(() => fn(...args), delay);
     };
   }
@@ -64,8 +70,8 @@ export default function ModeratedTextarea() {
           width: "100%",
           height: "200px",
           border: status === "clean" ? "2px solid green" :
-                  status === "prohibited" ? "2px solid red" :
-                  "2px solid orange"
+            status === "prohibited" ? "2px solid red" :
+              "2px solid orange"
         }}
       />
 

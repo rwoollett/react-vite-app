@@ -11,16 +11,24 @@ const SignOut = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    try {
-      signOut().unwrap();
-      dispatch(setContents([]));
-      navigate(ROUTES.HOMEPAGE_ROUTE);
+    let isMounted = true;
 
-    } catch (error) {
-      console.log(error);
-    }
+    (async () => {
+      try {
+        await signOut().unwrap();
+        if (!isMounted) return;
 
-  }, [signOut, navigate]);
+        dispatch(setContents([]));
+        navigate(ROUTES.HOMEPAGE_ROUTE);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [signOut, dispatch, navigate]);
 
   return <div>Signing you out...</div>;
 };

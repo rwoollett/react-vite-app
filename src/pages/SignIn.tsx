@@ -29,7 +29,7 @@ const SignIn: React.FC = () => {
     if (isLoggedIn) {
       navigate(from, { replace: true });
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate, from]);
 
   const redirectToHomePage = () => {
     navigate(ROUTES.LIVEPOSTS_ROUTE)

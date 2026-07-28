@@ -39,7 +39,7 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
     }
 
     setLastProcessedCSSeq(updatedSeq);
-  }, [newActions, client.ip]);
+  }, [newActions, lastProcessedCSSeq, setLastProcessedCSSeq]);
 
   return (
     <div className="card">

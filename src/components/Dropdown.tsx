@@ -13,7 +13,7 @@ function Dropdown(
   { value, onChange, options, ...rest }:
     Omit<HTMLAttributes<HTMLElement>, 'onChange'> & {
       value: Option | null;
-      onChange: Function;
+      onChange: (value: Option) => void;
       options: Option[];
     }) {
   const [isOpen, setIsOpen] = useState(false);

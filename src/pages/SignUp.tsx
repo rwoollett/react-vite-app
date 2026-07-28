@@ -21,15 +21,15 @@ const SignUp = (): JSX.Element => {
   const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useSignedInAuthorize();
 
-  if (isLoading) {
-    return <Skeleton times={1} className="sign-in-skeleton" />
-  }
-
   useEffect(() => {
     if (isLoggedIn && !isLoading) {
       navigate(ROUTES.USER_ROUTE);
     }
   }, [isLoggedIn, isLoading, navigate]);
+
+  if (isLoading) {
+    return <Skeleton times={1} className="sign-in-skeleton" />
+  }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

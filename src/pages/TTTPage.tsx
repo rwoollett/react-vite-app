@@ -12,27 +12,6 @@ const CanvasComponent: React.FC = () => {
   const dispatch = useAppDispatch();
 
   //const [createGameData, setCreateGameData] = useState<Game | null>(null);
-  const createGame = async (userId: string) => {
-    try {
-      //const response = await fetch("http://localhost:3009/api/v1/game/create", {
-      const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/create`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId })
-      });
-      const data = await response.json();
-      if (!data || !isGame(data.createGame)) {
-        throw new Error("Invalid response format");
-      } else {
-        dispatch(setCurrentGame(data.createGame));
-        //setCreateGameData(data.createGame);
-      }
-    } catch (error) {
-      console.error("Failed to create game:", error);
-      //setCreateGameData(null);
-      dispatch(clearCurrentGame());
-    }
-  };
 
   const [startGameData, setStartGameData] = useState<Game | null>(null);
   const startGame = async (gameId: string) => {
@@ -97,7 +76,6 @@ const CanvasComponent: React.FC = () => {
   ];
 
   // GameID is required before any ui activity on the page
-  //const [userId, setUserId] = useState<string>("EMPTY");
   const [gameId, setGameId] = useState<string>("EMPTY");
   const [gameActive, setGameActive] = useState(false);
 
@@ -111,8 +89,6 @@ const CanvasComponent: React.FC = () => {
 
   const game = useAppSelector(state => state.ttt.currentGame);
   const gameUser = useAppSelector(state => state.ttt.currentGameUser);
-
-  //const [lastProcessedSeq, setLastProcessedSeq] = useState(0);
 
   useEffect(() => {
     let updatedSeq = lastProcessedTTTSeq;
@@ -155,14 +131,34 @@ const CanvasComponent: React.FC = () => {
       console.log('lastProcessedTTTSeq', updatedSeq);
       setLastProcessedTTTSeq(updatedSeq);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tttMessageQueue, gameId]);
+  }, [tttMessageQueue, gameId, dispatch, lastProcessedTTTSeq, setLastProcessedTTTSeq]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    !game && gameUser && createGame(gameUser);
-  }, [player, gameUser, game]);
+    const createGame = async (userId: string) => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/create`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId })
+        });
+        const data = await response.json();
+        if (!data || !isGame(data.createGame)) {
+          throw new Error("Invalid response format");
+        } else {
+          dispatch(setCurrentGame(data.createGame));
+        }
+      } catch (error) {
+        console.error("Failed to create game:", error);
+        dispatch(clearCurrentGame());
+      }
+    };
+
+    if (!game && gameUser) {
+      createGame(gameUser);
+    }
+  }, [player, gameUser, game, dispatch]);
 
   useEffect(() => {
     if (game) {
@@ -172,7 +168,6 @@ const CanvasComponent: React.FC = () => {
 
   useEffect(() => {
     if (startGameData) {
-      console.log('set board', 'gameUser', gameUser);
       setBoard(() => {
         let newBoard: number[] = startGameData.board.split(",").map((cell) => parseInt(cell));
         return newBoard;
@@ -186,38 +181,6 @@ const CanvasComponent: React.FC = () => {
       setHasMovedBoard(true);
     }
   }, [boardMoveData]);
-
-  // useSubscription(
-  //   UPDATE_GAME, {
-  //   variables: { gameId: Number(gameId) },
-  //   context: { service: 'ttt' },
-  //   skip: gameId === "EMPTY",
-  //   onData({ data }) {
-  //     if (data.data?.game_Update) {
-  //       //console.log('subscribe got board', data.data.game_Update.board, data.data.game_Update.result, data.data.game_Update.gameId);
-  //       const newBoard = data.data.game_Update?.board.split(",");
-  //       setBoard(newBoard.map((cell) => parseInt(cell)));
-  //       setPlayMessage("Your turn.");
-  //       if (data.data.game_Update?.result.indexOf(':') > 0) {
-  //         const msgResult = data.data.game_Update?.result.split(":");
-  //         // A result is found when sum of result string > 0 (or equal 3)
-  //         if (msgResult.length === 2 && msgResult[1].indexOf(',') > 0) {
-  //           //console.log('sum of result ', msgResult[1].split(",").reduce((prev, curr) => prev + parseInt(curr), 0));
-  //           if (msgResult[1].split(",").reduce((prev, curr) => prev + parseInt(curr), 0) > 0) {
-  //             setPlayMessage(msgResult[0]);
-  //             setResult(msgResult[1].split(",").map((cell) => parseInt(cell)));
-  //           } else {
-  //             setPlayMessage(msgResult[0]);  // draw
-  //           }
-  //         }
-  //       }
-
-  //       setPlayerMove(-1);
-  //       setBoardUpdated(true);
-  //       setHasMovedBoard(false);
-  //     }
-  //   }
-  // });
 
   const handleCreateGameSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

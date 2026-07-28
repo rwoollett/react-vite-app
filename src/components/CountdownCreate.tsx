@@ -5,7 +5,7 @@ import { useAppDispatch } from '../store/reducers/store';
 import { addCountdown } from '../store/actions/data';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { TABLE_EDIT, TABLE_VIEW } from './Table';
+import { TABLE_EDIT, TABLE_VIEW } from './TableModes';
 import Button from './Button';
 
 function CountdownCreate() {

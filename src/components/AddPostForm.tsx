@@ -26,14 +26,16 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     if (postUserByAuthIdStatus === 'idle') {
       dispatch(fetchUserByAuthId({ authId: email }))
     }
-  }, [dispatch, postUserByAuthIdStatus]);
+  }, [dispatch, postUserByAuthIdStatus, email]);
 
   useEffect(() => {
     if (authUser.length === 0 && postUserByAuthIdStatus === 'succeeded' && postUsersNewUserStatus === 'idle') {
       dispatch(addNewUser({ name: email, authId: email }));
     }
-    authUser.length && postUsersNewUserStatus && setAuthor(authUser[0].name);
-  }, [author, authUser, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch]);
+    if (authUser.length && postUsersNewUserStatus) {
+      setAuthor(authUser[0].name);
+    }
+  }, [author, authUser, email, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch]);
 
   if (postUserByAuthIdStatus === 'failed') {
     navigate(ROUTES.LIVEPOSTS_ROUTE);

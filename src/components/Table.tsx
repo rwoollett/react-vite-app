@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState, type JSX } from "react";
 import { useLocation } from "react-router-dom";
 import style from './Table.module.scss';
-//import { RxCircle, RxCheckCircled } from 'react-icons/rx';
+import { TABLE_VIEW, TABLE_EDIT } from './TableModes';
 import Button from "./Button";
 import className from 'classnames';
 
@@ -11,9 +11,6 @@ export interface ConfigColumn<T> {
   header?: () => JSX.Element;
   sortValue?: (item: T) => string | number;
 }
-
-export const TABLE_VIEW = 'VIEW';
-export const TABLE_EDIT = 'EDIT';
 
 export interface ConfigEdit<T> {
   label: string;
@@ -67,7 +64,7 @@ function Table<T>({ data, config, keyFn }: {
     } else if (selectedCount == Object.values(selectIndex).length) {
       setSelectedAll(true);
     }
-  }, [selectIndex]);
+  }, [selectIndex, selectedCount]);
 
   const handleSelectIndex = (index: string | number) => {
     if (edit) {
@@ -174,7 +171,9 @@ function Table<T>({ data, config, keyFn }: {
     return (
       <div key={command.label}><Button type="button" onClick={() => {
         data.forEach((rowData) => {
-          selectIndex[keyFn(rowData)] === true && command.execute(rowData);
+          if (selectIndex[keyFn(rowData)] === true) {
+            command.execute(rowData);
+          }
         });
         setTableMode(TABLE_VIEW);
       }} secondary >{command.label} {selectedCount}</Button></div>

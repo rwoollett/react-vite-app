@@ -1,4 +1,4 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import websocketClient, { type WebSocketClient } from "../client/wsock";
 import type { WSCSTokenMessage, WSTTTMessage, WSLivePostMessage } from "../types";
 import { useAppDispatch } from "../store/reducers/store";
@@ -90,7 +90,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     );
     return () => {
       wsRefGateway.current?.close();
-      //if (updateTimer.current) clearTimeout(updateTimer.current);
 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,7 +116,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       (client) => { wsRefTTT.current = client; }
     );
     return () => wsRefTTT.current?.close();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -140,7 +138,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       (client) => { wsRefLivePost.current = client; }
     );
     return () => wsRefLivePost.current?.close();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -28,7 +28,7 @@ export const fetchUserByAuthId = createAsyncThunk(
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const response = await http<{ fetchUserByAuthId: AuthorUser[] }>(
       `${apiUrl}/api/v1/liveposts/user/fetchbyauthid/${authId}`,
-      { 
+      {
         method: "GET",
         credentials: "include" as const
       }
@@ -77,7 +77,9 @@ export const usersSlice = createSlice({
     });
     builder.addCase(fetchUserByAuthId.fulfilled, (state, action) => {
       state.status = 'succeeded';
-      action.payload.length && usersAdapter.upsertOne(state, action.payload[0]);
+      if (action.payload.length) {
+        usersAdapter.upsertOne(state, action.payload[0]);
+      }
     });
     builder.addCase(fetchUserByAuthId.rejected, (state, action) => {
       state.status = 'failed';

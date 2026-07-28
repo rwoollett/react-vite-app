@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '../resources/routes-constants'
 import logo from '../styles/favicon-32x32.png'
 import './NavBar.module.scss';
-import { TABLE_VIEW } from './Table';
+import { TABLE_VIEW } from './TableModes';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useAppDispatch } from '../store/reducers/store';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
