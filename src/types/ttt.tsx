@@ -1,11 +1,3 @@
-import { type WSUserConnect } from "./wsuser";
-// /** A board update of tictactoe */
-// export type BoardOutput = {
-//   __typename?: 'BoardOutput';
-//   board: Scalars['String']['output'];
-//   gameId: Scalars['Int']['output'];
-//   result: Scalars['String']['output'];
-// };
 
 /** Tic Tac Toes game board. The player can play as Nought(1) or Cross(2). O is empty cell. */
 export type Game = {
@@ -38,7 +30,5 @@ export type BoardOutput = {
   result: string;
 };
 
-export type WSTTTMessage = 
-| { subject: "ttt_game_Update"; payload: BoardOutput }
-| { subject: "ws_user_Connected"; payload: WSUserConnect };
+export type WSTTTMessage = { subject: "ttt_game_Update"; payload: BoardOutput };
 

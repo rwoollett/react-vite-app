@@ -1,4 +1,3 @@
-import type { WSUserConnect } from "./wsuser";
 
 /**
  * A request for CS from a client source ip to its currently known parent ip in the distributed tree
@@ -80,9 +79,7 @@ export type WSCSTokenMessage =
   | { subject: "cstoken_client_Disconnected"; payload: DisconnectedClient }
   | { subject: "cstoken_token_Acquire"; payload: AcquireCS }
   | { subject: "cstoken_token_Request"; payload: RequestCS }
-  | { subject: "cstoken_process_Service"; payload: ProcSvc }
-  | { subject: "ws_user_Connected"; payload: WSUserConnect };
-
+  | { subject: "cstoken_process_Service"; payload: ProcSvc };
 
 // export type Subscription = {
 //   __typename?: 'Subscription';

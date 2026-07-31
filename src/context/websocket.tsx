@@ -1,8 +1,19 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
 import websocketClient, { type WebSocketClient } from "../client/wsock";
-import type { WSCSTokenMessage, WSTTTMessage, WSLivePostMessage } from "../types";
+import type {
+  WSTTTMessage,
+  WSLivePostMessage,
+  GatewayMessage,
+  AcquireCS,
+  ProcSvc,
+  RequestCS,
+  ConnectedClient,
+  DisconnectedClient,
+  WSCSTokenMessage
+} from "../types";
 import { useAppDispatch } from "../store/reducers/store";
 import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
+import type { WSUserConnectMessage } from "../types/wsuser";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
@@ -37,53 +48,168 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
 
+
   // NetWS Gateway
   useEffect(() => {
-    const handleWSMessage = (msg: WSCSTokenMessage) => {
-      const clientIp =
-        msg.subject === "cstoken_client_Connected" ? msg.payload.sourceIp :
-          msg.subject === "cstoken_client_Disconnected" ? msg.payload.sourceIp :
-            msg.subject === "cstoken_token_Acquire" ? msg.payload.ip :
-              msg.subject === "cstoken_token_Request" ? msg.payload.sourceIp :
-                msg.subject === "cstoken_process_Service" ? msg.payload.ip :
-                  undefined;
 
-      const seqNo =
-        msg.subject === "cstoken_client_Connected" ? msg.payload.seqNo :
-          msg.subject === "cstoken_client_Disconnected" ? msg.payload.seqNo :
-            msg.subject === "cstoken_token_Acquire" ? msg.payload.seqNo :
-              msg.subject === "cstoken_token_Request" ? msg.payload.seqNo :
-                msg.subject === "cstoken_process_Service" ? msg.payload.seqNo :
-                  undefined;
+    const handleWSUserConnect = (msg: WSUserConnectMessage) => {
+      console.log("Gateway WS connected with userId:", msg.payload.userId);
 
-      const timestamp =
-        'requestedAt' in msg.payload ? msg.payload.requestedAt :
-          'acquiredAt' in msg.payload ? msg.payload.acquiredAt :
-            'processedAt' in msg.payload ? msg.payload.processedAt :
-              'connectedAt' in msg.payload ? msg.payload.connectedAt :
-                'disconnectedAt' in msg.payload ? msg.payload.disconnectedAt :
-                  null;
+      // You can store this in context if needed:
+      // setGatewayUserId(msg.payload.userId);
+    };
 
-      if (!seqNo || !clientIp || !timestamp) return;
+    const handleAcquireCS = (msg: { subject: "cstoken_token_Acquire"; payload: AcquireCS }) => {
+      const { seqNo, acquiredAt, ip } = msg.payload;
 
       dispatch(actionReceived({
-        id: `${clientIp}_${seqNo}`,
-        clientIp,
+        id: `${ip}_${seqNo}`,
+        clientIp: ip,
         seqNo,
-        timestamp,
+        timestamp: acquiredAt,
         subject: msg.subject,
         payload: msg.payload
       }));
 
-      dispatch(truncateClient(clientIp));
+      dispatch(truncateClient(ip));
+    };
+
+    const handleProcSvc = (msg: { subject: "cstoken_process_Service"; payload: ProcSvc }) => {
+      const { seqNo, processedAt, ip } = msg.payload;
+      console.log("procsvc handler form ");
+      dispatch(actionReceived({
+        id: `${ip}_${seqNo}`,
+        clientIp: ip,
+        seqNo,
+        timestamp: processedAt,
+        subject: msg.subject,
+        payload: msg.payload
+      }));
+
+      dispatch(truncateClient(ip));
+    };
+
+    const handleRequestCS = (msg: { subject: "cstoken_token_Request"; payload: RequestCS }) => {
+      const { seqNo, requestedAt, sourceIp } = msg.payload;
+
+      dispatch(actionReceived({
+        id: `${sourceIp}_${seqNo}`,
+        clientIp: sourceIp,
+        seqNo,
+        timestamp: requestedAt,
+        subject: msg.subject,
+        payload: msg.payload
+      }));
+
+      dispatch(truncateClient(sourceIp));
+    };
+
+    const handleConnected = (msg: { subject: "cstoken_client_Connected"; payload: ConnectedClient }) => {
+      const { seqNo, connectedAt, sourceIp } = msg.payload;
+
+      dispatch(actionReceived({
+        id: `${sourceIp}_${seqNo}`,
+        clientIp: sourceIp,
+        seqNo,
+        timestamp: connectedAt,
+        subject: msg.subject,
+        payload: msg.payload
+      }));
+
+      dispatch(truncateClient(sourceIp));
+    };
+
+    const handleDisconnected = (msg: { subject: "cstoken_client_Disconnected"; payload: DisconnectedClient }) => {
+      const { seqNo, disconnectedAt, sourceIp } = msg.payload;
+
+      dispatch(actionReceived({
+        id: `${sourceIp}_${seqNo}`,
+        clientIp: sourceIp,
+        seqNo,
+        timestamp: disconnectedAt,
+        subject: msg.subject,
+        payload: msg.payload
+      }));
+
+      dispatch(truncateClient(sourceIp));
+    };
+
+    const handleTTT = (msg: WSTTTMessage) => {
+      setTTTSeq(prev => {
+        const next = prev + 1;
+        setTTTMessageQueue(q =>
+          [...q, { seq: next, msg }].slice(-MSG_QUEUE_MAX)
+        );
+        return next;
+      });
+    };
+
+    const handleLivePost = (msg: WSLivePostMessage) => {
+      setLivePostSeq(prev => {
+        const next = prev + 1;
+        setLivePostMessageQueue(q =>
+          [...q, { seq: next, msg }].slice(-MSG_QUEUE_MAX)
+        );
+        return next;
+      });
+    };
+
+    function isCSTokenMessage(msg: GatewayMessage): msg is WSCSTokenMessage {
+      return msg.subject.startsWith("cstoken_");
     }
 
+    const handleGatewayMessage = (msg: GatewayMessage) => {
+      // WSUserConnectEvent
+      if (msg.subject === "ws_user_Connected") {
+        handleWSUserConnect(msg);
+        return;
+      }
 
-    wsRefGateway.current = websocketClient<WSCSTokenMessage>(
+      // CSToken
+      if (isCSTokenMessage(msg)) {
+        switch (msg.subject) {
+          case "cstoken_client_Connected":
+            handleConnected(msg);
+            return;
+
+          case "cstoken_client_Disconnected":
+            handleDisconnected(msg);
+            return;
+
+          case "cstoken_token_Acquire":
+            handleAcquireCS(msg);
+            return;
+
+          case "cstoken_token_Request":
+            handleRequestCS(msg);
+            return;
+
+          case "cstoken_process_Service":
+            handleProcSvc(msg);
+            return;
+        }
+      }
+
+      // TTT
+      if (msg.subject === "ttt_game_Update") {
+        handleTTT(msg);
+        return;
+      }
+
+      // LivePost
+      if (msg.subject === "liveposts_post_Stage") {
+        handleLivePost(msg);
+        return;
+      }
+
+      console.warn("Unknown subject in msg:", msg);
+    };
+
+    wsRefGateway.current = websocketClient<GatewayMessage>(
       {
         queryParams: { type: "all" },
         service: "NetWSGateway",
-        onMessage: handleWSMessage,
+        onMessage: handleGatewayMessage,
         onDisconnect: () => { },
       },
       (client) => { wsRefGateway.current = client; }

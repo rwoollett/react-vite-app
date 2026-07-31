@@ -1,4 +1,3 @@
-import { type WSUserConnect } from "./wsuser";
 
 export type LivePostPage = {
   title: string;
@@ -71,7 +70,5 @@ declare global {
   }
 }
 
-export type WSLivePostMessage = 
-| { subject: "liveposts_post_Stage"; payload: PostStage }
-| { subject: "ws_user_Connected"; payload: WSUserConnect };
+export type WSLivePostMessage = { subject: "liveposts_post_Stage"; payload: PostStage };
 

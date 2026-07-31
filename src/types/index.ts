@@ -1,5 +1,7 @@
-import type { ClientCS, AcquireCS, RequestCS, ProcSvc } from "./cstoken";
-import type { Game, PlayerMove } from "./ttt";
+import type { ClientCS, AcquireCS, RequestCS, ProcSvc, WSCSTokenMessage } from "./cstoken";
+import type { WSLivePostMessage } from "./livePosts";
+import type { Game, PlayerMove, WSTTTMessage } from "./ttt";
+import type { WSUserConnectMessage } from "./wsuser";
 
 export * from "./cstoken";
 export * from "./ttt";
@@ -63,5 +65,12 @@ export type BoardMoveMutationVariables = {
 export type GameUpdateByGameIdSubscriptionVariables = {
   gameId: string;
 };
+
+export type GatewayMessage =
+  | WSCSTokenMessage
+  | WSTTTMessage
+  | WSLivePostMessage
+  | WSUserConnectMessage;
+
 
 
