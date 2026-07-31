@@ -19,7 +19,6 @@ type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
   gatewayUserId: string | null;
   setGatewayUserId: React.Dispatch<React.SetStateAction<string | null>>;
-  wsRefLivePost: React.RefObject<WebSocketClient | null>;
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
   livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
   lastProcessedCSSeq: number;
@@ -36,9 +35,7 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(undefin
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useAppDispatch();
 
-  const wsRefLivePost = useRef<WebSocketClient | null>(null);
   const wsRefGateway = useRef<WebSocketClient | null>(null);
-
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
   const [livePostMessageQueue, setLivePostMessageQueue] = useState<{ seq: number, msg: WSLivePostMessage }[]>([]);
   const [, setTTTSeq] = useState(0);
@@ -48,8 +45,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
   const [gatewayUserId, setGatewayUserId] = useState<string | null>(null);
 
-
-  // NetWS Gateway
   useEffect(() => {
 
     const handleWSUserConnect = (msg: WSUserConnectMessage) => {
@@ -219,34 +214,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    wsRefLivePost.current = websocketClient<WSLivePostMessage>(
-      {
-        queryParams: { type: "all" },
-        service: "LivePost",
-        onMessage: (msg) => {
-          setLivePostSeq(prevSeq => {
-            const nextSeq = prevSeq + 1;
-            setLivePostMessageQueue(
-              q => [...q, { seq: nextSeq, msg }]
-                .slice(-MSG_QUEUE_MAX)
-            );
-            return nextSeq;
-          });
-        },
-        onDisconnect: () => { },
-      },
-      (client) => { wsRefLivePost.current = client; }
-    );
-    return () => wsRefLivePost.current?.close();
-  }, []);
-
   return (
     <WebSocketContext.Provider value={{
       wsRefGateway,
       gatewayUserId,
       setGatewayUserId,
-      wsRefLivePost,
       lastProcessedCSSeq,
       setLastProcessedCSSeq,
       tttMessageQueue,
