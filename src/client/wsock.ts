@@ -27,7 +27,7 @@ const wsUrl = (service: string) => {
   } else if (service === 'NetWSGateway') {
     return `${import.meta.env.VITE_GATEWAY_WSL}`;
   } else {
-    return `${import.meta.env.VITE_CSTOKEN_SERVER_WS}`;
+    return `${import.meta.env.VITE_GATEWAY_WSL}`;
   }
 }
 
