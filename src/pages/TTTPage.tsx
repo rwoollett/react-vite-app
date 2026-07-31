@@ -5,13 +5,11 @@ import { useWebSocket } from "../hooks/use-websocket-context";
 import { type Game, isGame, isMove, type PlayerMove } from '../types';
 import Button from '../components/Button';
 import { useAppDispatch, useAppSelector } from '../store/reducers/store';
-import { setCurrentGame, clearCurrentGame, setCurrentGameUser } from '../store/actions/ttt';
+import { setCurrentGame, clearCurrentGame } from '../store/actions/ttt';
 
 const CanvasComponent: React.FC = () => {
-  const { tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
+  const { gatewayUserId: gameUser, tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
   const dispatch = useAppDispatch();
-
-  //const [createGameData, setCreateGameData] = useState<Game | null>(null);
 
   const [startGameData, setStartGameData] = useState<Game | null>(null);
   const startGame = async (gameId: string) => {
@@ -43,11 +41,9 @@ const CanvasComponent: React.FC = () => {
         body: JSON.stringify({ gameId, userId: gameUser, player, moveCell, isOpponentStart })
       });
       const data = await response.json();
-      //console.log(data);
       if (!data || !isMove(data.boardMove)) {
         throw new Error("Invalid response format");
       } else {
-        //console.log(data.boardMove);
         setBoardMoveData(data.boardMove);
       }
     } catch (error) {
@@ -88,7 +84,6 @@ const CanvasComponent: React.FC = () => {
   const [hasMovedBoard, setHasMovedBoard] = useState(false);
 
   const game = useAppSelector(state => state.ttt.currentGame);
-  const gameUser = useAppSelector(state => state.ttt.currentGameUser);
 
   useEffect(() => {
     let updatedSeq = lastProcessedTTTSeq;
@@ -96,10 +91,6 @@ const CanvasComponent: React.FC = () => {
 
     for (const { seq, msg } of tttMessageQueue) {
       if (seq > updatedSeq) {
-        if (msg.subject === "ws_user_Connected") {
-          dispatch(setCurrentGameUser(msg.payload.userId));
-          //setUserId(msg.payload.userId);
-        }
         console.log('client', updatedSeq, seq, msg);
         if (msg.subject === "ttt_game_Update" && msg.payload.gameId === gameId) {
           const newBoard = msg.payload.board.split(",");
@@ -208,7 +199,6 @@ const CanvasComponent: React.FC = () => {
 
       } else {
         setBoardUpdated(true);
-        // setHasMovedBoard(false);
       }
     }
   };

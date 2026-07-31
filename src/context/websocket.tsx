@@ -17,6 +17,8 @@ import type { WSUserConnectMessage } from "../types/wsuser";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
+  gatewayUserId: string | null;
+  setGatewayUserId: React.Dispatch<React.SetStateAction<string | null>>;
   wsRefTTT: React.RefObject<WebSocketClient | null>;
   wsRefLivePost: React.RefObject<WebSocketClient | null>;
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
@@ -47,6 +49,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedCSSeq, setLastProcessedCSSeq] = useState(0);
   const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
+  const [gatewayUserId, setGatewayUserId] = useState<string | null>(null);
 
 
   // NetWS Gateway
@@ -54,9 +57,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     const handleWSUserConnect = (msg: WSUserConnectMessage) => {
       console.log("Gateway WS connected with userId:", msg.payload.userId);
-
-      // You can store this in context if needed:
-      // setGatewayUserId(msg.payload.userId);
+      setGatewayUserId(msg.payload.userId);
     };
 
     const handleAcquireCS = (msg: { subject: "cstoken_token_Acquire"; payload: AcquireCS }) => {
@@ -269,6 +270,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   return (
     <WebSocketContext.Provider value={{
       wsRefGateway,
+      gatewayUserId,
+      setGatewayUserId,
       wsRefTTT,
       wsRefLivePost,
       lastProcessedCSSeq,
