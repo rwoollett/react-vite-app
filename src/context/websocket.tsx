@@ -19,7 +19,6 @@ type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
   gatewayUserId: string | null;
   setGatewayUserId: React.Dispatch<React.SetStateAction<string | null>>;
-  wsRefTTT: React.RefObject<WebSocketClient | null>;
   wsRefLivePost: React.RefObject<WebSocketClient | null>;
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
   livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
@@ -37,9 +36,7 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(undefin
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useAppDispatch();
 
-  const wsRefTTT = useRef<WebSocketClient | null>(null);
   const wsRefLivePost = useRef<WebSocketClient | null>(null);
-
   const wsRefGateway = useRef<WebSocketClient | null>(null);
 
   const [tttMessageQueue, setTTTMessageQueue] = useState<{ seq: number, msg: WSTTTMessage }[]>([]);
@@ -222,29 +219,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  useEffect(() => {
-    wsRefTTT.current = websocketClient<WSTTTMessage>(
-      {
-        queryParams: { type: "all" },
-        service: "TTT",
-        onMessage: (msg) => {
-          setTTTSeq(prevSeq => {
-            const nextSeq = prevSeq + 1;
-            setTTTMessageQueue(
-              q => [...q, { seq: nextSeq, msg }]
-                .slice(-MSG_QUEUE_MAX)
-            );
-            return nextSeq;
-          });
-        },
-        onDisconnect: () => { },
-      },
-      (client) => { wsRefTTT.current = client; }
-    );
-    return () => wsRefTTT.current?.close();
-  }, []);
-
   useEffect(() => {
     wsRefLivePost.current = websocketClient<WSLivePostMessage>(
       {
@@ -272,7 +246,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       wsRefGateway,
       gatewayUserId,
       setGatewayUserId,
-      wsRefTTT,
       wsRefLivePost,
       lastProcessedCSSeq,
       setLastProcessedCSSeq,
