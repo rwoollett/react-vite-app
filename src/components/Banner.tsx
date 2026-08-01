@@ -1,6 +1,6 @@
 import { Box, Title, Text, Stack, useMantineTheme } from '@mantine/core';
 import DateDisplay from './DateDisplay';
-import { useAppSelector } from '../store/reducers/store'
+import { useAppSelector } from '../store/reducers/store';
 
 interface BannerProps {
   title: string;
@@ -14,11 +14,14 @@ export function Banner({ title, desc }: BannerProps) {
 
   const lightOverlay = 'rgba(12, 200, 198, 0.45), rgba(212, 204, 198, 0.45)';
   const darkOverlay = 'rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)';
-
   const overlay = isDark ? darkOverlay : lightOverlay;
 
   return (
     <Box
+      pos="relative"
+      w={800}        // FIXED WIDTH (change as needed)
+      h={300}        // FIXED HEIGHT (change as needed)
+      mx="auto"
       style={{
         backgroundImage: `
           linear-gradient(${overlay}),
@@ -26,14 +29,26 @@ export function Banner({ title, desc }: BannerProps) {
         `,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        borderRadius: theme.radius.md,
+        overflow: 'hidden',
       }}
-      py="8vh"
-      px="md"
       c={isDark ? theme.white : theme.black}
     >
-      <Stack gap="xs">
+      <Stack
+        pos="absolute"
+        top={0}
+        left={0}
+        w="100%"
+        h="100%"
+        justify="center"
+        align="center"
+        px="lg"
+        style={{
+          textShadow: '0 2px 4px rgba(0,0,0,0.4)',
+        }}
+      >
         <Title order={1} size="3rem" c="white">
-          {title}
+          !!!! {title} test
         </Title>
 
         <Text size="lg" c="white">
