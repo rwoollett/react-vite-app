@@ -70,7 +70,7 @@ const SignIn: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Skeleton times={1} className="sign-in-skeleton" />
+    return <Skeleton times={1} />
   }
 
   return (<>

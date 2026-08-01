@@ -47,7 +47,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
         <p className="panel-heading mb-4 is-size-5">Live Posts</p>
         <div className='panel-block mb-2  '>
           <div className='container'>
-            <Skeleton times={4} className={'sign-in-skeleton'} />
+            <Skeleton times={4} />
           </div>
         </div>
       </div>

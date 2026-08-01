@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import './styles/main.scss'
+import { AppShell } from '@mantine/core';
 import { ROUTES } from './resources/routes-constants'
 import NavBar from './components/NavBar'
 import HomePage from './pages/HomePage'
@@ -20,47 +20,59 @@ import LivePosts from './pages/LivePosts'
 import AddPostForm from './components/AddPostForm'
 import LivePostsPage from './pages/LivePostsPage'
 
-const RootComponent: React.FC = () => {
+interface RootProps {
+  toggleColorScheme: () => void;
+}
+
+const RootComponent: React.FC<RootProps> = ({toggleColorScheme}) => {
   const { isLoggedIn, email, isLoading } = useSignedInAuthorize();
   if (isLoading) {
     return (
-      <div className='main-content'>
-        <Skeleton times={1} className={'sign-in-skeleton'} />
+      <div style={{ padding: 16 }}>
+        <Skeleton times={4} size="large" radius="md"/>
       </div>
     )
   }
   return (
     <Router>
-      <NavBar isLoggedIn={isLoggedIn} />
-      <section className='main-content'>
-        <Routes>
-          <Route path="/posts/*" element={null} />
-          <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
-          <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
-          <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
-          <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
-          <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
-          <Route path={ROUTES.COUNTDOWNPAGE_ROUTE} element={<CountdownPage />} >
-            <Route index element={<CountdownList />} />
-            <Route path="create" element={<CountdownCreate />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-          <Route path={`${ROUTES.LIVEPOSTS_ROUTE}`} element={<LivePostsPage />}>
-            <Route index element={<LivePosts />} />
-            <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
-              <Route path="create" element={<AddPostForm email={email} />} />
+      <AppShell padding="md">
+        <AppShell.Header>
+          {/* <div style={{ height: 52 }}> */}
+            <NavBar toggleColorScheme={toggleColorScheme} isLoggedIn={isLoggedIn} />
+          {/* </div> */}
+        </AppShell.Header>
+
+        <AppShell.Main pt={52}>
+          <Routes>
+            <Route path="/posts/*" element={null} />
+            <Route path={ROUTES.HOMEPAGE_ROUTE} element={<HomePage />} />
+            <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
+            <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
+            <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
+            <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
+            <Route path={ROUTES.COUNTDOWNPAGE_ROUTE} element={<CountdownPage />} >
+              <Route index element={<CountdownList />} />
+              <Route path="create" element={<CountdownCreate />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
+            <Route path={`${ROUTES.LIVEPOSTS_ROUTE}`} element={<LivePostsPage />}>
+              <Route index element={<LivePosts />} />
+              <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+                <Route path="create" element={<AddPostForm email={email} />} />
+              </Route>
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
+              <Route path={`${ROUTES.USER_ROUTE}`} element={<UserPage />} />
+            </Route>
+
+            {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
             <Route path="*" element={<NotFoundPage />} />
-          </Route>
+          </Routes>
 
-          <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
-            <Route path={`${ROUTES.USER_ROUTE}`} element={<UserPage />} />
-          </Route>
-
-          {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </section>
+        </AppShell.Main>
+      </AppShell>
     </Router>
   );
 

@@ -1,27 +1,28 @@
-import type { HTMLAttributes, JSX } from "react";
+import { Box } from '@mantine/core';
 import style from './Skeleton.module.scss';
 
 interface SkeletonProps {
   times: number;
+  size?: 'small' | 'medium' | 'large';
+  radius?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
-function Skeleton({ times, className }: SkeletonProps & HTMLAttributes<HTMLElement>): JSX.Element {
-  let outerClassNames = style.skeleton__container;
-  if (className) {
-    outerClassNames += ' ' + className;
-  } 
-  const innerClassNames = style.skeleton;
-  const boxes = Array(times)
-    .fill(0)
-    .map((_, i) => 
-      (
-        <div key={i} className={outerClassNames}>
-          <div className={innerClassNames}></div>
-        </div>
-      ));
+function Skeleton({ times, size = 'medium', radius = 'sm' }: SkeletonProps) {
+  const outerClassNames = `${style.skeleton__container}`;
+  const innerClassNames = `${style.skeleton} ${style[size]}`;
 
-  return (<div>{boxes}</div>);
+  return (
+    <Box>
+      {Array.from({ length: times }).map((_, i) => (
+        <Box key={i} className={outerClassNames} style={{
+            borderRadius: `var(--mantine-radius-${radius})`}}>
+          <Box className={innerClassNames} style={{
+            backgroundColor: 'var(--mantine-color-gray-3)',
+          }} />
+        </Box>
+      ))}
+    </Box>
+  );
 }
 
 export default Skeleton;
-

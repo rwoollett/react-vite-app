@@ -1,9 +1,7 @@
-//@import url('https://fonts.googleapis.com/css?family=Lato');
-@use '../styles/mixins';
 
 .countdown {
  // font-family: 'Lato', sans-serif;
-  @include mixins.boxMargin;
+  //@include mixins.boxMargin;
   margin: 4px;
   background-color:rgb(247, 247, 237);  
 

@@ -13,7 +13,7 @@ const Greeting = ({ name }: GreetingProps) => {
 
   let content;
   if (isLoading) {
-    content = <Skeleton times={1} className={style.greeting} />;
+    content = <Skeleton times={1} />;
   } else if (error) {
     content = 'A problem with Geolocation';
   } else {

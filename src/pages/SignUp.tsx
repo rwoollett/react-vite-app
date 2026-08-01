@@ -28,7 +28,7 @@ const SignUp = (): JSX.Element => {
   }, [isLoggedIn, isLoading, navigate]);
 
   if (isLoading) {
-    return <Skeleton times={1} className="sign-in-skeleton" />
+    return <Skeleton times={1} />
   }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {

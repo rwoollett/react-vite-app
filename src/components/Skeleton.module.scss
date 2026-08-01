@@ -1,48 +1,39 @@
-@use '../styles/mixins';
-
 .skeleton {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  width: 100%;
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right,
+      var(--mantine-color-gray-4) 0%,
+      var(--mantine-color-gray-1) 50%,
+      var(--mantine-color-gray-4) 100%);
+  background-size: 300% 100%;
+  border-radius: inherit;
+}
 
-  -webkit-animation: shimmer 1.5s infinite linear;
-  animation: shimmer 1.5s infinite linear;
-  -webkit-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
-  transform: translateX(-100%);
+.skeleton__container {
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--mantine-color-gray-4);
+  margin-bottom: 10px;
+}
 
-  background: -moz-linear-gradient(to right, var(--tw-gradient-stops));
-  background: -webkit-linear-gradient(to right, var(--tw-gradient-stops));
-  background: -o-linear-gradient(to right, var(--tw-gradient-stops));
-  background: -ms-linear-gradient(to right, var(--tw-gradient-stops));
-  background: linear-gradient(to right, var(--tw-gradient-stops));
-
-  &__container {
-    --tw-gradient-from: #e5e7eb;
-    --tw-gradient-to: #e5e7eb;
-    --tw-gradient-stops: var(--tw-gradient-from), #ffffff, var(--tw-gradient-to);
-
-    position: relative;
-    overflow: hidden;
-    background-color: var(--tw-gradient-from);
-    margin-bottom: 10px;
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
   }
-
-
-  @-webkit-keyframes shimmer {
-    100% {
-      -webkit-transform: translateX(100%);
-      transform: translateX(100%);
-    }
+  100% {
+    background-position: -200% 0;
   }
+}
 
-  @keyframes shimmer {
-    100% {
-      -webkit-transform: translateX(100%);
-      transform: translateX(100%);
-    }
-  }
+/* size variants */
+.small {
+  height: 20px;
+}
 
+.medium {
+  height: 30px;
+}
+
+.large {
+  height: 50px;
 }
