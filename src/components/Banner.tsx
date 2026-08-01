@@ -19,20 +19,19 @@ export function Banner({ title, desc }: BannerProps) {
   return (
     <Box
       pos="relative"
-      w={800}        // FIXED WIDTH (change as needed)
-      h={300}        // FIXED HEIGHT (change as needed)
-      mx="auto"
+      w="100%"
+      h={250}               // FIXED HEIGHT (mobile + desktop)
       style={{
         backgroundImage: `
           linear-gradient(${overlay}),
           url(/styles/coastalDream.jpg)
         `,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'left center',   // crop from left side
         borderRadius: theme.radius.md,
         overflow: 'hidden',
       }}
-      c={isDark ? theme.white : theme.black}
+      px="md"
     >
       <Stack
         pos="absolute"
@@ -41,17 +40,26 @@ export function Banner({ title, desc }: BannerProps) {
         w="100%"
         h="100%"
         justify="center"
-        align="center"
+        align="flex-start"
         px="lg"
         style={{
           textShadow: '0 2px 4px rgba(0,0,0,0.4)',
         }}
       >
-        <Title order={1} size="3rem" c="white">
-          !!!! {title} test
+        <Title
+          order={1}
+          size="2rem"
+          c="white"
+          style={{ lineHeight: 1.2 }}
+        >
+          {title}
         </Title>
 
-        <Text size="lg" c="white">
+        <Text
+          size="md"
+          c="white"
+          maw="90%"          // prevents overflow on mobile
+        >
           {desc}
         </Text>
 
@@ -60,7 +68,6 @@ export function Banner({ title, desc }: BannerProps) {
           c={isDark ? theme.white : theme.black}
           px="sm"
           py={4}
-          w="fit-content"
           style={{ borderRadius: 4 }}
         >
           <DateDisplay />
