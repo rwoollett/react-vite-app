@@ -1,5 +1,5 @@
 import React from "react";
-import type { RequestCS, AcquireCS, ActionByIp, ProcSvc } from "../../types";
+import type { RequestCS, AcquireCS, ActionByIp, ProcSvc, ConnectedClient } from "../../types";
 import { format, parseISO } from "date-fns";
 import styles from './ClientToken.module.scss'
 import { selectAllTokenActions, useAppSelector } from "../../store/reducers/store";
@@ -101,6 +101,22 @@ const ClientToken: React.FC<ClientTokenProps> = ({ clientsByIp }) => {
         activityDescription = `${(activity.payload as ProcSvc).serviceMessage}`;
         widthItem = styles.largeActivity;
         timestamp = activity.payload.processedAt;
+
+      } else if ('connectedAt' in activity.payload) {
+        // This is an ConnectedClient
+        backgroundItem = styles.connectedItem;
+        activityLabel = 'Connected';;
+        activityDescription = `${(activity.payload.sourceIp)} is connected`;
+        widthItem = styles.smallActivity;
+        timestamp = activity.payload.connectedAt;
+
+      } else if ('disconnectedAt' in activity.payload) {
+        // This is an ConnectedClient
+        backgroundItem = styles.disconnectedItem;
+        activityLabel = 'Disconnected';;
+        activityDescription = `${(activity.payload.sourceIp)} is disconnected`;
+        widthItem = styles.smallActivity;
+        timestamp = activity.payload.disconnectedAt;
 
       }
       console.log(activity);

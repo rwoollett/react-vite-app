@@ -50,6 +50,12 @@
 .processedItem {
   background: rgba(199, 132, 132, 0.122);
 }
+.connectedItem {
+  background: rgba(16, 179, 10, 0.163);
+}
+.disconnectedItem {
+  background: rgba(179, 33, 10, 0.163);
+}
 
 @keyframes fadeIn {
   from {
