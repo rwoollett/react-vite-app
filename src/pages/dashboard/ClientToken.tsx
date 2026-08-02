@@ -1,5 +1,5 @@
 import React from "react";
-import type { RequestCS, AcquireCS, ActionByIp, ProcSvc, ConnectedClient } from "../../types";
+import type { RequestCS, AcquireCS, ActionByIp, ProcSvc } from "../../types";
 import { format, parseISO } from "date-fns";
 import styles from './ClientToken.module.scss'
 import { selectAllTokenActions, useAppSelector } from "../../store/reducers/store";
