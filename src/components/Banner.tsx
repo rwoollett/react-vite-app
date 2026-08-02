@@ -16,6 +16,7 @@ export function Banner({ title, desc }: BannerProps) {
       pos="relative"
       w="100%"
       h={250}               // FIXED HEIGHT (mobile + desktop)
+      // mx="auto"
       style={{
         backgroundImage: `
           linear-gradient(${bannerOverlay}),

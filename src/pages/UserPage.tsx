@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, type FormEvent } from 'react'
+import React, { useEffect, useRef, useState, type FormEvent } from 'react';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useRefreshTokenMutation } from '../store/api/authenticatedUsersApi';
 import { selectAllTokenActions, useAppSelector } from '../store/reducers/store';
@@ -7,6 +7,9 @@ import { sayFarewell } from '../utility/functions';
 import Button from '../components/Button';
 import { useWebSocket } from '../hooks/use-websocket-context';
 import Dashboard from './dashboard/Dashboard';
+
+import { Box, Paper, Group, Text, Badge, Stack } from '@mantine/core';
+import { useColorMap } from '../theme/colorMap';
 
 const UserPage: React.FC = () => {
   const { isLoggedIn, email, expiry } = useSignedInAuthorize();
@@ -17,35 +20,29 @@ const UserPage: React.FC = () => {
   const [refreshToken] = useRefreshTokenMutation();
   const lastProcessedSeq = useRef(0);
 
-  const allActions = useAppSelector(state =>
-    selectAllTokenActions(state)
-  );
+  const allActions = useAppSelector(state => selectAllTokenActions(state));
+  const contents = useAppSelector(state => state.data.contents);
 
-  const contents = useAppSelector((state) => {
-    return state.data.contents;
-  });
+  const { surfaceBg, surfaceText } = useColorMap();
 
-  // const handleSendMessage = () => {
-  //   const { payload } = { payload: latestTimestamp };
-  //   if (wsRef.current && connected) {
-  //     wsRef.current.send({ payload });
-  //   } else {
-  //     console.log('WebSocket is not connected');
-  //   }
-  // };
+  const handleSendMessage = () => {
+    if (wsRef.current && connected) {
+      wsRef.current.send({ farewell });
+    } else {
+      console.log('WebSocket is not connected');
+    }
+  };
+
   useEffect(() => {
     if (allActions.length === 0) return;
 
     for (const action of allActions) {
       if (action.seqNo > lastProcessedSeq.current) {
         setConnected(true);
-        setReceived(prev => {
-          return [...prev].concat(action.seqNo as unknown as string);
-        });
+        setReceived(prev => [...prev, String(action.seqNo)]);
         lastProcessedSeq.current = action.seqNo;
       }
     }
-
   }, [allActions]);
 
   const onHandleGreet = async (event: FormEvent<HTMLFormElement>) => {
@@ -55,56 +52,69 @@ const UserPage: React.FC = () => {
   };
 
   return (
-    <div className='hero'>
-      <div className='hero-head'>
-        <header>
-          {isLoggedIn && (
-            <div className='mt-0 columns has-background-info-light'>
-              <div className="column is-narrow">
-                <div className="is-size-6">Welcome, <b>{email}</b>! {expiry && new Date(expiry * 1000).toLocaleString()}</div>
-              </div>
-              <div className="column is-narrow">
-                <span className={`tag ${connected ? 'is-success' : 'is-danger'}`}>
-                  {connected ? 'Connected' : 'Disconnected'}
-                </span>
-              </div>
-              {/* <div className="column">
-                <button type="button" className="tag is-link" onClick={handleSendMessage}>Send</button>
-              </div> */}
-              <div className="column is-narrow">
-                <span className={`tag ${received.length > 0 ? 'is-warning' : 'is-info'}`}>
-                  {received.length > 0 ? `Received ${received.length} notifications` : 'No new notifications'}
-                </span>
-              </div>
-            </div>
-          )}
-        </header>
-      </div>
+    <Box bg={surfaceBg} c={surfaceText} p="lg">
 
-      <div className='hero-body'>
-        <div className="container is-widescreen">
-          <form onSubmit={onHandleGreet}>
+      {/* Header Section */}
+      {isLoggedIn && (
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="md"
+          mb="lg"
+          bg={surfaceBg}
+          c={surfaceText}
+        >
+          <Group justify="space-between" align="center">
 
-            <div className="field is-grouped">
-              <div className="control">
-                <Button primary type="submit">Greet</Button>
-              </div>
-            </div>
+            <Text size="sm">
+              Welcome, <b>{email}</b>!{" "}
+              {expiry && new Date(expiry * 1000).toLocaleString()}
+            </Text>
 
-            <div className='block'>
-              {isLoggedIn && <Greeting name={`${contents}`} />}
-              <p>{farewell}</p>
-            </div>
-          </form>
-          <div className="px-4 pb-6">
-            <Dashboard />
-          </div>
+            <Badge color={connected ? "green" : "red"} variant="filled">
+              {connected ? "Connected" : "Disconnected"}
+            </Badge>
 
-        </div>
-      </div>
-    </div>
-  )
-}
+            <Button primary type="button" onClick={handleSendMessage}>
+              Send
+            </Button>
 
-export default UserPage
+            <Badge color={received.length > 0 ? "yellow" : "blue"} variant="filled">
+              {received.length > 0
+                ? `Received ${received.length} notifications`
+                : "No new notifications"}
+            </Badge>
 
+          </Group>
+        </Paper>
+      )}
+
+      {/* Body Section */}
+      <Paper
+        shadow="sm"
+        radius="md"
+        p="lg"
+        bg={surfaceBg}
+        c={surfaceText}
+      >
+        <form onSubmit={onHandleGreet}>
+          <Stack gap="md">
+
+            <Button primary type="submit">Greet</Button>
+
+            {isLoggedIn && <Greeting name={`${contents}`} />}
+            <Text>{farewell}</Text>
+
+          </Stack>
+        </form>
+
+        <Box mt="lg">
+          <Dashboard />
+        </Box>
+      </Paper>
+
+    </Box>
+  );
+};
+
+export default UserPage;

@@ -56,6 +56,7 @@ const RootComponent: React.FC<RootProps> = ({ toggleColorScheme }) => {
             <Route path={ROUTES.TTTPAGE_ROUTE} element={<TTTPage />} />
             <Route path={ROUTES.FLIPIMAGEPAGE_ROUTE} element={<FlipImagePage />} />
             <Route path={ROUTES.SIGNIN_ROUTE} element={<SignIn />} />
+            {/* <Route path={ROUTES.REGISTER_ROUTE} element={<SignUp />} /> */}
             <Route path={ROUTES.SIGNOUT_ROUTE} element={<SignOut />} />
             <Route path={ROUTES.COUNTDOWNPAGE_ROUTE} element={<CountdownPage />} >
               <Route index element={<CountdownList />} />

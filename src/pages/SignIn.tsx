@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type ChangeEvent, type FormEvent, type JSX } from 'react'
+import React, { useEffect, useState, type ChangeEvent, type FormEvent, type JSX } from 'react';
 import { setContents } from '../store/actions/data';
 import { ipApi } from '../store/api/ipApi';
 import { useAppDispatch } from '../store/reducers/store';
@@ -12,16 +12,22 @@ import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import Skeleton from '../components/Skeleton';
 import Banner from '../components/Banner';
 
+import { Box, Paper, Stack, Text, TextInput, PasswordInput, Group } from '@mantine/core';
+import { useColorMap } from '../theme/colorMap';
+
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [errors, setErrors] = useState<JSX.Element | null>(null);
+
   const [signIn, results] = useSignInMutation();
   const { isLoggedIn, isLoading } = useSignedInAuthorize();
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const { surfaceBg, surfaceText } = useColorMap();
 
   const from = location.state?.from || "/";
 
@@ -32,24 +38,20 @@ const SignIn: React.FC = () => {
   }, [isLoggedIn, navigate, from]);
 
   const redirectToHomePage = () => {
-    navigate(ROUTES.LIVEPOSTS_ROUTE)
-  }
+    navigate(ROUTES.LIVEPOSTS_ROUTE);
+  };
 
   const onHandleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const errorMessage: string[] = [];
-    if (email === '') {
-      errorMessage.push('Please enter email!');
-    }
-    if (password === '') {
-      errorMessage.push('Please enter a password!');
-    }
+
+    const errs: string[] = [];
+    if (!email) errs.push("Please enter email!");
+    if (!password) errs.push("Please enter a password!");
+
     setErrors(null);
-    if (errorMessage.length > 0) {
-      setErrorMessage(errorMessage);
-      return;
-    }
-    // Now use the url to login with auth backend service
+    setErrorMessage(errs);
+    if (errs.length > 0) return;
+
     try {
       await signIn({ email, password }).unwrap();
       setEmail("");
@@ -58,69 +60,76 @@ const SignIn: React.FC = () => {
       dispatch(setContents([email]));
     } catch (error) {
       const statusErrors = error as Partial<StatusErrors>;
-      // if (error.status === 401) {
-      //   setErrorMessage('Unauthorized: Invalid email or password.');
-      // } else {
-      //   setErrorMessage('An unexpected error occurred. Please try again.');
-      // }
-      console.error('Sign-in failed:', error);
+      console.error("Sign-in failed:", error);
       setErrors(<StatusAlert statusErrors={statusErrors} />);
-
     }
   };
 
   if (isLoading) {
-    return <Skeleton times={1} />
+    return <Skeleton times={1} />;
   }
 
-  return (<>
-    <Banner title="Net Processor Dashboard" desc="Show the activity of net processor clients by the IP identifier" />
-    <div className='hero'>
-      <div className='hero-body'>
-        <div className="container">
+  return (
+    <>
+      <Banner
+        title="Net Processor Dashboard"
+        desc="Show the activity of net processor clients by the IP identifier"
+      />
+
+      <Box bg={surfaceBg} c={surfaceText} p="lg">
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="lg"
+          bg={surfaceBg}
+          c={surfaceText}
+          mx="auto"
+          style={{ maxWidth: 480 }}
+        >
           <form onSubmit={onHandleLogin}>
-            <ul>
-              {errorMessage.length > 0 && errorMessage.map((err, i) => {
-                return (<li key={i}>{err}</li>);
-              })}
-            </ul>
-            {(results.isError) && errors}
-            <div className="field">
-              <div className="control">
-                <label htmlFor="emailInput" className="label">Email</label>
-                <input id="emailInput" name="emailInput" value={email}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
-                  className={`input ${email === '' && errorMessage.length && 'is-danger'}`}
-                  autoComplete="email" type="text" placeholder="temp@hello.co.nz" />
-              </div>
-            </div>
+            <Stack gap="sm">
 
-            <div className="field">
-              <div className="control">
-                <label htmlFor='passwordInput' className="label">Password</label>
-                <input id='passwordInput' name='passwordInput' value={password}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-                  className={`input ${password === '' && errorMessage.length && 'is-danger'}`}
-                  autoComplete="current-password" type="password" placeholder="password" />
-              </div>
-            </div>
+              {errorMessage.length > 0 && (
+                <Stack gap={4}>
+                  {errorMessage.map((err, i) => (
+                    <Text key={i} c="red">{err}</Text>
+                  ))}
+                </Stack>
+              )}
 
-            <div className="field is-grouped">
-              <div className="control">
+              {results.isError && errors}
+
+              <TextInput
+                id="emailInput"
+                label="Email"
+                value={email}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                placeholder="temp@hello.co.nz"
+                autoComplete="email"
+                error={email === '' && errorMessage.length > 0 ? "Required" : undefined}
+              />
+
+              <PasswordInput
+                id="passwordInput"
+                label="Password"
+                value={password}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                placeholder="password"
+                autoComplete="current-password"
+                error={password === '' && errorMessage.length > 0 ? "Required" : undefined}
+              />
+
+              <Group justify="flex-start" mt="md">
                 <Button primary type="submit">Login</Button>
-              </div>
-              <div className="control">
-                <Button secondary onClick={redirectToHomePage} type="button">Home</Button>
-              </div>
-            </div>
+                <Button secondary type="button" onClick={redirectToHomePage}>Home</Button>
+              </Group>
 
+            </Stack>
           </form>
-        </div>
-      </div>
-    </div>
-  </>
-  )
-}
+        </Paper>
+      </Box>
+    </>
+  );
+};
 
-export default SignIn
-
+export default SignIn;

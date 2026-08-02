@@ -1,5 +1,4 @@
-import { useEffect, type ChangeEvent, type FormEvent, type JSX } from 'react';
-import { useState } from 'react';
+import { useEffect, useState, type ChangeEvent, type FormEvent, type JSX } from 'react';
 import { useSignUpMutation } from '../store/api/authenticatedUsersApi';
 import { type StatusErrors } from '../types/statusErrors';
 import { useNavigate } from 'react-router-dom';
@@ -9,17 +8,24 @@ import { useAppDispatch } from '../store/reducers/store';
 import { ipApi } from '../store/api/ipApi';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import Skeleton from '../components/Skeleton';
+import Banner from '../components/Banner';
 import { ROUTES } from '../resources/routes-constants';
+
+import { Box, Paper, Stack, Text, TextInput, PasswordInput } from '@mantine/core';
+import { useColorMap } from '../theme/colorMap';
 
 const SignUp = (): JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [errors, setErrors] = useState<JSX.Element | null>(null);
+
   const [signUp, results] = useSignUpMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useSignedInAuthorize();
+
+  const { surfaceBg, surfaceText } = useColorMap();
 
   useEffect(() => {
     if (isLoggedIn && !isLoading) {
@@ -28,30 +34,25 @@ const SignUp = (): JSX.Element => {
   }, [isLoggedIn, isLoading, navigate]);
 
   if (isLoading) {
-    return <Skeleton times={1} />
+    return <Skeleton times={1} />;
   }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const errorMessage: string[] = [];
-    if (email === '') {
-      errorMessage.push('Please enter email!');
-    }
-    if (password === '') {
-      errorMessage.push('Please enter a password!');
-    }
+
+    const errs: string[] = [];
+    if (!email) errs.push('Please enter email!');
+    if (!password) errs.push('Please enter a password!');
+
     setErrors(null);
-    if (errorMessage.length > 0) {
-      setErrorMessage(errorMessage);
-      return;
-    }
-    // Now use the url to login with auth backend service
+    setErrorMessage(errs);
+    if (errs.length > 0) return;
+
     try {
       await signUp({ email, password }).unwrap();
-      setEmail("");
-      setPassword("");
+      setEmail('');
+      setPassword('');
       dispatch(ipApi.util.invalidateTags(['CurrentUser']));
-
     } catch (error) {
       const statusErrors = error as Partial<StatusErrors>;
       setErrors(<StatusAlert statusErrors={statusErrors} />);
@@ -59,46 +60,61 @@ const SignUp = (): JSX.Element => {
   };
 
   return (
-    <div className='hero'>
-      <div className='hero-body'>
-        <div className="container">
+    <>
+      <Banner
+        title="Create Your Account"
+        desc="Sign up to access your dashboard and manage your network activity"
+      />
+
+      <Box bg={surfaceBg} c={surfaceText} p="lg">
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="lg"
+          bg={surfaceBg}
+          c={surfaceText}
+          mx="auto"
+          style={{ maxWidth: 480 }}
+        >
           <form onSubmit={onSubmit}>
-            <ul>
-              {errorMessage.length > 0 && errorMessage.map((err, i) => {
-                return (<li key={i}>{err}</li>);
-              })}
-            </ul>
-            {(results.isError) && errors}
+            <Stack gap="sm">
 
-            <div className="field">
-              <div className="control">
-                <label htmlFor="emailInput" className="label">Email</label>
-                <input id="emailInput" name="emailInput" value={email}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
-                  className={`input ${email === '' && errorMessage.length && 'is-danger'}`}
-                  autoComplete="email" type="text" placeholder="temp@hello.co.nz" />
-              </div>
-            </div>
+              {errorMessage.length > 0 && (
+                <Stack gap={4}>
+                  {errorMessage.map((err, i) => (
+                    <Text key={i} c="red">{err}</Text>
+                  ))}
+                </Stack>
+              )}
 
-            <div className="field">
-              <div className="control">
-                <label htmlFor='passwordInput' className="label">Password</label>
-                <input id='passwordInput' name='passwordInput' value={password}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
-                  className={`input ${password === '' && errorMessage.length && 'is-danger'}`}
-                  autoComplete="current-password" type="password" placeholder="password" />
-              </div>
-            </div>
+              {results.isError && errors}
 
-            <div className="field is-grouped">
-              <div className="control">
-                <Button primary type="submit">Sign Up</Button>
-              </div>
-            </div>
+              <TextInput
+                id="emailInput"
+                label="Email"
+                value={email}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                placeholder="temp@hello.co.nz"
+                autoComplete="email"
+                error={email === '' && errorMessage.length > 0 ? 'Required' : undefined}
+              />
+
+              <PasswordInput
+                id="passwordInput"
+                label="Password"
+                value={password}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                placeholder="password"
+                autoComplete="current-password"
+                error={password === '' && errorMessage.length > 0 ? 'Required' : undefined}
+              />
+
+              <Button primary type="submit">Sign Up</Button>
+            </Stack>
           </form>
-        </div>
-      </div>
-    </div>
+        </Paper>
+      </Box>
+    </>
   );
 };
 
