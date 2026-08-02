@@ -1,6 +1,6 @@
 import React, { memo, useEffect, type JSX } from 'react';
 import styles from './Card.module.scss';
-import postStyles from './PostsComponent.module.scss';
+import postStyles from './PostsComponent.module.css';
 import PostAuthor from './PostAuthor';
 import TimeAgo from './TimeAgo';
 import { selectPostById, selectPostIds, useAppDispatch, useAppSelector } from '../store/reducers/store';
@@ -22,9 +22,6 @@ let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
         <h3>{post.title}&nbsp;</h3>
         <PostAuthor author={post.userName} />
         <TimeAgo timeISO={post.date} />
-        {/* <Button secondary outline type="button">
-          View Post
-        </Button> */}
       </a>
     </div>
     );

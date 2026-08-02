@@ -1,0 +1,102 @@
+.posts {
+  display: block;
+}
+
+.posts h2 {
+  margin-right: 10px;
+  font-weight: lighter;
+}
+
+.posts h3 {
+  color: rgba(55, 182, 134, 1);
+  margin-right: 10px;
+  font-weight: lighter;
+}
+
+.posts p {
+  font-weight: lighter;
+}
+
+/* ---------------------- */
+
+.post {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.post h2 {
+  color: rgba(55, 182, 134, 1);
+  margin-right: 10px;
+  margin-bottom: 0px;
+  text-align: left;
+  font-weight: lighter;
+}
+
+.post h2:first-child {
+  display: inline;
+}
+
+.post h3:first-child {
+  display: inline;
+  font-size: large;
+}
+
+.post .author {
+  display: inline;
+}
+
+.post .timePosted {
+  display: inline;
+}
+
+.post h3 {
+  color: rgba(55, 182, 134, 1);
+  margin-right: 10px;
+  font-weight: lighter;
+}
+
+.post p {
+  font-weight: lighter;
+}
+
+.post a {
+  color: inherit;
+}
+
+/* ---------------------- */
+
+.post-content {
+  text-align: left;
+}
+
+/* ---------------------- */
+
+.posts-content .posts-form {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.posts-content .posts-form form {
+  flex: 1 1 190px;
+}
+
+.posts-content .posts-form label,
+.posts-content .posts-form input,
+.posts-content .posts-form select,
+.posts-content .posts-form textarea {
+  width: 100%;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 10px 0px 10px;
+  height: calc(25px + 3vw / 2);
+}
+
+.posts-content .posts-form textarea {
+  padding: 10px;
+  border-right: 1px solid;
+  overflow: auto;
+  height: calc(100px + 3vw / 2);
+}
+
+.posts-content .posts-form label + textarea {
+  margin-top: 0px;
+}

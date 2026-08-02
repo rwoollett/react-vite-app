@@ -1,5 +1,5 @@
 import { useGeolocationQuery } from "../store/api/ipApi";
-import style from './Greeting.module.scss';
+import style from './Greeting.module.css';
 import classnames from 'classnames';
 import Skeleton from "./Skeleton";
 //import { useAppSelector } from "../store/reducers/store";

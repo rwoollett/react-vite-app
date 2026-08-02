@@ -1,6 +1,6 @@
 import { type JSX } from 'react';
 import {parseISO, formatDistanceToNow} from 'date-fns';
-import style from './PostsComponent.module.scss';
+import style from './PostsComponent.module.css';
 
 const TimeAgo = ({ timeISO }: { timeISO:string }):JSX.Element => {
   let timeAgo = '';

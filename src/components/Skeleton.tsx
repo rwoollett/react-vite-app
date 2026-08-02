@@ -1,5 +1,5 @@
 import { Box } from '@mantine/core';
-import style from './Skeleton.module.scss';
+import style from './Skeleton.module.css';
 
 interface SkeletonProps {
   times: number;

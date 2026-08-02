@@ -1,5 +1,5 @@
 import React, { type JSX } from 'react';
-import style from './HomeNavigation.module.scss';
+import style from './HomeNavigation.module.css';
 import Card from  './Card';
 import type { FlashCard } from '../types';
 

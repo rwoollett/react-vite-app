@@ -1,6 +1,6 @@
 import { type HTMLAttributes, type ButtonHTMLAttributes } from 'react';
 import className from 'classnames';
-import style from './Button.module.scss';
+import style from './Button.module.css';
 
 interface ButtonProps {
   rounded?: boolean;

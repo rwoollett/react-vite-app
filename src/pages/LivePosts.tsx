@@ -13,96 +13,112 @@ import { refetchUserByID } from '../store/api/authorUsersSlice';
 import { useWebSocket } from "../hooks/use-websocket-context";
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 
+import { Box, Paper, Group, Text } from '@mantine/core';
+import { useColorMap } from '../theme/colorMap';
+
 const LivePosts: React.FC = () => {
   const { livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
   const { isLoggedIn } = useSignedInAuthorize();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  // const [navCards, setNavCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
-  // const [popularCards, setPopularCards] = useState<{ title: string; catchPhrase: string; }[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { surfaceBg, surfaceText } = useColorMap();
 
+  // WebSocket updates
   useEffect(() => {
     let updatedSeq = lastProcessedLivePostSeq;
-    console.log('\n**client lastProcessedLivePostSeq', updatedSeq);
+
     for (const { seq, msg } of livePostMessageQueue) {
       if (seq > updatedSeq) {
-        // if (msg.subject === "ws_user_Connected") {
-        //   setUserId(msg.payload.userId);
-        // }
         if (msg.subject === "liveposts_post_Stage") {
-          console.log('client', updatedSeq, seq, msg);
           dispatch(fetchPosts());
-
         }
         updatedSeq = seq;
       }
     }
-    console.log('client looped livepost updatesSeq', updatedSeq, lastProcessedLivePostSeq);
+
     if (updatedSeq !== lastProcessedLivePostSeq) {
-      console.log('lastProcessedLivePostSeq', updatedSeq);
       setLastProcessedLivePostSeq(updatedSeq);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [livePostMessageQueue]);
 
+  // Fetch homepage content
   useEffect(() => {
     (async () => {
       try {
         const response = await http<LivePostPage>(
           `${import.meta.env.VITE_LIVEPOSTS_URL}/api/v1/liveposts/homepage`,
-          { method: "GET" });
+          { method: "GET" }
+        );
 
-        const { title, description } = response;
-        setTitle(title);
-        setDescription(description);
-        // setNavCards(navCards);
-        // setPopularCards(popularCards);
-        setIsFetching(false);
+        setTitle(response.title);
+        setDescription(response.description);
       } catch (err) {
-        const error = err as Error;
-        console.log(error.message);
         const { title, description } = homepage.homepage;
-        console.log("Message page :", title);
         setTitle(title);
         setDescription(description);
-        // setNavCards(navCards);
-        // setPopularCards(popularCards);
+      } finally {
         setIsFetching(false);
       }
     })();
   }, []);
 
-  // const handleOnRefresh = () => {
-  //   dispatch(fetchPosts());
-  // };
-
   const toAddPostPage = () => {
     dispatch(refetchUserByID());
-    navigate(`${ROUTES.LIVEPOSTS_ROUTE}/create`)
+    navigate(`${ROUTES.LIVEPOSTS_ROUTE}/create`);
+  };
+
+  if (isFetching) {
+    return <Text p="md">Fetching home page ...</Text>;
   }
 
   return (
-    isFetching ?
-      <div>Fetching home page ...</div> :
-      <>
-        <Banner title={title} desc={description} />
-        <div className='hero'>
-          <div className='hero-head'>
-            {isLoggedIn &&
-              <div className="column is-flex-grow-0 is-size-7">
-                <Button type="button" onClick={() => toAddPostPage()} secondary outline>Create Post</Button>
-              </div>}
-          </div>
-          <div className='hero-body p-0'>
-            <PostsComponent />
-          </div>
-        </div>
-      </>);
+    <>
+      <Banner title={title} desc={description} />
 
-}
+      <Box bg={surfaceBg} c={surfaceText} p="lg">
+
+        {/* Header Section */}
+        {isLoggedIn && (
+          <Paper
+            shadow="sm"
+            radius="md"
+            p="md"
+            mb="lg"
+            bg={surfaceBg}
+            c={surfaceText}
+          >
+            <Group justify="flex-start">
+              <Button
+                type="button"
+                secondary
+                outline
+                onClick={toAddPostPage}
+              >
+                Create Post
+              </Button>
+            </Group>
+          </Paper>
+        )}
+
+        {/* Posts Section */}
+        <Paper
+          // shadow="sm"
+          radius="md"
+          p="md"
+          bg={surfaceBg}
+          c={surfaceText}
+        >
+          <PostsComponent />
+        </Paper>
+
+      </Box>
+    </>
+  );
+};
 
 export default LivePosts;

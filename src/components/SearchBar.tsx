@@ -1,6 +1,6 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useState } from "react";
-import style from "./SearchBar.module.scss";
+import style from "./SearchBar.module.css";
 
 function SearchBar({ onSubmit }: { onSubmit: (term: string) => Promise<void> }) {
   const [term, setTerm] = useState('');

@@ -1,7 +1,7 @@
 import { useEffect, useRef, type HTMLAttributes, useState } from "react";
 //import { GoChevronDown, GoChevronLeft } from 'react-icons/go';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import styles from './Dropdown.module.scss'
+import styles from './Dropdown.module.css'
 import Button from "./Button";
 
 export interface Option {

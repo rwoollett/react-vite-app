@@ -1,5 +1,5 @@
 import { type JSX } from 'react';
-import style from './PostsComponent.module.scss';
+import style from './PostsComponent.module.css';
 
 const PostAuthor = ({ author }: { author: string}):JSX.Element => {
   return (<span className={style.author}>by {
