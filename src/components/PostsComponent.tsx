@@ -1,49 +1,19 @@
-import React, { memo, useEffect, type JSX } from 'react';
-import styles from './Card.module.scss';
-import postStyles from './PostsComponent.module.css';
-import PostAuthor from './PostAuthor';
-import TimeAgo from './TimeAgo';
-import { selectPostById, selectPostIds, useAppDispatch, useAppSelector } from '../store/reducers/store';
+import { useEffect } from 'react';
+import { Box, Text, Stack } from '@mantine/core';
+import { useColorMap } from '../theme/colorMap';
+import { selectPostsForList, useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { fetchPosts } from '../store/api/postsSlice';
+import PostCard from './PostCard';
+import PostCardSkeleton from './PostCardSkeleton';
 
-interface ExcerptProps {
-  postId: number;
-}
-const staticPostUrl = (slug: string) =>
-  `${import.meta.env.VITE_LIVEPOSTS_STATIC_URL}/${slug}/`;
-
-let PostExcerpt: React.FC<ExcerptProps> = ({ postId: p }: ExcerptProps) => {
-  const post = useAppSelector(state => selectPostById(state, p));
-
-  let postExcerpt;
-  if (post) {
-    postExcerpt = (<div className={postStyles.post}>
-      <a href={staticPostUrl(post.slug)} style={{ textDecoration: 'none' }}>
-        <h3>{post.title}&nbsp;</h3>
-        <PostAuthor author={post.userName} />
-        <TimeAgo timeISO={post.date} />
-      </a>
-    </div>
-    );
-  } else {
-    postExcerpt = (<div>
-      <p>Post not found</p>
-    </div>);
-  }
-  return (
-    <div className={styles.card}>
-      {postExcerpt}
-    </div>
-  );
-};
-
-PostExcerpt = memo(PostExcerpt);
-
-function PostsComponent(): JSX.Element {
+function PostsComponent() {
   const dispatch = useAppDispatch();
-  const orderedPosts = useAppSelector(selectPostIds);
-  const postStatus = useAppSelector(state => state.posts.status);
-  const error = useAppSelector(state => state.posts.error);
+
+  const posts = useAppSelector(selectPostsForList);
+  const postStatus = useAppSelector((state) => state.posts.status);
+  const error = useAppSelector((state) => state.posts.error);
+
+  const { surfaceBg, surfaceText } = useColorMap();
 
   useEffect(() => {
     if (postStatus === 'idle') {
@@ -54,24 +24,26 @@ function PostsComponent(): JSX.Element {
   let content;
 
   if (postStatus === 'loading') {
-    content = <div className={styles.loader}>Loading...</div>;
+    content = Array.from({ length: 3 }).map((_, i) => <PostCardSkeleton key={i} />);
 
   } else if (postStatus === 'succeeded') {
-    content = orderedPosts.map(postId =>
-    (
-      <PostExcerpt key={postId} postId={postId} />
+    content = posts.map((post) => (
+      <PostCard key={post.id} post={post} />
     ));
 
   } else if (postStatus === 'failed') {
-    content = <div>{error}</div>;
+    content = (
+      <Text p="md" c="red">
+        {error}
+      </Text>
+    );
   }
 
-  return (<div className={postStyles.posts}>
-    <div className={postStyles['posts-content']}>
-      {content}
-    </div>
-  </div>);
+  return (
+    <Box bg={surfaceBg} c={surfaceText} p="md">
+      <Stack>{content}</Stack>
+    </Box>
+  );
 }
 
 export default PostsComponent;
-

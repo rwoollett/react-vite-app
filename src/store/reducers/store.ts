@@ -99,6 +99,7 @@ export const selectActionsGroupedByClient = createAppSelector(
 
 // Posts selectors
 export const {
+  selectEntities: selectPostsEntities,
   selectAll: selectAllPosts,
   selectById: selectPostById,
   selectIds: selectPostIds
@@ -108,6 +109,12 @@ export const {
 export const selectPostsByUser = createAppSelector(
   [selectAllPosts, (_: RootState, userId: number) => userId],
   (posts, userId) => posts.filter(post => post.userId === userId)
+);
+
+// Memoized list of posts in correct order
+export const selectPostsForList = createAppSelector(
+  [selectPostIds, selectPostsEntities],
+  (ids, entities) => ids.map((id) => entities[id])
 );
 
 // Author Users selectors
