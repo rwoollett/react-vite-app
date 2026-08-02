@@ -44,7 +44,7 @@ const LivePosts: React.FC = () => {
     if (updatedSeq !== lastProcessedLivePostSeq) {
       setLastProcessedLivePostSeq(updatedSeq);
     }
-  }, [livePostMessageQueue]);
+  }, [livePostMessageQueue, dispatch, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   // Fetch homepage content
   useEffect(() => {
@@ -57,7 +57,7 @@ const LivePosts: React.FC = () => {
 
         setTitle(response.title);
         setDescription(response.description);
-      } catch (err) {
+      } catch (_err) {
         const { title, description } = homepage.homepage;
         setTitle(title);
         setDescription(description);
