@@ -3,6 +3,7 @@ import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useWebSocket } from '../hooks/use-websocket-context';
 import Banner from '../components/Banner';
 import { selectAllTokenActions, useAppSelector } from "../store/reducers/store";
+//import { useColorMap } from '../theme/colorMap';
 
 const HomePage: React.FC = () => {
   const { isLoggedIn, email } = useSignedInAuthorize();
@@ -10,7 +11,8 @@ const HomePage: React.FC = () => {
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
   const lastProcessedSeq = useRef(0);
-
+  //const { surfaceBg, surfaceText } = useColorMap();
+  
   const allActions = useAppSelector(state =>
     selectAllTokenActions(state)
   );

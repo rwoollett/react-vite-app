@@ -1,6 +1,6 @@
 import { Box, Title, Text, Stack, useMantineTheme } from '@mantine/core';
 import DateDisplay from './DateDisplay';
-import { useAppSelector } from '../store/reducers/store';
+import { useColorMap } from '../theme/colorMap';
 
 interface BannerProps {
   title: string;
@@ -8,13 +8,8 @@ interface BannerProps {
 }
 
 export function Banner({ title, desc }: BannerProps) {
-  const colorScheme = useAppSelector(state => state.theme.colorScheme);
   const theme = useMantineTheme();
-  const isDark = colorScheme === 'dark';
-
-  const lightOverlay = 'rgba(12, 200, 198, 0.45), rgba(212, 204, 198, 0.45)';
-  const darkOverlay = 'rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)';
-  const overlay = isDark ? darkOverlay : lightOverlay;
+  const { bannerOverlay, surfaceBg, surfaceText } = useColorMap();
 
   return (
     <Box
@@ -23,7 +18,7 @@ export function Banner({ title, desc }: BannerProps) {
       h={250}               // FIXED HEIGHT (mobile + desktop)
       style={{
         backgroundImage: `
-          linear-gradient(${overlay}),
+          linear-gradient(${bannerOverlay}),
           url(/styles/coastalDream.jpg)
         `,
         backgroundSize: 'cover',
@@ -64,8 +59,8 @@ export function Banner({ title, desc }: BannerProps) {
         </Text>
 
         <Box
-          bg={isDark ? theme.colors.dark[4] : 'white'}
-          c={isDark ? theme.white : theme.black}
+          bg={surfaceBg}
+          c={surfaceText}
           px="sm"
           py={4}
           style={{ borderRadius: 4 }}

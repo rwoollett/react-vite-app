@@ -19,26 +19,33 @@ import FlipImagePage from './pages/FlipImagePage'
 import LivePosts from './pages/LivePosts'
 import AddPostForm from './components/AddPostForm'
 import LivePostsPage from './pages/LivePostsPage'
+import { useColorMap } from './theme/colorMap';
 
 interface RootProps {
   toggleColorScheme: () => void;
 }
 
-const RootComponent: React.FC<RootProps> = ({toggleColorScheme}) => {
+const RootComponent: React.FC<RootProps> = ({ toggleColorScheme }) => {
   const { isLoggedIn, email, isLoading } = useSignedInAuthorize();
+  const { appShellBg, appShellText } = useColorMap();
+
   if (isLoading) {
     return (
       <div style={{ padding: 16 }}>
-        <Skeleton times={4} size="large" radius="md"/>
+        <Skeleton times={4} size="large" radius="md" />
       </div>
     )
   }
   return (
     <Router>
-      <AppShell padding="md">
-        <AppShell.Header>
+      <AppShell padding="md"
+        bg={appShellBg}
+        c={appShellText}>
+        <AppShell.Header
+          bg={appShellBg}
+          c={appShellText}>
           {/* <div style={{ height: 52 }}> */}
-            <NavBar toggleColorScheme={toggleColorScheme} isLoggedIn={isLoggedIn} />
+          <NavBar toggleColorScheme={toggleColorScheme} isLoggedIn={isLoggedIn} />
           {/* </div> */}
         </AppShell.Header>
 

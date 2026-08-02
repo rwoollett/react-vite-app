@@ -6,7 +6,6 @@ import { TABLE_VIEW } from './TableModes';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useAppDispatch } from '../store/reducers/store';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
-
 import {
   Group,
   Flex,
@@ -15,6 +14,7 @@ import {
   Image,
   Button,
 } from '@mantine/core';
+import { useColorMap } from '../theme/colorMap';
 
 interface NavBarProps {
   isLoggedIn: boolean;
@@ -25,6 +25,17 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
   const [opened, setOpened] = useState(false);
   const { email } = useSignedInAuthorize();
   const dispatch = useAppDispatch();
+
+  const {
+    headerBg,
+    headerText,
+    drawerBg,
+    drawerHeaderBg,
+    drawerHeaderText,
+    drawerCloseColor,
+    drawerHoverBg,
+    buttonText,
+  } = useColorMap();
 
   const userBar = [
     { show: !isLoggedIn, to: '/signin', label: 'Sign In' },
@@ -39,6 +50,7 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
         component={Link}
         to={to}
         onClick={() => setOpened(false)}
+        c={buttonText}
       >
         {label}
       </Button>
@@ -53,6 +65,8 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
         px="md"
         py="xs"
         style={{ height: 52 }}
+        bg={headerBg}
+        c={headerText}
       >
         <Group>
           <Link to={ROUTES.HOMEPAGE_ROUTE}>
@@ -65,13 +79,17 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
               component={Link}
               to={ROUTES.USER_ROUTE}
               onClick={() => setOpened(false)}
+              c={buttonText}
             >
               {email}
             </Button>
           )}
         </Group>
 
-        <Burger opened={opened} onClick={() => setOpened((o) => !o)} />
+        <Burger
+          color={headerText}
+          opened={opened}
+          onClick={() => setOpened((o) => !o)} />
       </Flex>
 
       {/* Drawer for mobile menu */}
@@ -80,13 +98,44 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
         onClose={() => setOpened(false)}
         padding="md"
         title="Menu"
+        bg={drawerBg}
+        c={drawerHeaderText}
+        styles={{
+          header: {
+            backgroundColor:drawerHeaderBg,
+            color: drawerHeaderText,
+          },
+          title: {
+            color: drawerHeaderText,
+          },
+          body: {
+            backgroundColor: drawerBg,
+          },
+          content: {
+            backgroundColor: drawerBg,
+          },
+          close: {
+            color: drawerCloseColor,
+            backgroundColor: 'transparent',
+            '&:hover': {
+              backgroundColor: drawerHoverBg,
+            },
+          },
+        }}
       >
-        <Flex direction="column" gap="sm">
+        <Flex
+          direction="column"
+          gap="sm"
+          bg={drawerBg}
+          c={drawerHeaderText}
+          p="sm"
+        >
           <Button
             variant="subtle"
             component={Link}
             to={ROUTES.TTTPAGE_ROUTE}
             onClick={() => setOpened(false)}
+            c={buttonText}
           >
             Tic Tac Toe
           </Button>
@@ -96,6 +145,7 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
             component={Link}
             to={ROUTES.LIVEPOSTS_ROUTE}
             onClick={() => setOpened(false)}
+            c={buttonText}
           >
             Live Posts
           </Button>
@@ -106,6 +156,7 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
             to={ROUTES.COUNTDOWNPAGE_ROUTE}
             state={{ tableMode: TABLE_VIEW }}
             onClick={() => setOpened(false)}
+            c={buttonText}
           >
             Countdown Timer
           </Button>
@@ -115,6 +166,7 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
               variant="subtle"
               component={Link}
               to={`${ROUTES.LIVEPOSTS_ROUTE}/create`}
+              c={buttonText}
               onClick={() => {
                 setOpened(false);
                 dispatch(refetchUserByID());
