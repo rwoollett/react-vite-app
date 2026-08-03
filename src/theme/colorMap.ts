@@ -1,9 +1,9 @@
-import { useMantineTheme } from '@mantine/core';
-import { useColorScheme } from '../hooks/use-colour-scheme';
+import { useComputedColorScheme, useMantineTheme } from '@mantine/core';
 
 export function useColorMap() {
   const theme = useMantineTheme();
-  const { isDark } = useColorScheme();
+  const computed = useComputedColorScheme();
+  const isDark = computed === 'dark';
 
   return {
     // AppShell backgrounds

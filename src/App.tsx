@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { WebSocketProvider } from "./context/websocket";
 import RootComponent from './RootComponent'
-import { useAppSelector, store } from './store/reducers/store'
+import { store } from './store/reducers/store'
 import { ipApi } from './store/api/ipApi';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
@@ -72,18 +72,15 @@ const theme = createTheme({
 });
 
 const App: React.FC = () => {
-  const colorScheme = useAppSelector(state => state.theme.colorScheme);
 
   useEffect(() => {
     store.dispatch(ipApi.endpoints.geolocation.initiate());
   }, []);
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+    <MantineProvider theme={theme} defaultColorScheme="auto">
       <WebSocketProvider>
-        <RootComponent toggleColorScheme={() =>
-          console.log('toggle theme not available in 9.5 mantine')//setColorScheme(colorScheme === 'dark' ? 'light' : 'dark')
-        } />
+        <RootComponent/>
       </WebSocketProvider>
     </MantineProvider>
   )

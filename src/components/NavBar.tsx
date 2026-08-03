@@ -18,7 +18,6 @@ import { useColorMap } from '../theme/colorMap';
 
 interface NavBarProps {
   isLoggedIn: boolean;
-  toggleColorScheme: () => void;
 }
 
 export function NavBar({ isLoggedIn }: NavBarProps) {

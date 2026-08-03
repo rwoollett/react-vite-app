@@ -21,11 +21,8 @@ import AddPostForm from './components/AddPostForm'
 import LivePostsPage from './pages/LivePostsPage'
 import { useColorMap } from './theme/colorMap';
 
-interface RootProps {
-  toggleColorScheme: () => void;
-}
 
-const RootComponent: React.FC<RootProps> = ({ toggleColorScheme }) => {
+const RootComponent: React.FC = () => {
   const { isLoggedIn, email, isLoading } = useSignedInAuthorize();
   const { appShellBg, appShellText } = useColorMap();
 
@@ -44,9 +41,7 @@ const RootComponent: React.FC<RootProps> = ({ toggleColorScheme }) => {
         <AppShell.Header
           bg={appShellBg}
           c={appShellText}>
-          {/* <div style={{ height: 52 }}> */}
-          <NavBar toggleColorScheme={toggleColorScheme} isLoggedIn={isLoggedIn} />
-          {/* </div> */}
+          <NavBar isLoggedIn={isLoggedIn} />
         </AppShell.Header>
 
         <AppShell.Main pt={52}>

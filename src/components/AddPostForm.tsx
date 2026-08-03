@@ -26,7 +26,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
 
-  const { surfaceBg, surfaceText } = useColorMap();
+  const { buttonText, surfaceBg, surfaceText } = useColorMap();
 
   const canSave =
     title.trim().length > 0 &&
@@ -130,7 +130,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
 
           {/* FOOTER BUTTON */}
           <Grid.Col span={12}>
-            <Button type="submit" disabled={!canSave}>
+            <Button c={buttonText} type="submit" disabled={!canSave}>
               Create
             </Button>
           </Grid.Col>
