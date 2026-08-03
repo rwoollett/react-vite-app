@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { type ClientCS, type ConnectedClient, type DisconnectedClient } from "../../types";
-import { parseISO, format } from 'date-fns';
+import { IconClock } from "@tabler/icons-react";
+import { Paper, Text, Group, Stack, Badge } from "@mantine/core";
+import { parseISO, format } from "date-fns";
+import { useColorMap } from "../../theme/colorMap";
 import { useWebSocket } from "../../hooks/use-websocket-context";
 import { selectNewActionsForClient, useAppSelector } from "../../store/reducers/store";
+import type { ClientCS, ConnectedClient, DisconnectedClient } from "../../types";
 
 type ClientNodeProps = {
   client: ClientCS;
-}
+};
+
 const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
   const [connected, setConnected] = useState<boolean>(client.connected);
   const [connectedAt, setConnectedAt] = useState<string>(client.connectedAt);
-  const [disconnectedAt, setDisconnectedAt] = useState<string>(client.disconnectedAt || new Date().toISOString());
-  const { lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
+  const [disconnectedAt, setDisconnectedAt] = useState<string>(
+    client.disconnectedAt || new Date().toISOString()
+  );
 
-  const newActions = useAppSelector(state =>
+  const { lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
+  const newActions = useAppSelector((state) =>
     selectNewActionsForClient(state, client.ip, lastProcessedCSSeq)
   );
+
+  const { surfaceBg, surfaceText } = useColorMap();
 
   useEffect(() => {
     if (newActions.length === 0) return;
@@ -42,24 +50,44 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
   }, [newActions, lastProcessedCSSeq, setLastProcessedCSSeq]);
 
   return (
-    <div className="card">
-      <header className="card-header">
-        <p className="card-header-title my-0 px-5">{client.name}</p>
-      </header>
-      <div className="card-content">
-        <div className="media my-1">
-          <div className="media-content">
-            <p className="title is-7">{client.name}</p>
-          </div>
-        </div>
-        <div className="content">
-          <p className="is-size-7 my-1"><span className="has-text-weight-light">Node IP: </span>{client.ip}</p>
-          <p className="is-size-7 my-0"><span className="has-text-weight-light">{!connected && 'Disconnected:'}{connected && 'Connected:'}<br /></span>
-            <time>{connected && `${format(parseISO(connectedAt), 'P p')}`}{!connected && `${format(parseISO(disconnectedAt), 'P p')}`}</time>
-          </p>
-        </div>
-      </div>
-    </div >
+    <Paper shadow="sm" radius="md" p="md" bg={surfaceBg} c={surfaceText}>
+      {/* Header */}
+      <Group justify="space-between" mb="xs">
+        <Text fw={600}>{client.name}</Text>
+
+        <Badge
+          color={connected ? "green" : "red"}
+          variant="filled"
+          radius="sm"
+        >
+          {connected ? "Connected" : "Disconnected"}
+        </Badge>
+      </Group>
+
+
+      <Stack gap={6}>
+        <Text size="sm">
+          <Text span fw={300}>Node IP:</Text> {client.ip}
+        </Text>
+
+        <Group gap={8}>
+          <Badge
+            leftSection={<IconClock size={12} />}
+            variant="light"
+            color={connected ? "green" : "red"}
+            radius="sm"
+          >
+            {connected ? "Connected at" : "Disconnected at"}
+          </Badge>
+
+          <Text size="sm">
+            {connected
+              ? format(parseISO(connectedAt), "P p")
+              : format(parseISO(disconnectedAt), "P p")}
+          </Text>
+        </Group>
+      </Stack>
+    </Paper>
   );
 };
 

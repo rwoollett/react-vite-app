@@ -142,22 +142,22 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
           <Button
             variant="subtle"
             component={Link}
-            to={ROUTES.LIVEPOSTS_ROUTE}
-            onClick={() => setOpened(false)}
-            c={buttonText}
-          >
-            Live Posts
-          </Button>
-
-          <Button
-            variant="subtle"
-            component={Link}
             to={ROUTES.COUNTDOWNPAGE_ROUTE}
             state={{ tableMode: TABLE_VIEW }}
             onClick={() => setOpened(false)}
             c={buttonText}
           >
             Countdown Timer
+          </Button>
+
+          <Button
+            variant="subtle"
+            component={Link}
+            to={ROUTES.LIVEPOSTS_ROUTE}
+            onClick={() => setOpened(false)}
+            c={buttonText}
+          >
+            Live Posts
           </Button>
 
           {isLoggedIn && (
