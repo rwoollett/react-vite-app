@@ -1,7 +1,8 @@
 import React from "react";
 import type { ClientCS } from "../../types";
 import ClientNode from "./ClientNode";
-import Button from "../../components/Button";
+import { Button } from '@mantine/core';
+
 
 /**
  * Network list.
@@ -77,12 +78,12 @@ const NetworkList: React.FC<NetworkListProps> = ({ clientList, range }) => {
               <p className="is-size-7 my-0 p-0 cell"><span className="has-text-weight-light">From: </span>{range.from}</p>
               <p className="is-size-7 my-0 p-0 cell"><span className="has-text-weight-light">To: </span>{range.to}</p> */}
               <div className="cell is-size-7">
-                <Button secondary outline type="button" onClick={() => doPostStartRequest()}>
+                <Button color="gray" variant="outline" type="button" onClick={() => doPostStartRequest()}>
                   Only&nbsp;Connected
                 </Button>
               </div>
               <div className="cell is-size-7">
-                <Button secondary outline type="button" onClick={() => doPostStopRequest()}>
+                <Button color="gray" variant="outline" type="button" onClick={() => doPostStopRequest()}>
                   Show&nbsp;All
                 </Button>
               </div>

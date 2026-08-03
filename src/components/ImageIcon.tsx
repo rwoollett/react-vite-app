@@ -1,6 +1,6 @@
 import type { ImageData } from '../types/imageData';
-import style from './ImageIcon.module.scss';
-import Button from './Button';
+import style from './ImageIcon.module.css';
+import { Button } from '@mantine/core';
 
 function ImageIcon({ image, onSelect }: {
   image: ImageData;

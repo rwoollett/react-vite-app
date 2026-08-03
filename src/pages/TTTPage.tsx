@@ -3,7 +3,7 @@ import Dropdown, { type Option } from '../components/Dropdown';
 import { type BoardBounds, boardTraverse, drawPlayer, drawWinResult } from '../utility/DrawingTTT';
 import { useWebSocket } from "../hooks/use-websocket-context";
 import { type Game, isGame, isMove, type PlayerMove } from '../types';
-import Button from '../components/Button';
+import { Button } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { setCurrentGame, clearCurrentGame } from '../store/actions/ttt';
 
@@ -329,7 +329,7 @@ const CanvasComponent: React.FC = () => {
           </div>
           <div className="field is-grouped">
             <div className="control">
-              <Button primary type="submit">{buttonText}</Button>
+              <Button color="blue" type="submit">{buttonText}</Button>
             </div>
           </div>
         </form>

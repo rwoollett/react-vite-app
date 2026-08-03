@@ -14,11 +14,6 @@
   margin: 2px;
 }
 
-.overText:hover {
-  background-color: bisque;
-  opacity: 80%;
-}
-
 .overText {
   display: inline-flex;
   flex: 0 1 auto;
@@ -32,14 +27,20 @@
   opacity: 0%;
 }
 
+.overText:hover {
+  background-color: bisque;
+  opacity: 80%;
+}
+
 .larger {
-  font-size:xx-large;
+  font-size: xx-large;
   animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 @keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
+  75%,
+  100% {
+    transform: scale(1);
+    opacity: 25%;
   }
 }

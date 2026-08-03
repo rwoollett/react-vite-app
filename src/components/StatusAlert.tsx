@@ -1,6 +1,6 @@
 import type { HTMLAttributes, JSX } from 'react';
 import type { StatusErrors } from '../types/statusErrors';
-import style from './StatusAlert.module.scss';
+import style from './StatusAlert.module.css';
 
 interface StatusAlertProps {
   statusErrors: StatusErrors;

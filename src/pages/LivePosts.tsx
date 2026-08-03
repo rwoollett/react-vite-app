@@ -4,7 +4,7 @@ import homepage from '../homepage.json';
 import { http } from '../utility/fetchData';
 import Banner from '../components/Banner';
 import PostsComponent from '../components/PostsComponent';
-import Button from '../components/Button';
+import { Button } from '@mantine/core';
 import { useAppDispatch } from '../store/reducers/store';
 import { fetchPosts } from '../store/api/postsSlice';
 import { useNavigate } from 'react-router';
@@ -95,8 +95,8 @@ const LivePosts: React.FC = () => {
             <Group justify="flex-start">
               <Button
                 type="button"
-                secondary
-                outline
+                color="gray"
+                variant='outline'
                 onClick={toAddPostPage}
               >
                 Create Post

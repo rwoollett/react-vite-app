@@ -2,7 +2,7 @@ import { useEffect, useRef, type HTMLAttributes, useState } from "react";
 //import { GoChevronDown, GoChevronLeft } from 'react-icons/go';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './Dropdown.module.css'
-import Button from "./Button";
+import { Button } from '@mantine/core';
 
 export interface Option {
   label: string;
@@ -64,7 +64,7 @@ function Dropdown(
   return (
     <div ref={divEl} {...rest} className="dropdown is-active" >
       <div className="dropdown-trigger">
-        <Button type="button" success className="pt-1 pb-0">
+        <Button type="button" color="green" className="pt-1 pb-0">
           <div
             className={`columns is-mobile`}
             onClick={() => setIsOpen((current) => !current)}

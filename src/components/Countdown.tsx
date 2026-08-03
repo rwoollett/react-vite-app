@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import style from './Countdown.module.scss';
+import style from './Countdown.module.css';
 
 function Countdown({ timeTillDate }: { timeTillDate: Date }) {
   const [days, setDays] = useState(0);

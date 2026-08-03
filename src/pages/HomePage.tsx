@@ -3,8 +3,10 @@ import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useWebSocket } from '../hooks/use-websocket-context';
 import Banner from '../components/Banner';
 import { selectAllTokenActions, useAppSelector } from "../store/reducers/store";
-import { Box, Group, Paper, Text, Badge, Stack } from '@mantine/core';
+import { Box, Flex, Group, Paper, Text, Badge, Stack } from '@mantine/core';
 import { useColorMap } from '../theme/colorMap';
+import homepage from '../homepage.json';
+import CardItem from '../components/Card';
 
 const HomePage: React.FC = () => {
   const { isLoggedIn, email } = useSignedInAuthorize();
@@ -15,6 +17,7 @@ const HomePage: React.FC = () => {
 
   const allActions = useAppSelector(state => selectAllTokenActions(state));
   const { surfaceBg, surfaceText } = useColorMap();
+  const { title, description, navCards } = homepage.homepage;
 
   useEffect(() => {
     if (allActions.length === 0) return;
@@ -31,8 +34,8 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Banner
-        title="Net Processor Dashboard"
-        desc="Show the activity of net processor clients by the IP identifier"
+        title={title}
+        desc={description}
       />
 
       <Box bg={surfaceBg} c={surfaceText} p="md">
@@ -69,8 +72,13 @@ const HomePage: React.FC = () => {
         )}
 
         <Stack mt="lg">
-          {/* Future Mantine content goes here */}
+          <Flex wrap="wrap" justify="space-between" gap="lg">
+            {navCards.map((card, i) => (
+              <CardItem key={i} {...card} />
+            ))}
+          </Flex>
         </Stack>
+
       </Box>
     </>
   );

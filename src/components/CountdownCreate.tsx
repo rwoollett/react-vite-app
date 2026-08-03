@@ -6,7 +6,9 @@ import { addCountdown } from '../store/actions/data';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { TABLE_EDIT, TABLE_VIEW } from './TableModes';
-import Button from './Button';
+//import Button from './Button';
+import { Button } from '@mantine/core';
+
 
 function CountdownCreate() {
   const [name, setName] = useState("");
@@ -80,11 +82,10 @@ function CountdownCreate() {
 
       <div className="field is-grouped">
         <div className="control">
-          {/* <button type="submit" className="button is-primary">Create</button> */}
-          <Button type="submit" secondary outline>Create</Button>
+          <Button type="submit" color='gray' variant='outline'>Create</Button>
         </div>
         <div className="control">
-          <Button type="button" onClick={() => onHandleCancel()} secondary outline>Cancel</Button>
+          <Button type="button" onClick={() => onHandleCancel()} color='gray' variant='outline'>Cancel</Button>
         </div>
       </div>
 

@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState, type JSX } from "react";
 import { useLocation } from "react-router-dom";
-import style from './Table.module.scss';
+import style from './Table.module.css';
 import { TABLE_VIEW, TABLE_EDIT } from './TableModes';
-import Button from "./Button";
+import { Button } from '@mantine/core';
 import className from 'classnames';
 
 export interface ConfigColumn<T> {
@@ -161,7 +161,7 @@ function Table<T>({ data, config, keyFn }: {
   };
 
   const renderEditCancelButton = edit === false
-    ? <Button type="button" onClick={handleEdit} secondary outline>Edit</Button>
+    ? <Button type="button" onClick={handleEdit} color="green" variant="outline">Edit</Button>
     : <></>
 
   const isSelectedEdit = Object.values(selectIndex)
@@ -176,7 +176,7 @@ function Table<T>({ data, config, keyFn }: {
           }
         });
         setTableMode(TABLE_VIEW);
-      }} secondary >{command.label} {selectedCount}</Button></div>
+      }} color="gray" >{command.label} {selectedCount}</Button></div>
     );
   });
 
@@ -185,7 +185,7 @@ function Table<T>({ data, config, keyFn }: {
       <div key={command.label}><Button type="button" onClick={() => {
         command.execute();
         setTableMode(TABLE_VIEW);
-      }} secondary outline>{command.label}</Button></div>
+      }} color="gray" variant="outline">{command.label}</Button></div>
     );
   });
 
@@ -215,7 +215,7 @@ function Table<T>({ data, config, keyFn }: {
             {/* <span>Selected: {selectedCount}</span> */}
             {isSelectedEdit && renderedEditable}
             {renderedAction}
-            <Button type="button" onClick={handleCancel} secondary outline>Exit Edit</Button>
+            <Button type="button" onClick={handleCancel} color="gray" variant="outline">Exit Edit</Button>
           </div>
         )}
       </div>

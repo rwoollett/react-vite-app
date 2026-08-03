@@ -1,11 +1,11 @@
 {
   "homepage": {
-    "title": "LivePosts",
-    "description": "Live posts made by users",
+    "title": "Net Processor Dashboard",
+    "description": "Show the activity of net processor clients by the IP identifier",
     "navCards": [
       {
-        "title": "The live post index",
-        "catchPhrase": "The posts made are made by users."
+        "title": "A real time figs",
+        "catchPhrase": "Their bird was, in this moment that composed."
       }
     ],
     "popularCards": [

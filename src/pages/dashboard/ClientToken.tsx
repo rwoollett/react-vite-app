@@ -1,7 +1,7 @@
 import React from "react";
 import type { RequestCS, AcquireCS, ActionByIp, ProcSvc } from "../../types";
 import { format, parseISO } from "date-fns";
-import styles from './ClientToken.module.scss'
+import styles from './ClientToken.module.css'
 import { selectAllTokenActions, useAppSelector } from "../../store/reducers/store";
 import type { CSTokenAction } from "../../store/api/cstokenSlice";
 

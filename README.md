@@ -23,7 +23,6 @@ This is the structure of the files in the project:
     │   ├── components        # dir of Components on pages
     │   │   ├── AddPostForm.tsx
     │   │   ├── Banner.tsx
-    │   │   ├── Button.tsx
     │   │   ├── Card.tsx
     │   │   ├── Countdown.tsx
     │   │   ├── CountdownCreate.tsx
@@ -31,12 +30,10 @@ This is the structure of the files in the project:
     │   │   ├── DateDisplay.tsx
     │   │   ├── Dropdown.tsx
     │   │   ├── Greeting.tsx
-    │   │   ├── HomeNavigation.tsx
     │   │   ├── ImageIcon.tsx
     │   │   ├── Moderation.tsx
     │   │   ├── NavBar.tsx
     │   │   ├── PopularCards.tsx
-    │   │   ├── PostAuthor.tsx
     │   │   ├── PostComponent.tsx
     │   │   ├── ReactionButton.tsx
     │   │   ├── SearchBar.tsx
@@ -45,8 +42,7 @@ This is the structure of the files in the project:
     │   │   ├── SortableTable.tsx
     │   │   ├── StatusAlert.tsx
     │   │   ├── Table.tsx
-    │   │   ├── TableMode.ts
-    │   │   └── TimeAgo.tsx
+    │   │   └── TableMode.ts
     │   ├── context           # dir of react context and provider 
     │   │   └── websocket.ts  # context websocket message by service
     │   ├── hooks             # dir of Use hooks for shared actions

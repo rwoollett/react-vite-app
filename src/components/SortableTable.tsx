@@ -1,6 +1,6 @@
 import Table, { type ConfigTable } from "./Table";
 import useSort from "../hooks/use-sort";
-import style from './SortableTable.module.scss';
+import style from './SortableTable.module.css';
 
 function SortableTable<T>(props: {
   data: T[];

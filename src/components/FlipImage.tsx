@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ImageData } from '../types/imageData';
-import style from './FlipImage.module.scss';
-import Button from './Button';
+import style from './FlipImage.module.css';
+import { Button } from '@mantine/core';
 //import { GoChevronDown, GoChevronUp, GoChevronLeft, GoChevronRight } from 'react-icons/go';
 
 function FlipImage({ image }: { image?: ImageData | undefined }) {

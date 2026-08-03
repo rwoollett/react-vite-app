@@ -4,6 +4,8 @@ import type { Post, ReactionEmoji } from '../types';
 import style from './Card.module.scss';
 //import {useDispatch} from 'react-redux';
 //import { reactionAdded } from '../features/posts/postsSlice';
+//import { Button } from '@mantine/core';
+
 
 const reactionEmoji:ReactionEmoji = {
   thumbsUp: '👍',

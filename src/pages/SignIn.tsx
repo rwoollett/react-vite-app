@@ -5,7 +5,7 @@ import { useAppDispatch } from '../store/reducers/store';
 import { useSignInMutation } from '../store/api/authenticatedUsersApi';
 import { type StatusErrors } from '../types/statusErrors';
 import StatusAlert from '../components/StatusAlert';
-import Button from '../components/Button';
+import { Button } from '@mantine/core';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../resources/routes-constants';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
@@ -120,8 +120,8 @@ const SignIn: React.FC = () => {
               />
 
               <Group justify="flex-start" mt="md">
-                <Button primary type="submit">Login</Button>
-                <Button secondary type="button" onClick={redirectToHomePage}>Home</Button>
+                <Button color="blue" type="submit">Login</Button>
+                <Button color="gray" type="button" onClick={redirectToHomePage}>Home</Button>
               </Group>
 
             </Stack>

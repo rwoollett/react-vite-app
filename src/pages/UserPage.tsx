@@ -4,7 +4,7 @@ import { useRefreshTokenMutation } from '../store/api/authenticatedUsersApi';
 import { selectAllTokenActions, useAppSelector } from '../store/reducers/store';
 import Greeting from '../components/Greeting';
 import { sayFarewell } from '../utility/functions';
-import Button from '../components/Button';
+import { Button } from '@mantine/core';
 import { useWebSocket } from '../hooks/use-websocket-context';
 import Dashboard from './dashboard/Dashboard';
 
@@ -75,7 +75,7 @@ const UserPage: React.FC = () => {
               {connected ? "Connected" : "Disconnected"}
             </Badge>
 
-            <Button primary type="button" onClick={handleSendMessage}>
+            <Button color="blue" type="button" onClick={handleSendMessage}>
               Send
             </Button>
 
@@ -100,7 +100,7 @@ const UserPage: React.FC = () => {
         <form onSubmit={onHandleGreet}>
           <Stack gap="md">
 
-            <Button primary type="submit">Greet</Button>
+            <Button color="blue" type="submit">Greet</Button>
 
             {isLoggedIn && <Greeting name={`${contents}`} />}
             <Text>{farewell}</Text>

@@ -1,33 +1,47 @@
 import React, { useEffect, useState, type FormEvent } from 'react';
-import style from './AddPostForm.module.scss';
-import Button from './Button';
-import { selectIdByAuth, useAppDispatch, useAppSelector } from '../store/reducers/store';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { addNewPost } from '../store/api/postsSlice';
-import { addNewUser } from '../store/api/authorUsersSlice';
+import { Stack, Paper, Text, TextInput, Textarea, Button, Grid, Skeleton } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../resources/routes-constants';
-import Skeleton from './Skeleton';
-import { fetchUserByAuthId } from '../store/api/authorUsersSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useColorMap } from '../theme/colorMap';
 
+import { 
+  selectIdByAuth, 
+  useAppDispatch, 
+  useAppSelector 
+} from '../store/reducers/store';
+
+import { addNewPost } from '../store/api/postsSlice';
+import { addNewUser, fetchUserByAuthId } from '../store/api/authorUsersSlice';
+import { ROUTES } from '../resources/routes-constants';
 
 const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const postUserByAuthIdStatus = useAppSelector(state => state.postusers.status);
   const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
   const authUser = useAppSelector(state => selectIdByAuth(state, email));
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
-  const canSave = [title, content, authUser.length > 0 && authUser[0].id].every(Boolean);
 
+  const { surfaceBg, surfaceText } = useColorMap();
+
+  const canSave =
+    title.trim().length > 0 &&
+    content.trim().length > 0 &&
+    authUser.length > 0 &&
+    authUser[0].id;
+
+  // Fetch user by authId
   useEffect(() => {
     if (postUserByAuthIdStatus === 'idle') {
-      dispatch(fetchUserByAuthId({ authId: email }))
+      dispatch(fetchUserByAuthId({ authId: email }));
     }
   }, [dispatch, postUserByAuthIdStatus, email]);
 
+  // Create user if missing
   useEffect(() => {
     if (authUser.length === 0 && postUserByAuthIdStatus === 'succeeded' && postUsersNewUserStatus === 'idle') {
       dispatch(addNewUser({ name: email, authId: email }));
@@ -35,31 +49,26 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     if (authUser.length && postUsersNewUserStatus) {
       setAuthor(authUser[0].name);
     }
-  }, [author, authUser, email, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch]);
+  }, [authUser, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch, email]);
 
   if (postUserByAuthIdStatus === 'failed') {
     navigate(ROUTES.LIVEPOSTS_ROUTE);
   }
 
+  // Skeleton loader
   if (postUserByAuthIdStatus === 'idle' || postUserByAuthIdStatus === 'loading') {
     return (
-      <div className='panel'>
-        <p className="panel-heading mb-4 is-size-5">Live Posts</p>
-        <div className='panel-block mb-2  '>
-          <div className='container'>
-            <Skeleton times={4} />
-          </div>
-        </div>
-      </div>
-    )
+      <Paper shadow="sm" radius="md" p="lg" bg={surfaceBg} c={surfaceText}>
+        <Text size="lg" mb="md">Live Posts</Text>
+        <Stack>
+          <Skeleton height={30} radius="sm" />
+          <Skeleton height={30} radius="sm" />
+          <Skeleton height={200} radius="sm" />
+          <Skeleton height={40} radius="sm" />
+        </Stack>
+      </Paper>
+    );
   }
-
-  const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setTitle(e.target.value);
-  const onContentChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-    setContent(e.target.value);
-  const onAuthorChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setAuthor(e.target.value);
 
   const onSavePostClicked = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,74 +85,60 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     }
   };
 
-  const formOption = (formTitle: string, buttonText: string) => (
-    <div className="panel ml-3 mb-4">
-      <p className="panel-heading mb-4 is-size-7">{formTitle}</p>
+  return (
+    <Paper shadow="sm" radius="md" p="lg" bg={surfaceBg} c={surfaceText}>
+      <Text size="lg" mb="md">Live Posts – Create Post</Text>
 
-      <div className="panel-block is-block">
-        <form onSubmit={onSavePostClicked} className={style.postFormGrid}>
+      <form onSubmit={onSavePostClicked}>
+        <Grid gap="xl">
 
           {/* LEFT SIDE */}
-          <div className={style.leftSide}>
-            <div className="field">
-              <label className="label">Post Title</label>
-              <div className="control">
-                <input
-                  className="input"
-                  id="postTitle"
-                  name="postTitle"
-                  type="text"
-                  value={title}
-                  onChange={onTitleChanged}
-                />
-              </div>
-            </div>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <TextInput
+              label="Post Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
 
-            <div className="field">
-              <label className="label">Author</label>
-              <div className="control">
-                <input
-                  className="input is-static"
-                  id="postAuthor"
-                  name="postAuthor"
-                  type="text"
-                  value={author}
-                  onChange={onAuthorChanged}
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
+            <TextInput
+              label="Author"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              readOnly
+              mt="md"
+            />
+          </Grid.Col>
 
           {/* RIGHT SIDE */}
-          <div className={style.rightSide}>
-            <div className="field">
-              <label className="label">Content</label>
-              <div className="control">
-                <textarea
-                  className="textarea has-fixed-size"
-                  rows={14}
-                  id="postContent"
-                  name="postContent"
-                  value={content}
-                  onChange={onContentChanged}
-                />
-              </div>
-            </div>
-          </div>
+          <Grid.Col span={{ base: 12, md: 8 }}>
+            <Textarea
+              label="Content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              minRows={14}
+              autosize={false}
+              styles={{
+                input: {
+                  minHeight: 300,
+                  borderRadius: 6,
+                  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)',
+                },
+              }}
+            />
+          </Grid.Col>
 
-          {/* FOOTER BUTTONS */}
-          <div className="form-footer">
-            <Button secondary outline type="submit">{buttonText}</Button>
-          </div>
+          {/* FOOTER BUTTON */}
+          <Grid.Col span={12}>
+            <Button type="submit" disabled={!canSave}>
+              Create
+            </Button>
+          </Grid.Col>
 
-        </form>
-      </div>
-    </div>
+        </Grid>
+      </form>
+    </Paper>
   );
-
-  return formOption('Live Posts - Create Post', 'Create');
-
 };
 
 export default AddPostForm;

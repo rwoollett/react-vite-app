@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ImageIcon from './ImageIcon';
 import type { ImageData } from '../types/imageData';
-import style from './ImageList.module.scss';
+import style from './ImageList.module.css';
 
 function ImageList({ images, onSelect }: {
   images: ImageData[];

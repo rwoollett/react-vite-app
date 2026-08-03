@@ -3,7 +3,7 @@ import { useSignUpMutation } from '../store/api/authenticatedUsersApi';
 import { type StatusErrors } from '../types/statusErrors';
 import { useNavigate } from 'react-router-dom';
 import StatusAlert from '../components/StatusAlert';
-import Button from '../components/Button';
+import { Button } from '@mantine/core';
 import { useAppDispatch } from '../store/reducers/store';
 import { ipApi } from '../store/api/ipApi';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
@@ -109,7 +109,7 @@ const SignUp = (): JSX.Element => {
                 error={password === '' && errorMessage.length > 0 ? 'Required' : undefined}
               />
 
-              <Button primary type="submit">Sign Up</Button>
+              <Button color="blue" type="submit">Sign Up</Button>
             </Stack>
           </form>
         </Paper>
