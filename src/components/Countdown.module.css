@@ -1,6 +1,6 @@
 .countdown {
   margin: 4px;
-  background-color: rgb(247, 247, 237);
+  /* background-color: rgb(247, 247, 237); */
 }
 
 .countdown h1 {
@@ -16,7 +16,7 @@
 }
 
 .countdown_item {
-  color: purple;
+  /* color: purple; */
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -32,7 +32,7 @@
 }
 
 .countdown_item span {
-  color: #333;
+  /* color: #333; */
   font-size: xx-small;
   font-weight: 600;
   text-transform: uppercase;

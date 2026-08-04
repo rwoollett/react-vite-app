@@ -1,17 +1,23 @@
-import { Outlet } from 'react-router-dom';
+import { Container, Paper } from "@mantine/core";
+import { Outlet } from "react-router-dom";
+import { useColorMap } from "../theme/colorMap";
 
 function CountdownPage() {
+  const { surfaceBg, surfaceText } = useColorMap();
 
   return (
-    <div>
-      <section className='section'>
-        <div className="container is-fluid">
-          <Outlet />
-        </div>
-      </section>
-    </div>
-  )
+    <Container size="xl">
+      <Paper
+        p="lg"
+        radius="md"
+        shadow="sm"
+        bg={surfaceBg}
+        c={surfaceText}
+      >
+        <Outlet />
+      </Paper>
+    </Container>
+  );
 }
 
-export default CountdownPage
-
+export default CountdownPage;
