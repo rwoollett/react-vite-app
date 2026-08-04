@@ -153,6 +153,16 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
           <Button
             variant="subtle"
             component={Link}
+            to={ROUTES.FLIPIMAGEPAGE_ROUTE}
+            onClick={() => setOpened(false)}
+            c={buttonText}
+          >
+            Flip Image
+          </Button>
+
+          <Button
+            variant="subtle"
+            component={Link}
             to={ROUTES.LIVEPOSTS_ROUTE}
             onClick={() => setOpened(false)}
             c={buttonText}
@@ -177,11 +187,6 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
 
           {userBar}
 
-          {/* <Button
-            variant="subtle"
-            onClick={toggleColorScheme}>
-            Toggle Theme
-          </Button> */}
         </Flex>
       </Drawer>
     </>

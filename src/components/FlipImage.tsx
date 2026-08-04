@@ -1,103 +1,121 @@
-import { useEffect, useState } from 'react';
-import type { ImageData } from '../types/imageData';
-import style from './FlipImage.module.css';
-import { Button } from '@mantine/core';
-//import { GoChevronDown, GoChevronUp, GoChevronLeft, GoChevronRight } from 'react-icons/go';
+import { useEffect, useState } from "react";
+import type { ImageData } from "../types/imageData";
+import style from "./FlipImage.module.css";
+import { Paper, Text, Group, Button, Box, Stack } from "@mantine/core";
+import { useColorMap } from "../theme/colorMap";
 
-function FlipImage({ image }: { image?: ImageData | undefined }) {
+function FlipImage({ image }: { image?: ImageData }) {
+  const [flipItem, setFlipItem] = useState<{ index: number; dir: string }>();
+  const { surfaceBg, surfaceText } = useColorMap();
 
-  const [flipItem, setFlipItem] = useState<{
-    index: number;
-    dir: string;
-  } | undefined>();
   const width = 250;
   const height = 250;
 
   const handleFlip = (i: number, direction: string) => {
     setFlipItem({ index: i, dir: direction });
-
   };
-  
+
   useEffect(() => {
-    setTimeout(() => setFlipItem(undefined), 800);
-  },[flipItem]);
+    if (!flipItem) return;
+    const timer = setTimeout(() => setFlipItem(undefined), 800);
+    return () => clearTimeout(timer);
+  }, [flipItem]);
 
   if (!image) {
-    return <div>Select an image!</div>;
+    return (
+      <Paper p="lg" radius="md" shadow="sm" bg={surfaceBg} c={surfaceText}>
+        <Text>Select an image!</Text>
+      </Paper>
+    );
   }
+
   const imageAs2x2 = Array(4).fill({
     src: `${image.urls.raw}&fit=crop&w=${width}&h=${height}`,
-    alt: image.alt_description
+    alt: image.alt_description,
   });
 
-
   const matrix2x2 = imageAs2x2.map(({ src, alt }, i) => {
-    let flipDir = '';
-    let flipDirBack = 'leftFlipBack';
-    let mirror = 'imageMirrorX';
-    if (flipItem) {
-      const { index, dir } = flipItem;
-      if (index == i) {
-        flipDir = `${dir}Flip`;
-        flipDirBack = `${dir}FlipBack`;
-        if (dir === 'left' || dir === 'right') {
-          mirror = 'imageMirrorX';
-        } else {
-          mirror = 'imageMirrorY'
-        }
-      }
+    let flipDir = "";
+    let flipDirBack = "leftFlipBack";
+    let mirror = "imageMirrorX";
+
+    if (flipItem && flipItem.index === i) {
+      flipDir = `${flipItem.dir}Flip`;
+      flipDirBack = `${flipItem.dir}FlipBack`;
+      mirror =
+        flipItem.dir === "left" || flipItem.dir === "right"
+          ? "imageMirrorX"
+          : "imageMirrorY";
     }
+
     return (
-      <div key={i} className={style.flipTools}>
-        <div className={
-          `${style.flipBox}`
-        }>
-          <div className={
-            `${style.flipBoxInner} ${flipDir && style[flipDir]}`
-          }>
+      <Box key={i} className={style.flipTools}>
+        <Box className={style.flipBox}>
+          <Box className={`${style.flipBoxInner} ${flipDir && style[flipDir]}`}>
+            <Box className={style.flipBoxFront}>
+              <img className={style.imgShow} src={src} alt={alt} />
+            </Box>
 
-            <div className={style.flipBoxFront}>
-              {image && <img className={style.imgShow}
+            <Box className={`${style.flipBoxBack} ${style[flipDirBack]}`}>
+              <img
+                className={`${style.imgShow} ${style[mirror]}`}
                 src={src}
-                alt={alt} /> || <p>Flipper</p>}
-            </div>
+                alt={alt}
+              />
+            </Box>
+          </Box>
+        </Box>
 
-            <div className={
-              `${style.flipBoxBack} ${flipDirBack && style[flipDirBack]}`
-            }>
-
-              {image && <img className={
-                `${style.imgShow} ${mirror && style[mirror]}`
-              }
-                src={src}
-                alt={alt} /> || <p>Amazing</p>}
-            </div>
-          </div>
-        </div>
-        <div className={style.buttons}>
-          <Button onClick={() => handleFlip(i, 'down')} className={style.button} >v</Button>
-          <Button onClick={() => handleFlip(i, 'up')} className={style.button} >^</Button>
-          <Button onClick={() => handleFlip(i, 'left')} className={style.button} >&lt;</Button>
-          <Button onClick={() => handleFlip(i, 'right')} className={style.button} >&gt;</Button>
-          {/* <GoChevronDown onClick={() => handleFlip(i, 'down')} className={style.button} />
-          <GoChevronUp onClick={() => handleFlip(i, 'up')} className={style.button} />
-          <GoChevronLeft onClick={() => handleFlip(i, 'left')} className={style.button} />
-          <GoChevronRight onClick={() => handleFlip(i, 'right')} className={style.button} /> */}
-        </div>
-      </div>
+        {/* Flip buttons */}
+        <Group justify="center" mt="xs">
+          <Button
+            size="xs"
+            variant="light"
+            onClick={() => handleFlip(i, "down")}
+          >
+            ↓
+          </Button>
+          <Button
+            size="xs"
+            variant="light"
+            onClick={() => handleFlip(i, "up")}
+          >
+            ↑
+          </Button>
+          <Button
+            size="xs"
+            variant="light"
+            onClick={() => handleFlip(i, "left")}
+          >
+            ←
+          </Button>
+          <Button
+            size="xs"
+            variant="light"
+            onClick={() => handleFlip(i, "right")}
+          >
+            →
+          </Button>
+        </Group>
+      </Box>
     );
   });
 
   return (
-    <div>
-      <div className={style.flipImage}>
-        {matrix2x2}
-      </div>
-      <div>
-        <div>Image description: {image && image.alt_description || 'Flip an Image'}</div>
-      </div>
-    </div>
-  )
+    <Stack>
+      <Paper p="lg" radius="md" shadow="sm" bg={surfaceBg} c={surfaceText}>
+        <div className={style.flipImage}>
+          {matrix2x2}
+        </div>
+      </Paper>
+
+      <Paper p="md" radius="md" shadow="xs" bg={surfaceBg} c={surfaceText}>
+        <Text size="sm">
+          Image description: {image.alt_description || "Flip an Image"}
+        </Text>
+      </Paper>
+    </Stack>
+  );
 }
 
 export default FlipImage;
