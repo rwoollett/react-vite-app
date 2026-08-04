@@ -176,7 +176,7 @@ function Table<T>({ data, config, keyFn }: {
           }
         });
         setTableMode(TABLE_VIEW);
-      }} color="gray" >{command.label} {selectedCount}</Button></div>
+      }} color="gray" variant="outline">{command.label} {selectedCount}</Button></div>
     );
   });
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import style from './Countdown.module.css';
+import { Paper, Text, Group } from "@mantine/core";
+import { useColorMap } from "../theme/colorMap";
 
 function Countdown({ timeTillDate }: { timeTillDate: Date }) {
   const [days, setDays] = useState(0);
@@ -8,24 +9,18 @@ function Countdown({ timeTillDate }: { timeTillDate: Date }) {
   const [seconds, setSeconds] = useState(0);
   const [done, setDone] = useState(false);
 
+  const { countdownItemBg, countdownItemText } = useColorMap();
+
   useEffect(() => {
     const secondInterval = setInterval(() => {
-
-      const now = new Date().getTime();
+      const now = Date.now();
       const timeTill = timeTillDate.getTime();
       const distance = timeTill - now;
 
-      // Time calculations for days, hours, minutes and seconds
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      // select element
-      setDays(days);
-      setHours(hours);
-      setMinutes(minutes);
-      setSeconds(seconds);
+      setDays(Math.floor(distance / (1000 * 60 * 60 * 24)));
+      setHours(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+      setMinutes(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
+      setSeconds(Math.floor((distance % (1000 * 60)) / 1000));
 
       if (now >= timeTill) {
         clearInterval(secondInterval);
@@ -35,36 +30,46 @@ function Countdown({ timeTillDate }: { timeTillDate: Date }) {
         setMinutes(0);
         setSeconds(0);
       }
-
-
     }, 1000);
 
-    return () => {
-      clearInterval(secondInterval);
-    }
+    return () => clearInterval(secondInterval);
   }, [timeTillDate]);
 
+  const renderItem = (value: number | string, label: string) => (
+    <Paper
+      w={50}
+      h={50}
+      p={4}
+      radius="md"
+      shadow="sm"
+      bg={countdownItemBg}
+      c={countdownItemText}
+      withBorder
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        fontWeight: 600,
+        lineHeight: "20px",
+      }}
+    >
+      <Text fw={700}>{value}</Text>
+      {!done && (
+        <Text fz={9} fw={600} tt="uppercase">
+          {label}
+        </Text>
+      )}
+    </Paper>
+  );
+
   return (
-    <div className={style.countdown}>
-      <div className={style.countdown_wrapper}>
-        <div className={style.countdown_item}>
-          {done && 'D' || days} 
-          {done || <span>days</span>}
-        </div>
-        <div className={style.countdown_item}>
-          {done && 'O' || hours}
-          {done || <span>hours</span>}
-        </div>
-        <div className={style.countdown_item}>
-          {done && 'N' || minutes}
-          {done || <span>minutes</span>}
-        </div>
-        <div className={style.countdown_item}>
-          {done && 'E' || seconds}
-          {done || <span>seconds</span>}
-        </div>
-      </div>
-    </div>
+    <Group justify="center" gap="md">
+      {renderItem(done ? "D" : days, "days")}
+      {renderItem(done ? "O" : hours, "hours")}
+      {renderItem(done ? "N" : minutes, "minutes")}
+      {renderItem(done ? "E" : seconds, "seconds")}
+    </Group>
   );
 }
 

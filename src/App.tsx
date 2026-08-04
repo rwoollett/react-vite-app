@@ -5,6 +5,7 @@ import { store } from './store/reducers/store'
 import { ipApi } from './store/api/ipApi';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 
 const theme = createTheme({
   colors: {

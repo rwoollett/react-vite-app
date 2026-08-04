@@ -32,5 +32,9 @@ export function useColorMap() {
     // Generic surfaces
     surfaceBg: isDark ? theme.colors.dark[5] : theme.white,
     surfaceText: isDark ? theme.white : theme.black,
+
+    countdownBg: isDark ? "#2C2E33" : "#F7F7ED",
+    countdownItemBg: isDark ? "#3A3C40" : "#E9E3FF",   // purple-ish light
+    countdownItemText: isDark ? "#D0BFFF" : "#5A189A", // purple text
   };
 }

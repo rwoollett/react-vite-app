@@ -55,7 +55,7 @@ td.editCell input[type="checkbox"] {
 .editFooter {
   margin-top: 10px;
   padding: 10px;
-  background: #f7f7f7;
+  /* background: #f7f7f7; */
   border-radius: 4px;
   display: flex;
   gap: 10px;
