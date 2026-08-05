@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect, type FormEvent, type ChangeEvent, type MouseEvent, useMemo } from 'react';
-import Dropdown, { type Option } from '../components/Dropdown';
+import { type Option } from '../components/Dropdown';
 import { type BoardBounds, boardTraverse, drawPlayer, drawWinResult } from '../utility/DrawingTTT';
 import { useWebSocket } from "../hooks/use-websocket-context";
 import { type Game, isGame, isMove, type PlayerMove } from '../types';
-import { Button } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { setCurrentGame, clearCurrentGame } from '../store/actions/ttt';
+import { useColorMap } from '../theme/colorMap';
+import { Container, Checkbox, Select, Paper, Text, Grid, Button, Stack } from "@mantine/core";
 
 const CanvasComponent: React.FC = () => {
   const { gatewayUserId: gameUser, tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
@@ -59,6 +60,9 @@ const CanvasComponent: React.FC = () => {
       blockSize: 80
     }
   }, []);
+
+  const { rowSize, colSize, blockSize } = boardBounds;
+  const { surfaceBg, surfaceText, GAME_COLORS } = useColorMap();
 
   const [board, setBoard] = useState<number[]>(() => {
     return Array(9).fill(0);
@@ -234,9 +238,18 @@ const CanvasComponent: React.FC = () => {
     setPlayerHover(-1);
   };
 
-  const handlePlayerSelect = (newOption: Option) => {
-    setPlayer(newOption);
+  // const handlePlayerSelect = (newOption: Option) => {
+  //   setPlayer(newOption);
+  // };
+  const handlePlayerSelect = (value: string | null) => {
+    if (!value) return;
+
+    const selected = playerCharactors.find((opt) => opt.value === value);
+    if (selected) {
+      setPlayer(selected);
+    }
   };
+
 
   const handleOpponentStart = (_event: ChangeEvent<HTMLInputElement>) => {
     //event.preventDefault();
@@ -244,19 +257,19 @@ const CanvasComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    const GAME_COLORS: string[] = [
-      'rgb(255, 255, 255)', // White for dead cells
-      'rgb(0, 0, 0)',       // 1 Black
-      'rgb(0, 255, 0)',     // 2 Green  
-      'rgb(255, 255, 0)',   // 3 Lemon
-      'rgb(255, 82, 4)',    // 3 Orange
-      'rgb(201, 208, 181)', // 4 Pear
-      'rgb(0, 255, 0)',     // 5 Lime
-      'rgb(167, 12, 28)',   // 6 Strawberry
-      'rgb(175, 195, 102)', // 7 Grape
-      'rgb(255, 136, 5)',   // 8 Manderine
-      'rgb(255, 5, 5)'      // 9 Apple
-    ];
+    // const GAME_COLORS: string[] = [
+    //   'rgb(255, 255, 255)', // White for dead cells
+    //   'rgb(0, 0, 0)',       // 1 Black
+    //   'rgb(0, 255, 0)',     // 2 Green  
+    //   'rgb(255, 255, 0)',   // 3 Lemon
+    //   'rgb(255, 82, 4)',    // 3 Orange
+    //   'rgb(201, 208, 181)', // 4 Pear
+    //   'rgb(0, 255, 0)',     // 5 Lime
+    //   'rgb(167, 12, 28)',   // 6 Strawberry
+    //   'rgb(175, 195, 102)', // 7 Grape
+    //   'rgb(255, 136, 5)',   // 8 Manderine
+    //   'rgb(255, 5, 5)'      // 9 Apple
+    // ];
 
     const paint = (ctx: CanvasRenderingContext2D) => {
       const ALIVE = 1;
@@ -309,58 +322,103 @@ const CanvasComponent: React.FC = () => {
         return () => cancelAnimationFrame(animationFrameId);
       }
     }
-  }, [board, gameActive, boardUpdated, result, boardBounds, playerHover, playerMove, player]);
+  }, [GAME_COLORS, board, gameActive, boardUpdated, result, boardBounds, playerHover, playerMove, player]);
 
-  const gameOption = (title: string, buttonText: string, change: boolean) => (
-    <div className='panel ml-3'>
-      <p className="panel-heading mb-4 is-size-7">{title}</p>
-      <div className='panel-block'>
+  const gameOption = (title: string, buttonText: string, change: boolean) => {
+    return (
+      <Paper
+        p="md"
+        radius="md"
+        shadow="sm"
+        bg={surfaceBg}
+        c={surfaceText}
+        style={{ marginLeft: "12px" }}
+      >
+        <Text fw={600} size="sm" mb="md">
+          {title}
+        </Text>
+
         <form onSubmit={handleCreateGameSubmit}>
-          <div className="field ">
-            <label className="label">Play Charactor</label>
-            {change && (<Dropdown style={{ width: "200px" }} options={playerCharactors} value={player} onChange={handlePlayerSelect} />)}
-            {change || (<div className="has-text-weight-semibold ml-4 pt-1 pb-2 is-size-6">{player.label}</div>)}
-          </div>
-          <div className="field">
-            <div className="control">
-              {change && (<label className="checkbox is-size-6">Opponent starts <input checked={isOpponentStart} onChange={handleOpponentStart} type="checkbox" className='is-size-6' /></label>)}
-              {change || playMessage}
-            </div>
-          </div>
-          <div className="field is-grouped">
-            <div className="control">
-              <Button color="blue" type="submit">{buttonText}</Button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+          <Stack gap="md">
 
-  const { rowSize, colSize, blockSize } = boardBounds;
+            {/* Player Character */}
+            <Stack gap={4}>
+              <Text fw={500}>Play Character</Text>
+
+              {change ? (
+                <Select
+                  data={playerCharactors}
+                  value={player.value}
+                  onChange={handlePlayerSelect}
+                  w={200}
+                />
+              ) : (
+                <Text fw={600}>{player.label}</Text>
+              )}
+            </Stack>
+
+            {/* Opponent Starts */}
+            <Stack gap={4}>
+              {change ? (
+                <Checkbox
+                  label="Opponent starts"
+                  checked={isOpponentStart}
+                  onChange={handleOpponentStart}
+                />
+              ) : (
+                <Text fw={600}>{playMessage}</Text>
+              )}
+            </Stack>
+
+            {/* Submit Button */}
+            <Button type="submit" color="blue">
+              {buttonText}
+            </Button>
+          </Stack>
+        </form>
+      </Paper>
+    );
+  };
+
   return (
-    <div className="container">
-      <div className="panel">
-        <p className="panel-heading mb-4">Tic Tac Toe {gameId} {gameActive && hasMovedBoard && "Move made"} {gameActive && (hasMovedBoard || "Make a move")}</p>
-        <div className="columns">
-          <div className="column is-one-third">
-            {gameActive || gameOption('Select Game Options', startButtonText, true)}
-            {gameActive && gameOption('Playing Tic Tac Toe!', 'Finish Game', false)}
-          </div>
-          <div className="column">
-            <canvas className='is-clickable'
+    <Container size="md">
+      <Paper p="lg" radius="md" shadow="sm" bg={surfaceBg} c={surfaceText}>
+        <Text fw={700} size="lg" mb="md">
+          Tic Tac Toe {gameId}{" "}
+          {gameActive && hasMovedBoard && "Move made"}{" "}
+          {gameActive && (hasMovedBoard || "Make a move")}
+        </Text>
+
+        <Grid>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Stack>
+              {!gameActive &&
+                gameOption("Select Game Options", startButtonText, true)}
+
+              {gameActive &&
+                gameOption("Playing Tic Tac Toe!", "Finish Game", false)}
+            </Stack>
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, md: 8 }}>
+            <canvas
+              className="is-clickable"
               onMouseMove={handleOnMouseMove}
               onMouseDown={handleOnMouseDown}
               onMouseLeave={handleOnMouseLeave}
               ref={canvasRef}
               width={colSize * blockSize}
               height={rowSize * blockSize}
-              style={{ border: '1px solid #EEEEEE' }}>
-            </canvas>
-          </div>
-        </div>
-      </div>
-    </div>
+              style={{
+                border: "1px solid #EEEEEE",
+                display: "block",
+                margin: "0 auto",
+              }}
+            />
+          </Grid.Col>
+        </Grid>
+      </Paper>
+    </Container>
   );
 };
 

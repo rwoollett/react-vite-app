@@ -82,7 +82,6 @@ td.editCell input[type="checkbox"] {
   text-align: left;
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--bulma-text-strong);
   user-select: none;
 }
 
@@ -90,8 +89,8 @@ td.editCell input[type="checkbox"] {
   cursor: pointer;
 }
 
-.rowSelect:hover {
-  background-color: var(--bulma-background-hover);
+/* .rowSelect:hover {
+  background-color: beige;
   animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
@@ -101,7 +100,7 @@ td.editCell input[type="checkbox"] {
     transform: scale(1);
     opacity: 75%;
   }
-}
+} */
 
 /* Responsive table collapse */
 @media only screen and (max-width: 760px),
