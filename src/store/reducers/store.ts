@@ -9,6 +9,7 @@ import { ipApi } from '../api/ipApi'
 import { usersApi } from '../api/authenticatedUsersApi';
 import { reducer as postsReducer, postsAdapter } from '../api/postsSlice';
 import { reducer as csTokenActionsReducer, csTokenActionsAdapter, type CSTokenAction} from '../api/cstokenSlice';
+import clientIPSeqSliceReducer from '../api/cstokenClientIPSeqSlice';
 import { reducer as postUsersReducer, usersAdapter } from '../api/authorUsersSlice';
 
 import { setupListeners } from '@reduxjs/toolkit/query'
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   [usersApi.reducerPath]: usersApi.reducer,
   posts: postsReducer,
   postusers: postUsersReducer,
-  csTokenActions: csTokenActionsReducer
+  csTokenActions: csTokenActionsReducer,
+  clientIPSeq: clientIPSeqSliceReducer
 });
 
 const persistedReducer = persistReducer(
@@ -65,6 +67,9 @@ export const selectActionsByClient = createAppSelector(
   [selectAllTokenActions,  (_: RootState, clientIp: string) => clientIp],
   (actions, clientIp) => actions.filter(a => a.clientIp === clientIp)
 );
+
+export const selectLastSeqForClient = (state: RootState, clientIp: string) =>
+  state.clientIPSeq[clientIp] ?? 0;
 
 export const selectNewActionsForClient = createAppSelector(
   [selectActionsByClient, (_state, _clientIp: string, lastSeq: number) => lastSeq],

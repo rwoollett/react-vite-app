@@ -3,24 +3,30 @@ import { IconClock } from "@tabler/icons-react";
 import { Paper, Text, Group, Stack, Badge } from "@mantine/core";
 import { parseISO, format } from "date-fns";
 import { useColorMap } from "../../theme/colorMap";
-import { useWebSocket } from "../../hooks/use-websocket-context";
-import { selectNewActionsForClient, useAppSelector } from "../../store/reducers/store";
+import { useAppDispatch } from "../../store/reducers/store";
+import { selectLastSeqForClient, selectNewActionsForClient, useAppSelector } from "../../store/reducers/store";
 import type { ClientCS, ConnectedClient, DisconnectedClient } from "../../types";
+import { updateLastSeq } from "../../store/api/cstokenClientIPSeqSlice";
 
 type ClientNodeProps = {
   client: ClientCS;
 };
 
 const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
+  const dispatch = useAppDispatch();
+
   const [connected, setConnected] = useState<boolean>(client.connected);
   const [connectedAt, setConnectedAt] = useState<string>(client.connectedAt);
   const [disconnectedAt, setDisconnectedAt] = useState<string>(
     client.disconnectedAt || new Date().toISOString()
   );
 
-  const { lastProcessedCSSeq, setLastProcessedCSSeq } = useWebSocket();
+  const lastSeq = useAppSelector(state =>
+    selectLastSeqForClient(state, client.ip)
+  );
+
   const newActions = useAppSelector((state) =>
-    selectNewActionsForClient(state, client.ip, lastProcessedCSSeq)
+    selectNewActionsForClient(state, client.ip, lastSeq)
   );
 
   const { surfaceBg, surfaceText } = useColorMap();
@@ -28,7 +34,7 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
   useEffect(() => {
     if (newActions.length === 0) return;
 
-    let updatedSeq = lastProcessedCSSeq;
+    let updatedSeq = lastSeq;
 
     for (const action of newActions) {
       if (action.subject === "cstoken_client_Connected") {
@@ -46,8 +52,8 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
       updatedSeq = action.seqNo;
     }
 
-    setLastProcessedCSSeq(updatedSeq);
-  }, [newActions, lastProcessedCSSeq, setLastProcessedCSSeq]);
+    dispatch(updateLastSeq({ clientIp: client.ip, seq: updatedSeq }));
+  }, [newActions, dispatch, lastSeq, client]);
 
   return (
     <Paper shadow="sm" radius="md" p="md" bg={surfaceBg} c={surfaceText}>

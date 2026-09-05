@@ -25,8 +25,8 @@ export default function ModeratedTextarea() {
 
   const sendModerationRequest = debounce(async (value: string) => {
     setStatus("pending");
-
-    await fetch("/api/moderate", {
+///api/v1/liveposts/posts
+    await fetch("/api/v1/liveposts/moderate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
