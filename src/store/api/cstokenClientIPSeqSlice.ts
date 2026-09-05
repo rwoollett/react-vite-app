@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-//import type { WSCSTokenMessage } from '../../types';
 
 interface ClientSeqState {
   [clientIp: string]: number;

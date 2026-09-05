@@ -59,7 +59,7 @@ const ClientNode: React.FC<ClientNodeProps> = ({ client }) => {
     <Paper shadow="sm" radius="md" p="md" bg={surfaceBg} c={surfaceText}>
       {/* Header */}
       <Group justify="space-between" mb="xs">
-        <Text fw={600}>{client.name}</Text>
+        <Text fw={600}>{client.name} HI</Text>
 
         <Badge
           color={connected ? "green" : "red"}
