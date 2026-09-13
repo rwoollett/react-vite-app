@@ -173,6 +173,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return msg.subject.startsWith("cstoken_");
     }
 
+    function isTTTMessage(msg: GatewayMessage): msg is WSTTTMessage {
+      return msg.subject.startsWith("ttt_");
+    }
+
     const handleGatewayMessage = (msg: GatewayMessage) => {
       // WSUserConnectEvent
       if (msg.subject === "ws_user_Connected") {
@@ -206,9 +210,15 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       // TTT
-      if (msg.subject === "ttt_game_Update") {
-        handleTTT(msg);
-        return;
+      if (isTTTMessage(msg)) {
+        switch (msg.subject) {
+          case "ttt_game_Update":
+            handleTTT(msg);
+            return;
+          case "ttt_game_Create":
+            handleTTT(msg);
+            return;
+        }
       }
 
       // LivePost
