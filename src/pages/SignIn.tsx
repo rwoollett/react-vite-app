@@ -14,8 +14,12 @@ import Banner from '../components/Banner';
 
 import { Box, Paper, Stack, Text, TextInput, PasswordInput, Group } from '@mantine/core';
 import { useColorMap } from '../theme/colorMap';
+import { useWebSocket } from '../hooks/use-websocket-context';
+import { baseAuthUrl } from '../utility/functions';
 
 const SignIn: React.FC = () => {
+  const { wsRefGateway, gatewayUserId } = useWebSocket();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
@@ -32,10 +36,42 @@ const SignIn: React.FC = () => {
   const from = location.state?.from || "/";
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate(from, { replace: true });
-    }
-  }, [isLoggedIn, navigate, from]);
+    // Only run when user is logged in AND WS userId is available
+    if (!isLoggedIn || !gatewayUserId) return;
+
+    const authenticateWS = async () => {
+      try {
+        const getTokenResult = await fetch(`${baseAuthUrl()}/api/v1/users/currenttoken`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!getTokenResult.ok) {
+          console.warn("WS user connected but not authenticated");
+          return;
+        }
+
+        const auth = await getTokenResult.json();
+
+        wsRefGateway.current?.send({
+          subject: "ws_auth_Token",
+          payload: {
+            token: auth.currentToken,
+            userId: gatewayUserId,
+          },
+        });
+
+        navigate(from, { replace: true });
+
+      } catch (err) {
+        console.error("WS authentication failed:", err);
+      }
+    };
+
+    authenticateWS();
+
+  }, [isLoggedIn, gatewayUserId, navigate, from, wsRefGateway]);
+
 
   const redirectToHomePage = () => {
     navigate(ROUTES.LIVEPOSTS_ROUTE);

@@ -1,19 +1,17 @@
 import queryString from 'query-string';
+import type { WSGeneralMessage, WSMessageQueryParams, WSUserAuthMessage, WSUserLogoutMessage } from '../types/wsuser';
 
-interface Message {
-  [key: string]: string;
-}
 
 interface WebSocketClientOptions<T> {
   onDisconnect?: () => void;
-  onMessage?: (payload: T) => void;
-  queryParams?: Message;
+  onMessage?: (message: T) => void;
+  queryParams?: WSMessageQueryParams;
   service?: string;
 }
 
 export interface WebSocketClient {
   client: WebSocket;
-  send: (payload: Message) => void;
+  send: (message: WSUserAuthMessage|WSUserLogoutMessage|WSGeneralMessage) => void;
   close: () => void;
 }
 
@@ -47,12 +45,11 @@ const websocketClient = <T>(
 
   const connection: WebSocketClient = {
     client,
-    send: (payload = {}) => {
+    send: (message) => {
       if (options.queryParams) {
-        payload = { ...payload, ...options.queryParams };
+        message = { ...message, ...options.queryParams };
       }
-
-      return client?.send(JSON.stringify(payload));
+      return client?.send(JSON.stringify(message));
     },
     close: () => {
       client?.close();

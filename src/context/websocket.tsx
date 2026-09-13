@@ -14,6 +14,7 @@ import type {
 import { useAppDispatch } from "../store/reducers/store";
 import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 import type { WSUserConnectMessage } from "../types/wsuser";
+import { baseAuthUrl } from "../utility/functions";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
@@ -47,9 +48,30 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   useEffect(() => {
 
-    const handleWSUserConnect = (msg: WSUserConnectMessage) => {
+    const handleWSUserConnect = async (msg: WSUserConnectMessage) => {
       console.log("Gateway WS connected with userId:", msg.payload.userId);
+
       setGatewayUserId(msg.payload.userId);
+
+      const getTokenResult = await fetch(`${baseAuthUrl()}/api/v1/users/currenttoken`, {
+        method: 'GET',
+        credentials: 'include', // send cookie
+      });
+
+      if (!getTokenResult.ok) {
+        console.warn("WS user connected but not authenticated");
+        return;
+      }
+
+      const auth = await getTokenResult.json();
+      // Step 3 — send WS authentication message to Gateway
+      wsRefGateway.current?.send({
+        subject: "ws_auth_Token",
+        payload: {
+          token: auth.currentToken,
+          userId: msg.payload.userId,
+        }
+      });
     };
 
     const handleAcquireCS = (msg: { subject: "cstoken_token_Acquire"; payload: AcquireCS }) => {
