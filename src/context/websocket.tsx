@@ -62,23 +62,18 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const getTokenResult = await http<{ currentToken: string }>(`${baseAuthUrl()}/api/v1/users/currenttoken`, reqInit);
 
         // Step 3 — send WS authentication message to Gateway
-        wsRefGateway.current?.send({
-          subject: "ws_auth_Token",
-          payload: {
-            token: getTokenResult.currentToken,
-            userId: msg.payload.userId,
-          }
-        });
-      } catch (err) {
-        const error = err as Error;
-        console.warn("WS user connected but not authenticated.", error.message ? error.message : "");
+        if (getTokenResult.currentToken) {
           wsRefGateway.current?.send({
-          subject: "ws_auth_Token",
-          payload: {
-            token: error.message ? error.message : "",
-            userId: msg.payload.userId,
-          }
-        });
+            subject: "ws_auth_Token",
+            payload: {
+              token: getTokenResult.currentToken,
+              userId: msg.payload.userId,
+            }
+          });
+        }
+      } catch (_err) {
+        //const error = err as Error;
+        //console.warn("WS user connected but not authenticated.", error.message ? error.message : "");
       }
     };
 
