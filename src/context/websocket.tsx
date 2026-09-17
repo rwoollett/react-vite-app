@@ -15,6 +15,7 @@ import { useAppDispatch } from "../store/reducers/store";
 import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 import type { WSUserConnectMessage } from "../types/wsuser";
 import { baseAuthUrl } from "../utility/functions";
+import { http } from "../utility/fetchData";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
@@ -46,6 +47,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
   const [gatewayUserId, setGatewayUserId] = useState<string | null>(null);
 
+
   useEffect(() => {
 
     const handleWSUserConnect = async (msg: WSUserConnectMessage) => {
@@ -53,25 +55,31 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       setGatewayUserId(msg.payload.userId);
 
-      const getTokenResult = await fetch(`${baseAuthUrl()}/api/v1/users/currenttoken`, {
-        method: 'GET',
-        credentials: 'include', // send cookie
-      });
+      try {
+        const reqInit = {
+          method: "GET"
+        };
+        const getTokenResult = await http<{ currentToken: string }>(`${baseAuthUrl()}/api/v1/users/currenttoken`, reqInit);
 
-      if (!getTokenResult.ok) {
-        console.warn("WS user connected but not authenticated");
-        return;
+        // Step 3 — send WS authentication message to Gateway
+        wsRefGateway.current?.send({
+          subject: "ws_auth_Token",
+          payload: {
+            token: getTokenResult.currentToken,
+            userId: msg.payload.userId,
+          }
+        });
+      } catch (err) {
+        const error = err as Error;
+        console.warn("WS user connected but not authenticated.", error.message ? error.message : "");
+          wsRefGateway.current?.send({
+          subject: "ws_auth_Token",
+          payload: {
+            token: error.message ? error.message : "",
+            userId: msg.payload.userId,
+          }
+        });
       }
-
-      const auth = await getTokenResult.json();
-      // Step 3 — send WS authentication message to Gateway
-      wsRefGateway.current?.send({
-        subject: "ws_auth_Token",
-        payload: {
-          token: auth.currentToken,
-          userId: msg.payload.userId,
-        }
-      });
     };
 
     const handleAcquireCS = (msg: { subject: "cstoken_token_Acquire"; payload: AcquireCS }) => {

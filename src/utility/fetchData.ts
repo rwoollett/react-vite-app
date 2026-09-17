@@ -13,6 +13,7 @@ export async function http<T>(request: string, {
 
   const headers = { 'Content-Type': 'application/json' };
   const config: FetchConfig = {
+    credentials: 'include',
     body,
     ...customConfig,
     headers: {
@@ -32,6 +33,7 @@ export async function http<T>(request: string, {
 
       // Retry original request
       const response2 = await fetch(request, config);
+     
       if (!response2.ok) throw new Error(`Retry failed: ${response2.status}`);
       if (response2.status !== 200) {
         throw new Error('Not authorised');
