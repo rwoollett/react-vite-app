@@ -94,7 +94,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     const handleProcSvc = (msg: { subject: "cstoken_process_Service"; payload: ProcSvc }) => {
       const { seqNo, processedAt, ip } = msg.payload;
-      console.log("procsvc handler form ");
       dispatch(actionReceived({
         id: `${ip}_${seqNo}`,
         clientIp: ip,
@@ -180,6 +179,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return msg.subject.startsWith("ttt_");
     }
 
+    function isLivePostsMessage(msg: GatewayMessage): msg is WSLivePostMessage {
+      return msg.subject.startsWith("liveposts_");
+    }
+
     const handleGatewayMessage = (msg: GatewayMessage) => {
       // WSUserConnectEvent
       if (msg.subject === "ws_user_Connected") {
@@ -224,12 +227,16 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       }
 
-      // LivePost
-      if (msg.subject === "liveposts_post_Stage") {
-        handleLivePost(msg);
-        return;
+      if (isLivePostsMessage(msg)) {
+        switch (msg.subject) {
+          case "liveposts_post_Stage":
+            handleLivePost(msg);
+            return;
+          case "liveposts_moderate_Result":
+            handleLivePost(msg);
+            return;
+        }
       }
-
       console.warn("Unknown subject in msg:", msg);
     };
 

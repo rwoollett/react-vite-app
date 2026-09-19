@@ -1,5 +1,6 @@
 import React, { useEffect, useState, type FormEvent } from 'react';
-import { Stack, Paper, Text, TextInput, Textarea, Button, Grid, Skeleton } from '@mantine/core';
+import { Stack, Paper, Text, TextInput, Button, Grid, Skeleton } from '@mantine/core';
+import ModeratedTextarea from './ModerationTextarea';
 import { useNavigate } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useColorMap } from '../theme/colorMap';
@@ -112,7 +113,8 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
 
           {/* RIGHT SIDE */}
           <Grid.Col span={{ base: 12, md: 8 }}>
-            <Textarea
+            <ModeratedTextarea />
+            {/* <Textarea
               label="Content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -125,7 +127,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
                   boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)',
                 },
               }}
-            />
+            /> */}
           </Grid.Col>
 
           {/* FOOTER BUTTON */}

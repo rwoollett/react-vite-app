@@ -21,7 +21,6 @@ const CanvasComponent: React.FC = () => {
         body: JSON.stringify({ gameId, userId: gameUser })
       });
       const data = await response.json();
-      console.log('start game', data);
       if (!data || !isGame(data.startGame)) {
         throw new Error("Invalid response format");
       } else {
@@ -91,11 +90,9 @@ const CanvasComponent: React.FC = () => {
 
   useEffect(() => {
     let updatedSeq = lastProcessedTTTSeq;
-    console.log('\n**client lastProcessedTTTSeq', updatedSeq);
 
     for (const { seq, msg } of tttMessageQueue) {
       if (seq > updatedSeq) {
-        console.log('client', updatedSeq, seq, msg);
         if (msg.subject === "ttt_game_Update" && msg.payload.gameId === gameId) {
           const newBoard = msg.payload.board.split(",");
           setBoard(newBoard.map((cell) => parseInt(cell)));
@@ -121,9 +118,9 @@ const CanvasComponent: React.FC = () => {
         updatedSeq = seq;
       }
     }
-    console.log('client looped ttt updatesSeq', updatedSeq, lastProcessedTTTSeq);
+    //console.log('client looped ttt updatesSeq', updatedSeq, lastProcessedTTTSeq);
     if (updatedSeq !== lastProcessedTTTSeq) {
-      console.log('lastProcessedTTTSeq', updatedSeq);
+      //console.log('lastProcessedTTTSeq', updatedSeq);
       setLastProcessedTTTSeq(updatedSeq);
     }
   }, [tttMessageQueue, gameId, dispatch, lastProcessedTTTSeq, setLastProcessedTTTSeq]);

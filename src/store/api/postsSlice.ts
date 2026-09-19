@@ -89,7 +89,7 @@ export const postsSlice = createSlice({
       const existingPost = state.entities[id];
       if (existingPost) {
         existingPost.slug = slug;
-        console.log (existingPost);
+        //console.log (existingPost);
       }
     },
     upsertPost: (state, action: PayloadAction<Post>) => {

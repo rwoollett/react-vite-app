@@ -36,7 +36,6 @@ const FlipImagePage: React.FC = () => {
     setSelected(undefined);
     setImages(result);
   };
-  console.log(JSON.stringify(selected, null, 2));
 
   return (
     <Container size="xl">

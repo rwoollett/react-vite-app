@@ -23,6 +23,17 @@ export type PostStage = {
   slug: string;
 }
 
+export type ModerateResult = {
+  id: string;
+  userId: string;
+  isRejected: boolean;
+  score: number;
+  classIndex: number;
+  label: string;
+  probabilities: number[];
+  matchedLabels: string[];
+}
+
 export type AuthorUser = {
   id: number;
   authId: string;
@@ -46,10 +57,10 @@ export type FlashCard = {
   link?: {
     to: string;
     text: string;
-  }|undefined;
-  author?: string|undefined;
-  timeAgo?: string|undefined;
-  reactEmoji?: ReactionEmojiCount|undefined;
+  } | undefined;
+  author?: string | undefined;
+  timeAgo?: string | undefined;
+  reactEmoji?: ReactionEmojiCount | undefined;
 };
 
 export interface ReactionEmoji {
@@ -70,5 +81,7 @@ declare global {
   }
 }
 
-export type WSLivePostMessage = { subject: "liveposts_post_Stage"; payload: PostStage };
+export type WSLivePostMessage =
+  | { subject: "liveposts_post_Stage"; payload: PostStage }
+  | { subject: "liveposts_moderate_Result"; payload: ModerateResult };
 
