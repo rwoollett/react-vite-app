@@ -31,9 +31,12 @@ const LivePosts: React.FC = () => {
   // WebSocket updates
   useEffect(() => {
     let updatedSeq = lastProcessedLivePostSeq;
+    console.log('LivePosts: lastProcessedLivePostSeq', lastProcessedLivePostSeq);
 
     for (const { seq, msg } of livePostMessageQueue) {
+      console.log('LivePosts: wsseq, msg', seq, msg);
       if (seq > updatedSeq) {
+
         if (msg.subject === "liveposts_post_Stage") {
           dispatch(fetchPosts());
         }

@@ -5,10 +5,15 @@ import { useWebSocket } from "../hooks/use-websocket-context";
 import type { ModerateResult } from "../types";
 import { http } from "../utility/fetchData";
 
-export default function ModeratedTextarea() {
+
+
+export default function ModeratedTextarea({ onValueChange }: {
+  onValueChange: (value: string) => void;
+}) {
   const { gatewayUserId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
 
   const draftId = useRef(uuidv4()).current;
+  const moderationSeq = useRef(0);
 
   const [text, setText] = useState("");
   const [status, setStatus] = useState<"clean" | "prohibited" | "pending">("clean");
@@ -38,12 +43,20 @@ export default function ModeratedTextarea() {
   }
 
   const sendModerationRequest = debounce(async (value: string) => {
+
+    if (value.trim().length < 8) {
+      setStatus("clean");
+      setMessage("");
+      setModerateResult(null);
+      return;
+    }
     setStatus("pending");
 
     try {
+      const seq = ++moderationSeq.current;
       const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
       const reqInit = {
-        body: JSON.stringify({ id: draftId, userId: gatewayUserId, value }),
+        body: JSON.stringify({ id: draftId, userId: gatewayUserId, seq, value }),
         method: "PUT"
       };
       await http<{ createPost: ModerateResult }>(`${apiUrl}/api/v1/liveposts/moderate`, reqInit);
@@ -51,45 +64,38 @@ export default function ModeratedTextarea() {
     } catch (_err) {
       console.warn("Moderate Job not authenticated.");
     }
-
-    // await fetch("/api/v1/liveposts/moderate", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     draft_id: draftId,
-    //     text: value
-    //   })
-    // });
   }, 500);
 
   useEffect(() => {
     let updatedSeq = lastProcessedLivePostSeq;
-    //console.log('\n*MODERATION*client lastProcessedLivePostSeq', updatedSeq);
+    console.log('ModerateText: lastProcessedLivePostSeq', lastProcessedLivePostSeq);
 
     for (const { seq, msg } of livePostMessageQueue) {
       if (seq > updatedSeq) {
-        //console.log(' -- client', updatedSeq, seq, msg);
+        console.log('ModerateText: wsseq, seq, msg', seq, moderationSeq.current, msg);
         if (msg.subject === "liveposts_moderate_Result" && msg.payload.id === draftId) {
-          if (msg.payload.isRejected) {
-            setStatus("prohibited");
-            setMessage("⚠️ This text contains prohibited content");
-            setModerateResult(msg.payload);
-          } else {
-            setStatus("clean");
-            setMessage("");
-            setModerateResult(null);
+          if (!(msg.payload.seq < moderationSeq.current)) {
+            if (msg.payload.isRejected) {
+              setStatus("prohibited");
+              setMessage("⚠️ This text contains prohibited content");
+              setModerateResult(msg.payload);
+              onValueChange('');
+            } else {
+              setStatus("clean");
+              setMessage("");
+              setModerateResult(null);
+              onValueChange(text);
+            }
           }
         }
         updatedSeq = seq;
       }
     }
-    //console.log('client looped live[post updatesSeq', updatedSeq, lastProcessedLivePostSeq);
     if (updatedSeq !== lastProcessedLivePostSeq) {
-      //console.log('lastProcessedTTTSeq', updatedSeq);
       setLastProcessedLivePostSeq(updatedSeq);
     }
 
-  }, [livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
+  }, [livePostMessageQueue, draftId, text, onValueChange, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   return (
     <div>
@@ -97,9 +103,9 @@ export default function ModeratedTextarea() {
         label="Content"
         value={text}
         onChange={(e) => {
-          //console.log('Moderation on change');
           const value = e.currentTarget.value;
           setText(value);
+          onValueChange(value);
           sendModerationRequest(value);
         }}
         minRows={14}

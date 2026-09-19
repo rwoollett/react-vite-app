@@ -5,10 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useColorMap } from '../theme/colorMap';
 
-import { 
-  selectIdByAuth, 
-  useAppDispatch, 
-  useAppSelector 
+import {
+  selectIdByAuth,
+  useAppDispatch,
+  useAppSelector
 } from '../store/reducers/store';
 
 import { addNewPost } from '../store/api/postsSlice';
@@ -113,21 +113,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
 
           {/* RIGHT SIDE */}
           <Grid.Col span={{ base: 12, md: 8 }}>
-            <ModeratedTextarea />
-            {/* <Textarea
-              label="Content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              minRows={14}
-              autosize={false}
-              styles={{
-                input: {
-                  minHeight: 300,
-                  borderRadius: 6,
-                  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)',
-                },
-              }}
-            /> */}
+            <ModeratedTextarea onValueChange={setContent} />
           </Grid.Col>
 
           {/* FOOTER BUTTON */}

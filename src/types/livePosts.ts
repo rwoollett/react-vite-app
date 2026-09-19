@@ -26,6 +26,7 @@ export type PostStage = {
 export type ModerateResult = {
   id: string;
   userId: string;
+  seq: number;
   isRejected: boolean;
   score: number;
   classIndex: number;
