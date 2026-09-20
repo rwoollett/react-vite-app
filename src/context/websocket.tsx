@@ -60,14 +60,14 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const reqInit = {
           method: "GET"
         };
-        const getTokenResult = await http<{ currentToken: string }>(`${baseAuthUrl()}/api/v1/users/currenttoken`, reqInit);
+        const getTokenResult = await http<{ currentUser: { accessToken: string }}>(`${baseAuthUrl()}/api/v1/users/currentuser`, reqInit);
 
         // Step 3 — send WS authentication message to Gateway
-        if (getTokenResult.currentToken) {
+        if (getTokenResult.currentUser.accessToken) {
           wsRefGateway.current?.send({
             subject: "ws_auth_Token",
             payload: {
-              token: getTokenResult.currentToken,
+              token: getTokenResult.currentUser.accessToken,
               userId: msg.payload.userId,
             }
           });
