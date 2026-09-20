@@ -16,6 +16,7 @@ import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 import type { WSUserConnectMessage } from "../types/wsuser";
 import { baseAuthUrl } from "../utility/functions";
 import { http } from "../utility/fetchData";
+import { fetchPosts } from "../store/api/postsSlice";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
@@ -161,7 +162,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
     };
 
-    const handleLivePost = (msg: WSLivePostMessage) => {
+    const handleLivePostStage = () => {
+      dispatch(fetchPosts());
+    };
+
+    const handleLivePostModerate = (msg: WSLivePostMessage) => {
       setLivePostSeq(prev => {
         const next = prev + 1;
         setLivePostMessageQueue(q =>
@@ -230,10 +235,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (isLivePostsMessage(msg)) {
         switch (msg.subject) {
           case "liveposts_post_Stage":
-            handleLivePost(msg);
+            handleLivePostStage();
             return;
           case "liveposts_moderate_Result":
-            handleLivePost(msg);
+            handleLivePostModerate(msg);
             return;
         }
       }

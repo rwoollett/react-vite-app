@@ -6,18 +6,15 @@ import Banner from '../components/Banner';
 import PostsComponent from '../components/PostsComponent';
 import { Button } from '@mantine/core';
 import { useAppDispatch } from '../store/reducers/store';
-import { fetchPosts } from '../store/api/postsSlice';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
 import { refetchUserByID } from '../store/api/authorUsersSlice';
-import { useWebSocket } from "../hooks/use-websocket-context";
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 
 import { Box, Paper, Group, Text } from '@mantine/core';
 import { useColorMap } from '../theme/colorMap';
 
 const LivePosts: React.FC = () => {
-  const { livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
   const { isLoggedIn } = useSignedInAuthorize();
 
   const [title, setTitle] = useState("");
@@ -27,27 +24,6 @@ const LivePosts: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { surfaceBg, surfaceText } = useColorMap();
-
-  // WebSocket updates
-  useEffect(() => {
-    let updatedSeq = lastProcessedLivePostSeq;
-    console.log('LivePosts: lastProcessedLivePostSeq', lastProcessedLivePostSeq);
-
-    for (const { seq, msg } of livePostMessageQueue) {
-      console.log('LivePosts: wsseq, msg', seq, msg);
-      if (seq > updatedSeq) {
-
-        if (msg.subject === "liveposts_post_Stage") {
-          dispatch(fetchPosts());
-        }
-        updatedSeq = seq;
-      }
-    }
-
-    if (updatedSeq !== lastProcessedLivePostSeq) {
-      setLastProcessedLivePostSeq(updatedSeq);
-    }
-  }, [livePostMessageQueue, dispatch, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   // Fetch homepage content
   useEffect(() => {
