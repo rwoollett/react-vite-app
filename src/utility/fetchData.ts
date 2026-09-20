@@ -22,6 +22,8 @@ export async function http<T>(request: string, {
   };
   try {
     const response = await fetch(request, config);
+    console.log('fetch data response', response.status);
+
     if (response.status === 401) {
       // Try refreshing token
       const refreshRes = await fetch(`${baseAuthUrl()}/api/v1/users/refreshtoken`, {
@@ -29,11 +31,13 @@ export async function http<T>(request: string, {
         credentials: 'include', // send cookie
       });
 
+      console.log('fetch data refresh response', refreshRes.ok);
       if (!refreshRes.ok) throw new Error('Refresh failed');
 
       // Retry original request
       const response2 = await fetch(request, config);
-     
+
+      console.log('fetch data reauth response', response2.ok);
       if (!response2.ok) throw new Error(`Retry failed: ${response2.status}`);
       if (response2.status !== 200) {
         throw new Error('Not authorised');
@@ -48,7 +52,7 @@ export async function http<T>(request: string, {
     }
 
     return await response.json();
-    
+
   } catch (err) {
     const error = err as Error;
     return Promise.reject(error.message ? error.message : "");
