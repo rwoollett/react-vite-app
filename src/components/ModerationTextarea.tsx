@@ -14,6 +14,8 @@ export default function ModeratedTextarea({ onValueChange }: {
 
   const draftId = useRef(uuidv4()).current;
   const moderationSeq = useRef(0);
+  const lastQueueIndex = useRef(0);
+  const lastModeratedLength = useRef(0);
 
   const [text, setText] = useState("");
   const [status, setStatus] = useState<"clean" | "prohibited" | "pending">("clean");
@@ -44,12 +46,6 @@ export default function ModeratedTextarea({ onValueChange }: {
 
   const sendModerationRequest = debounce(async (value: string) => {
 
-    if (value.trim().length < 8) {
-      setStatus("clean");
-      setMessage("");
-      setModerateResult(null);
-      return;
-    }
     setStatus("pending");
 
     try {
@@ -67,33 +63,37 @@ export default function ModeratedTextarea({ onValueChange }: {
   }, 500);
 
   useEffect(() => {
-    let updatedSeq = lastProcessedLivePostSeq;
-    console.log('ModerateText: lastProcessedLivePostSeq', lastProcessedLivePostSeq);
+    for (
+      let i = lastQueueIndex.current;
+      i < livePostMessageQueue.length;
+      ++i
+    ) {
+      const { seq, msg } = livePostMessageQueue[i];
+      //console.log('ModerateText: i, queue seq, moderation seq, msg', i, seq, moderationSeq.current, msg);
 
-    for (const { seq, msg } of livePostMessageQueue) {
-      if (seq > updatedSeq) {
-        console.log('ModerateText: wsseq, seq, msg', seq, moderationSeq.current, msg);
-        if (msg.subject === "liveposts_moderate_Result" && msg.payload.id === draftId) {
-          if (!(msg.payload.seq < moderationSeq.current)) {
-            if (msg.payload.isRejected) {
-              setStatus("prohibited");
-              setMessage("⚠️ This text contains prohibited content");
-              setModerateResult(msg.payload);
-              onValueChange('');
-            } else {
-              setStatus("clean");
-              setMessage("");
-              setModerateResult(null);
-              onValueChange(text);
-            }
+      if (msg.subject === "liveposts_moderate_Result" && msg.payload.id === draftId) {
+        //console.log('ModerateText: payload seq', msg.payload.seq);
+
+        if (!(msg.payload.seq < moderationSeq.current)) {
+
+          //console.log('ModerateText: FOUND current seq');
+          if (msg.payload.isRejected) {
+            setStatus("prohibited");
+            setMessage("⚠️ This text contains prohibited content");
+            setModerateResult(msg.payload);
+            onValueChange('');
+          } else {
+            setStatus("clean");
+            setMessage("");
+            setModerateResult(null);
+            onValueChange(text);
           }
         }
-        updatedSeq = seq;
       }
+      setLastProcessedLivePostSeq(seq);
     }
-    if (updatedSeq !== lastProcessedLivePostSeq) {
-      setLastProcessedLivePostSeq(updatedSeq);
-    }
+
+    lastQueueIndex.current = livePostMessageQueue.length;
 
   }, [livePostMessageQueue, draftId, text, onValueChange, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
@@ -104,9 +104,23 @@ export default function ModeratedTextarea({ onValueChange }: {
         value={text}
         onChange={(e) => {
           const value = e.currentTarget.value;
+          const cursorPos = e.currentTarget.selectionStart;
+          const snippet = value[cursorPos - 1];
+
           setText(value);
           onValueChange(value);
+
+          if (value.trim().length < 8)
+            return;
+
+          if ([" ", ".", ",", "!", "?", "\n"].includes(snippet))
+            return;
+
+          if (Math.abs(value.length - lastModeratedLength.current) < 8)
+            return;
+
           sendModerationRequest(value);
+          lastModeratedLength.current = value.length;
         }}
         minRows={14}
         autosize={false}
