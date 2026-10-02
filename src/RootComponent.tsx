@@ -62,8 +62,8 @@ const RootComponent: React.FC = () => {
             <Route path={`${ROUTES.LIVEPOSTS_ROUTE}`} element={<LivePostsPage />}>
               <Route index element={<LivePosts />} />
               <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
-                <Route path="create" element={<AddPostForm email={email} />} />
-                <Route path="moderate" element={<PostWorkflow email={email} />} />
+                {/* <Route path="create" element={<AddPostForm email={email} />} /> */}
+                <Route path="create" element={<PostWorkflow email={email} />} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Route>
