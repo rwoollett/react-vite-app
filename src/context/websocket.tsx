@@ -52,8 +52,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
 
     const handleWSUserConnect = async (msg: WSUserConnectMessage) => {
-      console.log("Gateway WS connected with userId:", msg.payload.userId);
-
       setGatewayUserId(msg.payload.userId);
 
       try {

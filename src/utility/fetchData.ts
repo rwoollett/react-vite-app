@@ -22,7 +22,6 @@ export async function http<T>(request: string, {
   };
   try {
     const response = await fetch(request, config);
-    console.log('fetch data response', response.status);
 
     if (response.status === 401) {
       // Try refreshing token
@@ -36,8 +35,6 @@ export async function http<T>(request: string, {
 
       // Retry original request
       const response2 = await fetch(request, config);
-
-      console.log('fetch data reauth response', response2.ok);
       if (!response2.ok) throw new Error(`Retry failed: ${response2.status}`);
       if (response2.status !== 200) {
         throw new Error('Not authorised');

@@ -12,7 +12,6 @@ const baseQuery = fetchBaseQuery({
 
 export const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQueryApi, extraOptions: Record<string, unknown> = {}) => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log('result', result.error?.status);
 
   if (result.error?.status === 401) {
     const refreshResult = await baseQuery(
@@ -20,7 +19,6 @@ export const baseQueryWithReauth = async (args: string | FetchArgs, api: BaseQue
       api,
       extraOptions
     );
-    console.log('refresh result', refreshResult.meta?.response?.ok);
     if (refreshResult.meta?.response?.ok) {
       result = await baseQuery(args, api, extraOptions);
     }
