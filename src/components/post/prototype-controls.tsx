@@ -2,7 +2,7 @@
 
 import { Badge, Button, Card, Group, Stack, Text } from '@mantine/core'
 import { IconAlertTriangle, IconCircleCheck, IconCircleX, IconFlask } from '@tabler/icons-react'
-import type { ModerationScenario } from '@/lib/moderation'
+import type { ModerationScenario } from '../../lib/moderation'
 
 interface PrototypeControlsProps {
   disabled: boolean

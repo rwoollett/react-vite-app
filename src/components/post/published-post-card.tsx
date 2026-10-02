@@ -2,7 +2,7 @@
 
 import { Badge, Card, Group, Stack, Text, Title } from '@mantine/core'
 import { IconClock } from '@tabler/icons-react'
-import type { Post } from '@/lib/moderation'
+import type { Post } from '../../lib/moderation'
 
 interface PublishedPostCardProps {
   post: Post
