@@ -105,7 +105,7 @@ function getConfig(status: ModerationStatus, scores: ModerationScores): StatusCo
   return config
 }
 
-const CATEGORY_ORDER: ModerationCategory[] = ['insult', 'threat', 'toxicity', 'obscene']
+const CATEGORY_ORDER: ModerationCategory[] = ['insult', 'threat', 'toxic', 'obscene']
 
 interface ModerationAnalysisProps {
   status: ModerationStatus

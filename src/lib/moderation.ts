@@ -2,7 +2,7 @@ export type ModerationStatus = 'live' | 'pending' | 'approved' | 'rejected' | 'b
 
 export type RiskLevel = 'low' | 'medium' | 'high'
 
-export type ModerationCategory = 'insult' | 'threat' | 'toxicity' | 'obscene'
+export type ModerationCategory = 'insult' | 'threat' | 'toxic' | 'obscene'
 
 export type ModerationScores = Record<ModerationCategory, number>
 
@@ -19,7 +19,7 @@ export interface Post {
 export const CATEGORY_LABELS: Record<ModerationCategory, string> = {
   insult: 'Insult',
   threat: 'Threat',
-  toxicity: 'Toxicity',
+  toxic: 'Toxicity',
   obscene: 'Obscene',
 }
 
@@ -36,9 +36,9 @@ export const RISK_LABELS: Record<RiskLevel, string> = {
 }
 
 export const SCENARIO_SCORES: Record<ModerationScenario, ModerationScores> = {
-  approved: { insult: 12, threat: 0, toxicity: 12, obscene: 8 },
-  borderline: { insult: 52, threat: 0, toxicity: 12, obscene: 8 },
-  rejected: { insult: 78, threat: 0, toxicity: 12, obscene: 51 },
+  approved: { insult: 12, threat: 0, toxic: 12, obscene: 8 },
+  borderline: { insult: 52, threat: 0, toxic: 12, obscene: 8 },
+  rejected: { insult: 78, threat: 0, toxic: 12, obscene: 51 },
 }
 
 export const PUBLISHING_THRESHOLD = 60
@@ -70,7 +70,7 @@ export function getStatusForScores(scores: ModerationScores): ModerationStatus {
 const FLAGGED_TERMS: Record<ModerationCategory, string[]> = {
   insult: ['idiot', 'stupid', 'loser', 'dumb'],
   threat: ['kill', 'hurt', 'destroy', 'attack'],
-  toxicity: ['hate', 'awful', 'disgusting', 'worst'],
+  toxic: ['hate', 'awful', 'disgusting', 'worst'],
   obscene: ['damn', 'crap', 'hell'],
 }
 
@@ -86,7 +86,7 @@ export function estimateScores(text: string): ModerationScores {
   return {
     insult: score('insult'),
     threat: score('threat'),
-    toxicity: score('toxicity'),
+    toxic: score('toxic'),
     obscene: score('obscene'),
   }
 }

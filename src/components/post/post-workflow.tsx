@@ -1,16 +1,17 @@
 'use client'
 
 import { Alert, Container, Paper, Text, Stack, Skeleton } from '@mantine/core'
-import { useDebouncedValue } from '@mantine/hooks'
+//import { useDebouncedValue } from '@mantine/hooks'
 import { IconAlertCircle } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
 import { ModerationAnalysis } from '../moderation/moderation-analysis'
 import {
+  type ModerationCategory,
   type ModerationScenario,
   type ModerationScores,
   type ModerationStatus,
   type Post,
-  estimateScores,
+  //estimateScores,
   getOverallRisk,
   getStatusForScores,
 } from '../../lib/moderation'
@@ -20,6 +21,10 @@ import { PrototypeControls } from './prototype-controls'
 import { PublishedPostCard } from './published-post-card'
 import { ResultActions } from './result-actions'
 import { PostWorkflowHeader } from './post-workflow-header'
+import { v4 as uuidv4 } from "uuid";
+import { useWebSocket } from "../../hooks/use-websocket-context";
+import type { ModerateResult } from "../../types";
+import { http } from "../../utility/fetchData";
 
 import {
   selectIdByAuth,
@@ -52,14 +57,19 @@ export function PostWorkflow({ email }: { email: string }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const { gatewayUserId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [status, setStatus] = useState<ModerationStatus>('live')
   const [author, setAuthor] = useState('');
   const { surfaceBg, surfaceText } = useColorMap();
-  
-  
   const [resultScores, setResultScores] = useState<ModerationScores | null>(null)
+  const [liveScores, setLiveScores] = useState<ModerationScores>({
+    insult: 0,
+    threat: 0,
+    toxic: 0,
+    obscene: 0,
+  })
   const [publishedPost, setPublishedPost] = useState<Post | null>(null)
   const [showPost, setShowPost] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -69,8 +79,106 @@ export function PostWorkflow({ email }: { email: string }) {
   const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
   const authUser = useAppSelector(state => selectIdByAuth(state, email));
 
-  const [debouncedText] = useDebouncedValue(`${title}\n${content}`, 300)
-  const liveScores = estimateScores(debouncedText)
+  const draftId = useRef(uuidv4()).current;
+  const moderationSeq = useRef(0);
+  const lastQueueIndex = useRef(0);
+  const lastModeratedLength = useRef(0);
+  const moderationPending = useRef(false);
+  const queuedValue = useRef<string | null>(null);
+
+  function debounce<A extends unknown[], R>(
+    fn: (...args: A) => R,
+    delay: number
+  ) {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    return (...args: A) => {
+      if (timer !== null) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  const sendModerationRequest = debounce(async (value: string) => {
+    if (moderationPending.current) {
+      queuedValue.current = value;
+      return;
+    }
+
+    moderationPending.current = true;
+
+    try {
+      const seq = ++moderationSeq.current;
+      const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
+      const reqInit = {
+        body: JSON.stringify({
+          id: draftId,
+          userId: gatewayUserId,
+          seq,
+          value
+        }),
+        method: "PUT"
+      };
+      await http<{ createPost: ModerateResult }>(`${apiUrl}/api/v1/liveposts/moderate`, reqInit);
+
+    } catch (_err) {
+      console.warn("Moderate Job not authenticated.");
+      moderationPending.current = false;
+    }
+  }, 500);
+
+  useEffect(() => {
+    for (
+      let i = lastQueueIndex.current;
+      i < livePostMessageQueue.length;
+      ++i
+    ) {
+      const labels = [
+        "toxic",
+        //    "severe_toxic",
+        "obscene",
+        "threat",
+        "insult",
+        //    "identity_hate"
+      ] as const;
+
+      const { seq, msg } = livePostMessageQueue[i];
+
+      if (msg.subject === "liveposts_moderate_Result" && msg.payload.id === draftId) {
+        moderationPending.current = false;
+
+        const latest = queuedValue.current;
+
+        queuedValue.current = null;
+
+        if (latest && latest.trim().length >= 8) {
+          sendModerationRequest(latest);
+        }
+        
+        if (msg.payload.seq < moderationSeq.current) {
+          continue;
+        }
+
+        const score = (category: ModerationCategory) => {
+          const idx = labels.indexOf(category as typeof labels[number]);
+          return Math.min(Math.round(msg.payload.probabilities[idx] * 100), 98)
+        }
+        const scores = {
+          insult: score('insult'),
+          threat: score('threat'),
+          toxic: score('toxic'),
+          obscene: score('obscene'),
+        }
+        setLiveScores(scores);
+
+      }
+      setLastProcessedLivePostSeq(seq);
+    }
+
+    lastQueueIndex.current = livePostMessageQueue.length;
+
+  }, [livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   const runModeration = async (
     draft: { title: string; content: string },
@@ -168,7 +276,7 @@ export function PostWorkflow({ email }: { email: string }) {
     return (
       <Container size="md" py="md">
 
-        <PostWorkflowHeader  author={author} title={"Live Posts"} />
+        <PostWorkflowHeader author={author} title={"Live Posts"} />
 
         <Paper shadow="sm" radius="md" p="lg">
           <Stack gap="xl">
@@ -199,7 +307,24 @@ export function PostWorkflow({ email }: { email: string }) {
             isLocked={isAwaitingContinue}
             isSubmitBlocked={isLiveHighRisk}
             onTitleChange={setTitle}
-            onContentChange={setContent}
+            onContentChange={(value, cursorPos) => {
+              const previousModeratedLength = lastModeratedLength.current;
+              const snippet = value[cursorPos - 1];
+              setContent(value);
+              if (value.trim().length < 8)
+                return;
+
+              if ([" ", ".", ",", "!", "?", "\n"].includes(snippet))
+                return;
+
+              if (Math.abs(value.length - previousModeratedLength) < 8)
+                return;
+
+              sendModerationRequest(value);
+              lastModeratedLength.current = value.length;
+
+              console.log('send moderation debounce! length value now:', lastModeratedLength.current);
+            }}
             onSubmit={handleSubmit}
             onContinue={() => resetToForm(false)}
           />

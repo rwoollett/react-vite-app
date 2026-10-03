@@ -11,7 +11,7 @@ interface PostFormProps {
   isLocked: boolean
   isSubmitBlocked: boolean
   onTitleChange: (value: string) => void
-  onContentChange: (value: string) => void
+  onContentChange: (value: string, cursorPos: number) => void
   onSubmit: () => void
   onContinue: () => void
 }
@@ -63,7 +63,7 @@ export function PostForm({
           minRows={8}
           autosize
           value={content}
-          onChange={(event) => onContentChange(event.currentTarget.value)}
+          onChange={(event) => onContentChange(event.currentTarget.value, event.currentTarget.selectionStart)}
           disabled={isModerating}
           readOnly={isLocked}
           required
