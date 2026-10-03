@@ -174,6 +174,7 @@ export function PostWorkflow({ email }: { email: string }) {
           <Stack gap="xl">
             <ModerationAnalysis status={status} scores={scores} />
             <ResultActions
+              slug={"wert"}
               onView={() => setShowPost(true)}
               onCreateAnother={() => resetToForm(true)}
               onEdit={() => resetToForm(false)}
