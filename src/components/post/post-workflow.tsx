@@ -178,7 +178,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
     lastQueueIndex.current = livePostMessageQueue.length;
 
-  }, [livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
+  }, [sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   const runModeration = async (
     draft: { title: string; content: string },
