@@ -123,6 +123,7 @@ export function ModerationAnalysis({ status, scores }: ModerationAnalysisProps) 
       padding="lg"
       radius="md"
       bg={config.cardBg}
+      fz="sm" // smaller text for the entire card
       style={
         config.cardBorder
           ? { borderColor: `var(--mantine-color-${config.cardBorder.replace('.', '-')})` }
@@ -133,13 +134,13 @@ export function ModerationAnalysis({ status, scores }: ModerationAnalysisProps) 
     >
       <Stack gap="md">
         <Group justify="space-between" wrap="nowrap">
-          <Title order={2} size="h4" fw={500}>
+          <Title order={2} size="h6" fw={500}>
             Moderation Analysis
           </Title>
           {isPending ? (
             <Loader size="sm" color="blue" aria-label="Analysis in progress" />
           ) : (
-            <Badge variant="outline" color="gray" size="sm">
+            <Badge variant="outline" color="gray" size="xs">
               {status === 'live' ? 'Live' : 'Final'}
             </Badge>
           )}
@@ -154,9 +155,9 @@ export function ModerationAnalysis({ status, scores }: ModerationAnalysisProps) 
         <Divider color={config.cardBorder ?? 'gray.2'} />
 
         <Stack gap={6}>
-          <Text fw={500}>Overall Risk</Text>
+          <Text fw={500} size="sm">Overall Risk</Text>
           <Group>
-            <RiskBadge level={overallRisk} size="lg" />
+            <RiskBadge level={overallRisk} size="sm" />
           </Group>
         </Stack>
 
@@ -166,6 +167,10 @@ export function ModerationAnalysis({ status, scores }: ModerationAnalysisProps) 
           icon={config.icon}
           title={config.title}
           radius="md"
+          styles={{
+            title: { fontSize: '0.875rem' },
+            body: { fontSize: '0.675rem' },
+          }}
         >
           {config.message}
         </Alert>
