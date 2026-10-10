@@ -133,11 +133,11 @@ export function PostWorkflow({ email }: { email: string }) {
     ) {
       const labels = [
         "toxic",
-        //    "severe_toxic",
+        "severe_toxic",
         "obscene",
         "threat",
         "insult",
-        //    "identity_hate"
+        "identity_hate"
       ] as const;
 
       const { seq, msg } = livePostMessageQueue[i];
