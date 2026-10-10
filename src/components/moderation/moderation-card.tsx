@@ -136,15 +136,6 @@ export function ModerationCard({
       style={{ transition: 'background-color 200ms ease' }}
     >
       <Stack gap="lg">
-        <ModerationAnalysis scores={scores} />
-
-        <Stack gap={6} align="flex-start">
-          <Text fw={600} size="sm">
-            Overall Risk
-          </Text>
-          <RiskBadge level={overallRisk} />
-        </Stack>
-
         <Alert
           variant="light"
           color={color}
@@ -156,6 +147,16 @@ export function ModerationCard({
         >
           {config.message}
         </Alert>
+
+        <ModerationAnalysis scores={scores} />
+
+        <Stack gap={6} align="flex-start">
+          <Text fw={600} size="sm">
+            Overall Risk
+          </Text>
+          <RiskBadge level={overallRisk} />
+        </Stack>
+
       </Stack>
     </Card>
   )
