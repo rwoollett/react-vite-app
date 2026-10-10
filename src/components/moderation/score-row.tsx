@@ -1,7 +1,7 @@
 'use client'
 
 import { Group, Text } from '@mantine/core'
-import { getRiskLevel } from '../../lib/moderation'
+import { getSeverity } from '../../lib/moderation'
 import { RiskBadge } from './risk-badge'
 
 interface ScoreRowProps {
@@ -16,7 +16,7 @@ export function ScoreRow({ label, score }: ScoreRowProps) {
       <Text w={48} ta="right" ff="monospace" fw={500} size="sm">
         {`${score}%`}
       </Text>
-      <RiskBadge level={getRiskLevel(score)} size="sm" />
+      <RiskBadge level={getSeverity(score)} size="sm" />
     </Group>
   )
 }

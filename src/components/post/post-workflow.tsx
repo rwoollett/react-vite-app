@@ -1,17 +1,14 @@
 'use client'
 
 import { Alert, Container, Paper, Text, Stack, Skeleton } from '@mantine/core'
-//import { useDebouncedValue } from '@mantine/hooks'
 import { IconAlertCircle } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
-import { ModerationAnalysis } from '../moderation/moderation-analysis'
 import {
   type ModerationCategory,
   type ModerationScenario,
-  type ModerationScores,
+  type CategoryScore,
   type ModerationStatus,
   type Post,
-  //estimateScores,
   getOverallRisk,
   getStatusForScores,
 } from '../../lib/moderation'
@@ -36,7 +33,7 @@ import { addNewUser, fetchUserByAuthId } from '../../store/api/authorUsersSlice'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
-
+import { ModerationCard } from '../moderation/moderation-card'
 
 const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string }> = {
   approved: {
@@ -63,13 +60,13 @@ export function PostWorkflow({ email }: { email: string }) {
   const [status, setStatus] = useState<ModerationStatus>('live')
   const [author, setAuthor] = useState('');
   const { surfaceBg, surfaceText } = useColorMap();
-  const [resultScores, setResultScores] = useState<ModerationScores | null>(null)
-  const [liveScores, setLiveScores] = useState<ModerationScores>({
-    insult: 0,
-    threat: 0,
-    toxic: 0,
-    obscene: 0,
-  })
+  const [resultScores, setResultScores] = useState<CategoryScore[] | null>(null)
+  const [liveScores, setLiveScores] = useState<CategoryScore[]>([
+    { category: "insult", score: 0 },
+    { category: "threat", score: 0 },
+    { category: "toxic", score: 0 },
+    { category: "obscene", score: 0 },
+  ])
   const [publishedPost, setPublishedPost] = useState<Post | null>(null)
   const [showPost, setShowPost] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -155,7 +152,7 @@ export function PostWorkflow({ email }: { email: string }) {
         if (latest && latest.trim().length >= 8) {
           sendModerationRequest(latest);
         }
-        
+
         if (msg.payload.seq < moderationSeq.current) {
           continue;
         }
@@ -164,12 +161,12 @@ export function PostWorkflow({ email }: { email: string }) {
           const idx = labels.indexOf(category as typeof labels[number]);
           return Math.min(Math.round(msg.payload.probabilities[idx] * 100), 98)
         }
-        const scores = {
-          insult: score('insult'),
-          threat: score('threat'),
-          toxic: score('toxic'),
-          obscene: score('obscene'),
-        }
+        const scores = [
+          { category: "insult", score: score('insult') },
+          { category: "threat", score: score('threat') },
+          { category: "toxic", score: score('toxic') },
+          { category: "obscene", score: score('obscene') }
+        ] as CategoryScore[]
         setLiveScores(scores);
 
       }
@@ -182,7 +179,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
   const runModeration = async (
     draft: { title: string; content: string },
-    getScores: () => Promise<ModerationScores>,
+    getScores: () => Promise<CategoryScore[]>,
   ) => {
     const requestId = ++requestIdRef.current
     setError(null)
@@ -191,6 +188,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
     try {
       const scores = await getScores()
+
       if (requestId !== requestIdRef.current) return
 
       const finalStatus = getStatusForScores(scores)
@@ -280,7 +278,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
         <Paper shadow="sm" radius="md" p="lg">
           <Stack gap="xl">
-            <ModerationAnalysis status={status} scores={scores} />
+            <ModerationCard status={status} scores={scores} />
             <ResultActions
               slug={"wert"}
               onView={() => setShowPost(true)}
@@ -333,7 +331,8 @@ export function PostWorkflow({ email }: { email: string }) {
               {error}
             </Alert>
           )}
-          <ModerationAnalysis status={status} scores={scores} />
+          <ModerationCard status={status} scores={scores} />
+
           <PrototypeControls disabled={isPending} onScenario={handleScenario} />
         </Stack>
       </Paper>

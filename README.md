@@ -225,3 +225,81 @@ Modern dev dependencies for Vite 7 + React 19 + Lint 9 versions.
 - "globals": "^16.3.0"
 - "sass": "^1.89.2"
 - "typescript": "~5.8.3"
+
+
+# AI Prompt:
+
+### Initial
+These screenshots represent the states of the same Create Post workflow.
+
+Generate reusable React TypeScript components.
+
+Requirements:
+
+- Use Mantine v8/v9 components only
+- Do not use Tailwind
+- Do not use shadcn/ui
+- Use Mantine styling
+- Use AppShell compatible layouts
+- Use Mantine Card, Alert, Badge, Stack, Group, Text, Button and Progress
+- Use Tabler icons where appropriate
+
+Create the following reusable components:
+
+- CreatePostWorkflow
+- ModerationCard
+- ModerationAnalysis
+- ModerationScore
+- RiskBadge
+
+Component requirements:
+
+RiskBadge:
+- level: low | medium | high
+
+ModerationScore:
+- category: string
+- score: number
+- severity: low | medium | high
+
+ModerationCard:
+- status: live | pending | approved | rejected
+- title: string
+- message: string
+
+CreatePostWorkflow:
+- contains Create Post button
+- contains ModerationCard
+- supports workflow states:
+    Live
+    Pending
+    Approved
+    Rejected
+
+ModerationAnalysis should display:
+- Insult
+- Threat
+- Toxicity
+- Obscene
+
+with score percentages.
+
+Use component props rather than hard-coded values.
+
+Generate maintainable components rather than a single large page component.
+
+### Pass 2
+Pass 2:
+Refactor this design into Mantine React components.
+
+The design should support a Toxic BERT moderation workflow.
+
+Use props and component composition rather than duplicated JSX.
+
+ModerationCard should compose:
+- RiskBadge
+- ModerationAnalysis
+
+CreatePostWorkflow should compose:
+- ModerationCard
+- Create Post button

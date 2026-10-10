@@ -1,6 +1,6 @@
 'use client'
 
-import { Badge, type BadgeProps } from '@mantine/core'
+import { Badge, ColorSwatch, type BadgeProps } from '@mantine/core'
 import { RISK_COLORS, RISK_LABELS, type RiskLevel } from '../../lib/moderation'
 
 interface RiskBadgeProps {
@@ -9,9 +9,22 @@ interface RiskBadgeProps {
 }
 
 export function RiskBadge({ level, size = 'md' }: RiskBadgeProps) {
+  const color = RISK_COLORS[level]
+
   return (
-    <Badge variant="dot" color={RISK_COLORS[level]} size={size} radius="xl" bg="white">
+    <Badge
+      size={size} 
+      radius="md"
+      variant="default"
+      tt="none"
+      fw={500}
+      leftSection={
+        <ColorSwatch color={`var(--mantine-color-${color}-filled)`} size={10} withShadow={false} />
+      }
+      aria-label={`Overall risk: ${RISK_LABELS[level]}`}
+    >
       {RISK_LABELS[level]}
     </Badge>
   )
 }
+
