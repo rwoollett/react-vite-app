@@ -7,6 +7,8 @@ import type { Post } from '../../lib/moderation'
 interface PublishedPostCardProps {
   post: Post
 }
+// const staticPostUrl = (slug: string) =>
+//   `${import.meta.env.VITE_LIVEPOSTS_STATIC_URL}/${slug}/`;
 
 export function PublishedPostCard({ post }: PublishedPostCardProps) {
   return (
@@ -27,6 +29,17 @@ export function PublishedPostCard({ post }: PublishedPostCardProps) {
             {`Published ${post.publishedAt.toLocaleString()}`}
           </Text>
         </Group>
+        {/* <Group gap={6}>
+          <a
+            href={staticPostUrl(post.slug)}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            <Text size="xs" c="dimmed">
+              View Published Post
+            </Text>
+          </a>
+
+        </Group> */}
       </Stack>
     </Card>
   )

@@ -160,8 +160,15 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
     };
 
-    const handleLivePostStage = () => {
+    const handleLivePostStage = (msg: WSLivePostMessage) => {
       dispatch(fetchPosts());
+      setLivePostSeq(prev => {
+        const next = prev + 1;
+        setLivePostMessageQueue(q =>
+          [...q, { seq: next, msg }].slice(-MSG_QUEUE_MAX)
+        );
+        return next;
+      });
     };
 
     const handleLivePostModerate = (msg: WSLivePostMessage) => {
@@ -233,7 +240,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (isLivePostsMessage(msg)) {
         switch (msg.subject) {
           case "liveposts_post_Stage":
-            handleLivePostStage();
+            handleLivePostStage(msg);
             return;
           case "liveposts_moderate_Result":
             handleLivePostModerate(msg);

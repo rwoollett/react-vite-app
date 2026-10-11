@@ -11,8 +11,9 @@ import {
   type Post,
   getOverallRisk,
   getStatusForScores,
+  SCENARIO_SCORES,
 } from '../../lib/moderation'
-import { moderatePost, simulateModeration } from '../../lib/moderation-service'
+import { simulateModeration } from '../../lib/moderation-service'
 import { PostForm } from './post-form'
 import { PrototypeControls } from './prototype-controls'
 import { PublishedPostCard } from './published-post-card'
@@ -20,7 +21,7 @@ import { ResultActions } from './result-actions'
 import { PostWorkflowHeader } from './post-workflow-header'
 import { v4 as uuidv4 } from "uuid";
 import { useWebSocket } from "../../hooks/use-websocket-context";
-import type { ModerateResult } from "../../types";
+import type { CreateStatus, ModerateResult } from "../../types";
 import { http } from "../../utility/fetchData";
 
 import {
@@ -34,6 +35,8 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
+import { addNewPost } from '../../store/api/postsSlice'
+import { unwrapResult } from '@reduxjs/toolkit'
 
 const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string }> = {
   approved: {
@@ -58,6 +61,7 @@ export function PostWorkflow({ email }: { email: string }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [status, setStatus] = useState<ModerationStatus>('live')
+  const [createStatus, setCreateStatus] = useState<CreateStatus>("idle");
   const [author, setAuthor] = useState('');
   const { surfaceBg, surfaceText } = useColorMap();
   const [resultScores, setResultScores] = useState<CategoryScore[] | null>(null)
@@ -142,6 +146,25 @@ export function PostWorkflow({ email }: { email: string }) {
 
       const { seq, msg } = livePostMessageQueue[i];
 
+      console.log('liveposts message', msg);
+      if (msg.subject === "liveposts_post_Stage") {
+        if (msg.payload.slug) {
+          // TDB need moderation scores from processed create post
+          const scores = SCENARIO_SCORES.approved;
+          const finalStatus = getStatusForScores(scores)
+          setResultScores(scores)
+          setStatus(finalStatus)
+          if (finalStatus === 'approved') {
+            setPublishedPost({ id: msg.payload.id.toString(), title: "test", content: "", slug: msg.payload.slug, scores, publishedAt: new Date() })
+          }
+
+          setCreateStatus("created");
+        }
+        else {
+          setCreateStatus("rejected");
+        }
+      }
+
       if (msg.subject === "liveposts_moderate_Result" && msg.payload.id === draftId) {
         moderationPending.current = false;
 
@@ -188,6 +211,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
     try {
       const scores = await getScores()
+      //const scores = estimateScores(`${draft.title}\n${draft.content}`)
 
       if (requestId !== requestIdRef.current) return
 
@@ -195,7 +219,7 @@ export function PostWorkflow({ email }: { email: string }) {
       setResultScores(scores)
       setStatus(finalStatus)
       if (finalStatus === 'approved') {
-        setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, publishedAt: new Date() })
+        setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, slug:"wert", publishedAt: new Date() })
       }
     } catch {
       if (requestId !== requestIdRef.current) return
@@ -204,9 +228,27 @@ export function PostWorkflow({ email }: { email: string }) {
     }
   }
 
-  const handleSubmit = () => {
-    const draft = { title, content }
-    runModeration(draft, () => moderatePost(draft))
+  const handleSubmit = async () => {
+    //const draft = { title, content }
+    //runModeration(draft, () => moderatePost(draft))
+
+    try {
+      setError(null)
+      setResultScores(null)
+
+      setStatus('pending')
+      setCreateStatus("creating");
+
+      const resultAction = await dispatch(
+        addNewPost({ title, content, userId: authUser[0].id })
+      );
+      unwrapResult(resultAction);
+      //navigate(ROUTES.LIVEPOSTS_ROUTE);
+    } catch (err) {
+      console.error('Failed to save the post: ', err);
+    }
+    //}
+
   }
 
   const handleScenario = (scenario: ModerationScenario) => {
@@ -224,6 +266,7 @@ export function PostWorkflow({ email }: { email: string }) {
     }
     requestIdRef.current++
     setStatus('live')
+    setCreateStatus('idle')
     setResultScores(null)
     setShowPost(false)
     setError(null)
@@ -280,7 +323,6 @@ export function PostWorkflow({ email }: { email: string }) {
           <Stack gap="xl">
             <ModerationCard status={status} scores={scores} />
             <ResultActions
-              slug={"wert"}
               onView={() => setShowPost(true)}
               onCreateAnother={() => resetToForm(true)}
               onEdit={() => resetToForm(false)}
@@ -304,6 +346,7 @@ export function PostWorkflow({ email }: { email: string }) {
             isModerating={isPending}
             isLocked={isAwaitingContinue}
             isSubmitBlocked={isLiveHighRisk}
+            createStatus={createStatus}
             onTitleChange={setTitle}
             onContentChange={(value, cursorPos) => {
               const previousModeratedLength = lastModeratedLength.current;

@@ -86,3 +86,9 @@ export type WSLivePostMessage =
   | { subject: "liveposts_post_Stage"; payload: PostStage }
   | { subject: "liveposts_moderate_Result"; payload: ModerateResult };
 
+export type CreateStatus =
+  | "idle"
+  | "creating"
+  | "created"
+  | "rejected"
+  | "error";
