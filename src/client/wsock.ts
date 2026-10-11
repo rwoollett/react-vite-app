@@ -11,7 +11,7 @@ interface WebSocketClientOptions<T> {
 
 export interface WebSocketClient {
   client: WebSocket;
-  send: (message: WSUserAuthMessage|WSUserLogoutMessage|WSGeneralMessage) => void;
+  send: (message: WSUserAuthMessage | WSUserLogoutMessage | WSGeneralMessage) => void;
   close: () => void;
 }
 
@@ -43,6 +43,7 @@ const websocketClient = <T>(
 
   let client: WebSocket | null = new WebSocket(url);
 
+  console.log('webSocketCient', client);
   const connection: WebSocketClient = {
     client,
     send: (message) => {
@@ -52,15 +53,22 @@ const websocketClient = <T>(
       return client?.send(JSON.stringify(message));
     },
     close: () => {
+      console.log('connect close');
       client?.close();
     }
   };
 
   client.addEventListener("open", () => {
+    console.log("Gateway WS OPEN");
     if (onConnect) onConnect(connection);
   });
 
-  client.addEventListener("close", () => {
+  client.addEventListener("close", (e) => {
+    console.log(
+      "Gateway WS CLOSE",
+      e.code,
+      e.reason
+    );
     client = null;
 
     if (options?.onDisconnect) {

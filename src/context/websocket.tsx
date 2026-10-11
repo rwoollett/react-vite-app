@@ -49,6 +49,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [gatewayUserId, setGatewayUserId] = useState<string | null>(null);
 
 
+  console.log(
+    "Gateway WS state:",
+    wsRefGateway.current?.client.readyState
+  );
+
   useEffect(() => {
 
     const handleWSUserConnect = async (msg: WSUserConnectMessage) => {
@@ -58,7 +63,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const reqInit = {
           method: "GET"
         };
-        const getTokenResult = await http<{ currentUser: { accessToken: string }}>(`${baseAuthUrl()}/api/v1/users/currentuser`, reqInit);
+        const getTokenResult = await http<{ currentUser: { accessToken: string } }>(`${baseAuthUrl()}/api/v1/users/currentuser`, reqInit);
 
         // Step 3 — send WS authentication message to Gateway
         if (getTokenResult.currentUser.accessToken) {
@@ -250,16 +255,74 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.warn("Unknown subject in msg:", msg);
     };
 
-    wsRefGateway.current = websocketClient<GatewayMessage>(
-      {
-        queryParams: { type: "all" },
-        service: "NetWSGateway",
-        onMessage: handleGatewayMessage,
-        onDisconnect: () => { },
-      },
-      (client) => { wsRefGateway.current = client; }
-    );
+
+    const connectWebSocket = () => {
+      wsRefGateway.current = websocketClient<GatewayMessage>(
+        {
+          queryParams: { type: "all" },
+          service: "NetWSGateway",
+          onMessage: handleGatewayMessage,
+          onDisconnect: () => { },
+        },
+        (client) => { wsRefGateway.current = client; }
+      );
+    };
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted)
+        return;
+
+      console.log("Reconnect WS after BFCache restore");
+
+      wsRefGateway.current?.close();
+      connectWebSocket();
+    };
+
+    // const handlePageShow = (event: PageTransitionEvent) => {
+    //   console.log(
+    //     "pageshow",
+    //     "persisted=",
+    //     event.persisted
+    //   );
+
+    //   console.log(
+    //     "BF check",
+    //     {
+    //       persisted: event.persisted,
+    //       hasWs: wsRefGateway.current !== null,
+    //       state: wsRefGateway.current?.client.readyState
+    //     }
+    //   );
+    //   console.log(
+    //     "WS ref",
+    //     wsRefGateway.current,
+    //     wsRefGateway.current?.client.readyState
+    //   );
+    //   const needsReconnect =
+    //     wsRefGateway.current === null ||
+    //     wsRefGateway.current.client.readyState !== WebSocket.OPEN;
+
+    //   console.log('handle PageShow needsReconnect', needsReconnect);
+
+    //   if (event.persisted && needsReconnect) {
+    //     console.log('Connect WebSocket from BF');
+    //     connectWebSocket();
+    //   }
+    //   if (event.persisted) {
+    //     console.log("Connect WebSocket from BF only whne event persisted");
+    //     connectWebSocket();
+    //   }
+    // };
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    connectWebSocket();
+
     return () => {
+      window.removeEventListener(
+        "pageshow",
+        handlePageShow
+      );
       wsRefGateway.current?.close();
 
     }

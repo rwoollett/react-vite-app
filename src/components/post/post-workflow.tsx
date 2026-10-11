@@ -219,7 +219,7 @@ export function PostWorkflow({ email }: { email: string }) {
       setResultScores(scores)
       setStatus(finalStatus)
       if (finalStatus === 'approved') {
-        setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, slug:"wert", publishedAt: new Date() })
+        setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, slug: "wert", publishedAt: new Date() })
       }
     } catch {
       if (requestId !== requestIdRef.current) return
