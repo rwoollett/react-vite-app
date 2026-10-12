@@ -36,7 +36,6 @@ import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
 import { addNewPost } from '../../store/api/postsSlice'
-import { unwrapResult } from '@reduxjs/toolkit'
 
 const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string }> = {
   approved: {
@@ -53,6 +52,10 @@ const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string 
   },
 }
 
+type WorkflowMode =
+  | "create"
+  | "update";
+
 export function PostWorkflow({ email }: { email: string }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -63,6 +66,10 @@ export function PostWorkflow({ email }: { email: string }) {
   const [status, setStatus] = useState<ModerationStatus>('live')
   const [createStatus, setCreateStatus] = useState<CreateStatus>("idle");
   const [author, setAuthor] = useState('');
+  const [workflowMode, setWorkflowMode] = useState<WorkflowMode>("create");
+  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+
+  console.log('Editing post id', editingPostId);
   const { surfaceBg, surfaceText } = useColorMap();
   const [resultScores, setResultScores] = useState<CategoryScore[] | null>(null)
   const [liveScores, setLiveScores] = useState<CategoryScore[]>([
@@ -148,6 +155,8 @@ export function PostWorkflow({ email }: { email: string }) {
 
       console.log('liveposts message', msg);
       if (msg.subject === "liveposts_post_Stage") {
+
+        setEditingPostId(msg.payload.id);
         if (msg.payload.slug) {
           // TDB need moderation scores from processed create post
           const scores = SCENARIO_SCORES.approved;
@@ -155,7 +164,7 @@ export function PostWorkflow({ email }: { email: string }) {
           setResultScores(scores)
           setStatus(finalStatus)
           if (finalStatus === 'approved') {
-            setPublishedPost({ id: msg.payload.id.toString(), title: "test", content: "", slug: msg.payload.slug, scores, publishedAt: new Date() })
+            setPublishedPost({ id: msg.payload.id.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
           }
 
           setCreateStatus("created");
@@ -198,7 +207,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
     lastQueueIndex.current = livePostMessageQueue.length;
 
-  }, [sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
+  }, [setEditingPostId, title, content, sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   const runModeration = async (
     draft: { title: string; content: string },
@@ -239,16 +248,27 @@ export function PostWorkflow({ email }: { email: string }) {
       setStatus('pending')
       setCreateStatus("creating");
 
-      const resultAction = await dispatch(
-        addNewPost({ title, content, userId: authUser[0].id })
-      );
-      unwrapResult(resultAction);
-      //navigate(ROUTES.LIVEPOSTS_ROUTE);
+      if (workflowMode === "create") {
+        await dispatch(
+          addNewPost({
+            title,
+            content,
+            userId: authUser[0].id
+          })
+        ).unwrap(); // promise ready to throw
+      }
+      // else {
+      //   await dispatch(
+      //     updatePost({
+      //       id: editingPostId!,
+      //       title,
+      //       content
+      //     })
+      //   );
+      // }
     } catch (err) {
       console.error('Failed to save the post: ', err);
     }
-    //}
-
   }
 
   const handleScenario = (scenario: ModerationScenario) => {
@@ -324,8 +344,14 @@ export function PostWorkflow({ email }: { email: string }) {
             <ModerationCard status={status} scores={scores} />
             <ResultActions
               onView={() => setShowPost(true)}
-              onCreateAnother={() => resetToForm(true)}
-              onEdit={() => resetToForm(false)}
+              onCreateAnother={() => {
+                setWorkflowMode("create");
+                resetToForm(true);
+              }}
+              onEdit={() => {
+                setWorkflowMode("update");
+                resetToForm(false);
+              }}
             />
             {showPost && publishedPost && <PublishedPostCard post={publishedPost} />}
           </Stack>
@@ -347,6 +373,7 @@ export function PostWorkflow({ email }: { email: string }) {
             isLocked={isAwaitingContinue}
             isSubmitBlocked={isLiveHighRisk}
             createStatus={createStatus}
+            workflowMode={workflowMode}
             onTitleChange={setTitle}
             onContentChange={(value, cursorPos) => {
               const previousModeratedLength = lastModeratedLength.current;

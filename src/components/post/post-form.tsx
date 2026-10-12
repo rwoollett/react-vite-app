@@ -11,6 +11,7 @@ interface PostFormProps {
   isLocked: boolean
   isSubmitBlocked: boolean
   createStatus: string
+  workflowMode: string
   onTitleChange: (value: string) => void
   onContentChange: (value: string, cursorPos: number) => void
   onSubmit: () => void
@@ -24,6 +25,7 @@ export function PostForm({
   isLocked,
   isSubmitBlocked,
   createStatus,
+  workflowMode,
   onTitleChange,
   onContentChange,
   onSubmit,
@@ -76,11 +78,16 @@ export function PostForm({
             type="submit"
             size="md"
             leftSection={<IconSend size={18} />}
-            loading={isModerating || createStatus === "creating"}
-            loaderProps={{ type: 'dots' }}
+            //loading={isModerating || createStatus === "creating"}
+            //loaderProps={{ type: 'dots' }}
             disabled={!canSubmit}
           >
-            {isModerating ? createStatus === "creating" ? 'Creating...' : 'Moderating...' : 'Create Post'}
+            {isModerating ? createStatus === "creating" ? workflowMode === "create"
+              ? "Creating..."
+              : "Updating...":
+              'Moderating...' : workflowMode === "create"
+              ? "Create Post"
+              : "Update Post"}
           </Button>
           {isLocked && (
             <Button

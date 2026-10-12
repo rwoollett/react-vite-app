@@ -278,42 +278,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       connectWebSocket();
     };
 
-    // const handlePageShow = (event: PageTransitionEvent) => {
-    //   console.log(
-    //     "pageshow",
-    //     "persisted=",
-    //     event.persisted
-    //   );
-
-    //   console.log(
-    //     "BF check",
-    //     {
-    //       persisted: event.persisted,
-    //       hasWs: wsRefGateway.current !== null,
-    //       state: wsRefGateway.current?.client.readyState
-    //     }
-    //   );
-    //   console.log(
-    //     "WS ref",
-    //     wsRefGateway.current,
-    //     wsRefGateway.current?.client.readyState
-    //   );
-    //   const needsReconnect =
-    //     wsRefGateway.current === null ||
-    //     wsRefGateway.current.client.readyState !== WebSocket.OPEN;
-
-    //   console.log('handle PageShow needsReconnect', needsReconnect);
-
-    //   if (event.persisted && needsReconnect) {
-    //     console.log('Connect WebSocket from BF');
-    //     connectWebSocket();
-    //   }
-    //   if (event.persisted) {
-    //     console.log("Connect WebSocket from BF only whne event persisted");
-    //     connectWebSocket();
-    //   }
-    // };
-
     window.addEventListener("pageshow", handlePageShow);
 
     connectWebSocket();
