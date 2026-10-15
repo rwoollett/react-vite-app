@@ -9,20 +9,20 @@ import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 
 const SignOut = (): JSX.Element => {
   const { isLoggedIn } = useSignedInAuthorize();
-  const { wsRefGateway, gatewayUserId } = useWebSocket();
+  const { wsRefGateway, gatewayWsId } = useWebSocket();
   const [signOut] = useSignOutMutation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const doLogout = useCallback(async () => {
-    if (!isLoggedIn || !gatewayUserId) return;
+    if (!isLoggedIn || !gatewayWsId) return;
 
     try {
       await signOut().unwrap();
-      if (gatewayUserId) {
+      if (gatewayWsId) {
         wsRefGateway.current?.send({
           subject: "ws_logout_Token",
-          payload: { userId: gatewayUserId }
+          payload: { wsId: gatewayWsId }
         });
       }
 
@@ -32,7 +32,7 @@ const SignOut = (): JSX.Element => {
     } catch (error) {
       console.log(error);
     }
-  }, [isLoggedIn, signOut, dispatch, navigate, gatewayUserId, wsRefGateway]);
+  }, [isLoggedIn, signOut, dispatch, navigate, gatewayWsId, wsRefGateway]);
 
   const hasLoggedOut = useRef(false);
 

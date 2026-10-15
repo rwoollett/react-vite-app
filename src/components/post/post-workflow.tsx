@@ -60,7 +60,7 @@ export function PostWorkflow({ email }: { email: string }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { gatewayUserId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
+  const { gatewayWsId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [status, setStatus] = useState<ModerationStatus>('live')
@@ -122,7 +122,7 @@ export function PostWorkflow({ email }: { email: string }) {
       const reqInit = {
         body: JSON.stringify({
           id: draftId,
-          userId: gatewayUserId,
+          wsId: gatewayWsId,
           seq,
           value
         }),

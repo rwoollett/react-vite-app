@@ -4,7 +4,7 @@ export type Game = {
   board: string;
   createdAt: string;
   id: string;
-  userId: string;
+  wsId: string;
 };
 
 

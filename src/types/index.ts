@@ -47,20 +47,20 @@ export function isMove(obj: unknown): obj is PlayerMove {
   );
 }
 
-export type CreateGameMutationVariables = {
-  userId: string;
-};
+// export type CreateGameMutationVariables = {
+//   userId: string;
+// };
 
-export type StartGameMutationVariables = {
-  gameId: string;
-};
+// export type StartGameMutationVariables = {
+//   gameId: string;
+// };
 
-export type BoardMoveMutationVariables = {
-  gameId: string;
-  isOpponentStart: boolean;
-  moveCell: number;
-  player: number;
-};
+// export type BoardMoveMutationVariables = {
+//   gameId: string;
+//   isOpponentStart: boolean;
+//   moveCell: number;
+//   player: number;
+// };
 
 export type GameUpdateByGameIdSubscriptionVariables = {
   gameId: string;

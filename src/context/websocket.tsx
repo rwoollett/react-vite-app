@@ -20,8 +20,8 @@ import { fetchPosts } from "../store/api/postsSlice";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
-  gatewayUserId: string | null;
-  setGatewayUserId: React.Dispatch<React.SetStateAction<string | null>>;
+  gatewayWsId: string | null;
+  setGatewayWsId: React.Dispatch<React.SetStateAction<string | null>>;
   tttMessageQueue: { seq: number, msg: WSTTTMessage }[];
   livePostMessageQueue: { seq: number, msg: WSLivePostMessage }[];
   lastProcessedCSSeq: number;
@@ -46,7 +46,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedCSSeq, setLastProcessedCSSeq] = useState(0);
   const [lastProcessedTTTSeq, setLastProcessedTTTSeq] = useState(0);
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
-  const [gatewayUserId, setGatewayUserId] = useState<string | null>(null);
+  const [gatewayWsId, setGatewayWsId] = useState<string | null>(null);
 
 
   console.log(
@@ -57,7 +57,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
 
     const handleWSUserConnect = async (msg: WSUserConnectMessage) => {
-      setGatewayUserId(msg.payload.userId);
+      setGatewayWsId(msg.payload.wsId);
 
       try {
         const reqInit = {
@@ -71,7 +71,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             subject: "ws_auth_Token",
             payload: {
               token: getTokenResult.currentUser.accessToken,
-              userId: msg.payload.userId,
+              wsId: msg.payload.wsId,
             }
           });
         }
@@ -296,8 +296,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   return (
     <WebSocketContext.Provider value={{
       wsRefGateway,
-      gatewayUserId,
-      setGatewayUserId,
+      gatewayWsId,
+      setGatewayWsId,
       lastProcessedCSSeq,
       setLastProcessedCSSeq,
       tttMessageQueue,

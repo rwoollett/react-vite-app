@@ -10,7 +10,7 @@ import { http } from "../utility/fetchData";
 export default function ModeratedTextarea({ onValueChange }: {
   onValueChange: (value: string) => void;
 }) {
-  const { gatewayUserId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
+  const { gatewayWsId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
 
   const draftId = useRef(uuidv4()).current;
   const moderationSeq = useRef(0);
@@ -52,7 +52,7 @@ export default function ModeratedTextarea({ onValueChange }: {
       const seq = ++moderationSeq.current;
       const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
       const reqInit = {
-        body: JSON.stringify({ id: draftId, userId: gatewayUserId, seq, value }),
+        body: JSON.stringify({ id: draftId, wsId: gatewayWsId, seq, value }),
         method: "PUT"
       };
       await http<{ createPost: ModerateResult }>(`${apiUrl}/api/v1/liveposts/moderate`, reqInit);

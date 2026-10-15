@@ -13,7 +13,7 @@ import { useColorMap } from '../theme/colorMap';
 
 const UserPage: React.FC = () => {
   const { isLoggedIn, email, expiry } = useSignedInAuthorize();
-  const { wsRefGateway: wsRef, gatewayUserId } = useWebSocket();
+  const { wsRefGateway: wsRef, gatewayWsId } = useWebSocket();
   const [farewell, setFarewell] = useState("");
   const [connected, setConnected] = useState(wsRef.current?.client !== undefined);
   const [received, setReceived] = useState<string[]>([]);
@@ -26,12 +26,12 @@ const UserPage: React.FC = () => {
   const { surfaceBg, surfaceText } = useColorMap();
 
   const handleSendMessage = () => {
-    if (wsRef.current && connected && gatewayUserId) {
+    if (wsRef.current && connected && gatewayWsId) {
       wsRef.current?.send({
         subject: "ws_user_Message",
         payload: {
           message: farewell,
-          userId: gatewayUserId,
+          wsId: gatewayWsId,
         },
       });
 

@@ -18,7 +18,7 @@ import { useWebSocket } from '../hooks/use-websocket-context';
 import { baseAuthUrl } from '../utility/functions';
 
 const SignIn: React.FC = () => {
-  const { wsRefGateway, gatewayUserId } = useWebSocket();
+  const { wsRefGateway, gatewayWsId } = useWebSocket();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,8 +36,8 @@ const SignIn: React.FC = () => {
   const from = location.state?.from || "/";
 
   useEffect(() => {
-    // Only run when user is logged in AND WS userId is available
-    if (!isLoggedIn || !gatewayUserId) return;
+    // Only run when user is logged in AND gatewayWsId is available
+    if (!isLoggedIn || !gatewayWsId) return;
 
     const authenticateWS = async () => {
       try {
@@ -57,7 +57,7 @@ const SignIn: React.FC = () => {
           subject: "ws_auth_Token",
           payload: {
             token: auth.currentToken,
-            userId: gatewayUserId,
+            wsId: gatewayWsId,
           },
         });
 
@@ -70,7 +70,7 @@ const SignIn: React.FC = () => {
 
     authenticateWS();
 
-  }, [isLoggedIn, gatewayUserId, navigate, from, wsRefGateway]);
+  }, [isLoggedIn, gatewayWsId, navigate, from, wsRefGateway]);
 
 
   const redirectToHomePage = () => {

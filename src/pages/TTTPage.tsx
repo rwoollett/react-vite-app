@@ -9,7 +9,7 @@ import { useColorMap } from '../theme/colorMap';
 import { Container, Checkbox, Select, Paper, Text, Grid, Button, Stack } from "@mantine/core";
 
 const CanvasComponent: React.FC = () => {
-  const { gatewayUserId: gameUser, tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
+  const { gatewayWsId: gameUser, tttMessageQueue, lastProcessedTTTSeq, setLastProcessedTTTSeq } = useWebSocket();
   const dispatch = useAppDispatch();
 
   const [startGameData, setStartGameData] = useState<Game | null>(null);
@@ -18,7 +18,7 @@ const CanvasComponent: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/start`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId, userId: gameUser })
+        body: JSON.stringify({ gameId, wsId: gameUser })
       });
       const data = await response.json();
       if (!data || !isGame(data.startGame)) {
@@ -38,7 +38,7 @@ const CanvasComponent: React.FC = () => {
       const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/move`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId, userId: gameUser, player, moveCell, isOpponentStart })
+        body: JSON.stringify({ gameId, wsId: gameUser, player, moveCell, isOpponentStart })
       });
       const data = await response.json();
       if (!data || !isMove(data.boardMove)) {
@@ -128,12 +128,12 @@ const CanvasComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const createGame = async (userId: string) => {
+    const createGame = async (wsId: string) => {
       try {
         const response = await fetch(`${import.meta.env.VITE_TTT_SERVER_URL}/api/v1/ttt/game/create`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId })
+          body: JSON.stringify({ wsId })
         });
         const data = await response.json();
         if (!data || !isGame(data.createGame)) {

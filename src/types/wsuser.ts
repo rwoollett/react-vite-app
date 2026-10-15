@@ -1,14 +1,14 @@
 export type WSUserConnect = {
-  userId: string;
+  wsId: string;
 };
 
 export type WSUserAuth = {
-  userId: string;
+  wsId: string;
   token: string;
 };
 
 export type WSUserMessage = {
-  userId: string;
+  wsId: string;
   message: string;
 };
 
