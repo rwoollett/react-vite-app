@@ -18,6 +18,13 @@ export type Post = {
   reactions: ReactionEmojiCount;
 }
 
+export type PostCreate = {
+  title: string;
+  content: string;
+  authorUserId: number;
+  wsId: string;
+}
+
 export type PostStage = {
   id: number;
   slug: string;

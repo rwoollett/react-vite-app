@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
-import type { Post, PostStage, ReactPost } from '../../types';
+import type { Post, PostCreate, PostStage, ReactPost } from '../../types';
 import { http } from '../../utility/fetchData';
 
 // Entity adaptor for normalised posts structure; ids end entities.
@@ -39,11 +39,10 @@ export const fetchPosts = createAsyncThunk(
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPostStatus',
-  async ({ title, content, userId }:
-    { title: string, content: string, userId: number }) => {
+  async ({ title, content, authorUserId, wsId }: PostCreate) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const reqInit = {
-      body: JSON.stringify({ title, content, userId }),
+      body: JSON.stringify({ title, content, authorUserId, wsId }),
       method: "PUT",
       credentials: "include" as const
     };
