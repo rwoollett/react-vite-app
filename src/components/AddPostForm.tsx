@@ -14,11 +14,14 @@ import {
 import { addNewPost } from '../store/api/postsSlice';
 import { addNewUser, fetchUserByAuthId } from '../store/api/authorUsersSlice';
 import { ROUTES } from '../resources/routes-constants';
+import { useWebSocket } from '../hooks/use-websocket-context';
 
 const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const { gatewayWsId } = useWebSocket();
+  
   const postUserByAuthIdStatus = useAppSelector(state => state.postusers.status);
   const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
   const authUser = useAppSelector(state => selectIdByAuth(state, email));
@@ -73,10 +76,10 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
 
   const onSavePostClicked = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (canSave) {
+    if (canSave && gatewayWsId) {
       try {
         const resultAction = await dispatch(
-          addNewPost({ title, content, userId: authUser[0].id })
+          addNewPost({ title, content, authorUserId: authUser[0].id, wsId: gatewayWsId })
         );
         unwrapResult(resultAction);
         navigate(ROUTES.LIVEPOSTS_ROUTE);

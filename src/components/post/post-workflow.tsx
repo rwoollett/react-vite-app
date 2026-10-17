@@ -248,12 +248,13 @@ export function PostWorkflow({ email }: { email: string }) {
       setStatus('pending')
       setCreateStatus("creating");
 
-      if (workflowMode === "create") {
+      if (workflowMode === "create" && gatewayWsId) {
         await dispatch(
           addNewPost({
             title,
             content,
-            userId: authUser[0].id
+            authorUserId: authUser[0].id,
+            wsId: gatewayWsId
           })
         ).unwrap(); // promise ready to throw
       }
