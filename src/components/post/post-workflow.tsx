@@ -11,7 +11,7 @@ import {
   type Post,
   getOverallRisk,
   getStatusForScores,
-  SCENARIO_SCORES,
+//  SCENARIO_SCORES,
 } from '../../lib/moderation'
 import { simulateModeration } from '../../lib/moderation-service'
 import { PostForm } from './post-form'
