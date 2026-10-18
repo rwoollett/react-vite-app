@@ -158,15 +158,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
         setEditingPostId(msg.payload.postId);
         if (msg.payload.slug) {
-          // TDB need moderation scores from processed create post
-          const scores = SCENARIO_SCORES.approved;
-          const finalStatus = getStatusForScores(scores)
-          setResultScores(scores)
-          setStatus(finalStatus)
-          if (finalStatus === 'approved') {
-            setPublishedPost({ id: msg.payload.postId.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
-          }
-
+          setPublishedPost({ id: msg.payload.postId.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
           setCreateStatus("created");
         }
         else {
