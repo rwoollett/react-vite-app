@@ -11,7 +11,7 @@ import {
   type Post,
   getOverallRisk,
   getStatusForScores,
-//  SCENARIO_SCORES,
+  //  SCENARIO_SCORES,
 } from '../../lib/moderation'
 import { simulateModeration } from '../../lib/moderation-service'
 import { PostForm } from './post-form'
@@ -157,13 +157,14 @@ export function PostWorkflow({ email }: { email: string }) {
       if (msg.subject === "liveposts_post_Published") {
 
         setEditingPostId(msg.payload.postId);
-        if (msg.payload.slug) {
-          setPublishedPost({ id: msg.payload.postId.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
-          setCreateStatus("created");
-        }
-        else {
-          setCreateStatus("rejected");
-        }
+        setStatus("approved");
+        //if (msg.payload.slug) {
+        setPublishedPost({ id: msg.payload.postId.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
+        setCreateStatus("created");
+        //}
+        //else {
+        //  setCreateStatus("rejected");
+        //}
       }
 
       if (msg.subject === "liveposts_moderate_Result" &&
