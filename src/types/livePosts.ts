@@ -30,10 +30,18 @@ export type PostStage = {
   slug: string;
 }
 
+export type PostPublished = {
+  postId: number;
+  slug: string;
+  wsId: string;
+  authorUserId: number;
+}
+
 export type ModerateResult = {
   id: string;
   wsId: string;
   seq: number;
+  purpose: string;
   isRejected: boolean;
   score: number;
   classIndex: number;
@@ -91,6 +99,7 @@ declare global {
 
 export type WSLivePostMessage =
   | { subject: "liveposts_post_Stage"; payload: PostStage }
+  | { subject: "liveposts_post_Published"; payload: PostPublished }
   | { subject: "liveposts_moderate_Result"; payload: ModerateResult };
 
 export type CreateStatus =

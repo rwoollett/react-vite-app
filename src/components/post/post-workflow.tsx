@@ -154,9 +154,9 @@ export function PostWorkflow({ email }: { email: string }) {
       const { seq, msg } = livePostMessageQueue[i];
 
       console.log('liveposts message', msg);
-      if (msg.subject === "liveposts_post_Stage") {
+      if (msg.subject === "liveposts_post_Published") {
 
-        setEditingPostId(msg.payload.id);
+        setEditingPostId(msg.payload.postId);
         if (msg.payload.slug) {
           // TDB need moderation scores from processed create post
           const scores = SCENARIO_SCORES.approved;
@@ -164,7 +164,7 @@ export function PostWorkflow({ email }: { email: string }) {
           setResultScores(scores)
           setStatus(finalStatus)
           if (finalStatus === 'approved') {
-            setPublishedPost({ id: msg.payload.id.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
+            setPublishedPost({ id: msg.payload.postId.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
           }
 
           setCreateStatus("created");
@@ -174,19 +174,22 @@ export function PostWorkflow({ email }: { email: string }) {
         }
       }
 
-      if (msg.subject === "liveposts_moderate_Result" && msg.payload.id === draftId) {
-        moderationPending.current = false;
+      if (msg.subject === "liveposts_moderate_Result" &&
+        (msg.payload.id === draftId || msg.payload.purpose === "publish")) {
 
-        const latest = queuedValue.current;
+        if (msg.payload.purpose === "live") {
+          moderationPending.current = false;
+          const latest = queuedValue.current;
 
-        queuedValue.current = null;
+          queuedValue.current = null;
 
-        if (latest && latest.trim().length >= 8) {
-          sendModerationRequest(latest);
-        }
+          if (latest && latest.trim().length >= 8) {
+            sendModerationRequest(latest);
+          }
 
-        if (msg.payload.seq < moderationSeq.current) {
-          continue;
+          if (msg.payload.seq < moderationSeq.current) {
+            continue;
+          }
         }
 
         const score = (category: ModerationCategory) => {

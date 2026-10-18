@@ -247,6 +247,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           case "liveposts_post_Stage":
             handleLivePostStage(msg);
             return;
+          case "liveposts_post_Published":
+            handleLivePostStage(msg);
+            return;
           case "liveposts_moderate_Result":
             handleLivePostModerate(msg);
             return;
