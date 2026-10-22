@@ -177,7 +177,7 @@ export function PostWorkflow({ email }: { email: string }) {
             { category: "toxic", score: score('toxic') },
             { category: "obscene", score: score('obscene') }
           ] as CategoryScore[]
-          console.log ('set live scores', draftId, scores);
+          console.log('set live scores', draftId, scores);
           setResultScores(null);
           setLiveScores(scores);
 
@@ -253,6 +253,28 @@ export function PostWorkflow({ email }: { email: string }) {
     setShowPost(false)
     setError(null)
   }
+
+  const moderateLiveOnChangePost = (value: string, cursorPos: number) => {
+    const previousModeratedLength = lastModeratedLength.current;
+    const snippet = value[cursorPos - 1];
+    setContent(value);
+
+    const moderateValue = title + '\n' + value;
+    
+    if (moderateValue.trim().length < 8)
+      return;
+
+    if ([" ", ".", ",", "!", "?", "\n"].includes(snippet))
+      return;
+
+    if (Math.abs(moderateValue.length - previousModeratedLength) < 8)
+      return;
+
+    sendModerationRequest(moderateValue);
+    lastModeratedLength.current = moderateValue.length;
+
+    console.log('send moderation debounce! length value now:', lastModeratedLength.current, '\nModerate Value:', moderateValue);
+  };
 
   const isPending = status === 'pending'
   const isAwaitingContinue = status === 'rejected' || status === 'borderline'
@@ -337,24 +359,25 @@ export function PostWorkflow({ email }: { email: string }) {
             createStatus={createStatus}
             workflowMode={workflowMode}
             onTitleChange={setTitle}
-            onContentChange={(value, cursorPos) => {
-              const previousModeratedLength = lastModeratedLength.current;
-              const snippet = value[cursorPos - 1];
-              setContent(value);
-              if (value.trim().length < 8)
-                return;
+            onContentChange={moderateLiveOnChangePost}
+            // onContentChange={(value, cursorPos) => {
+            //   const previousModeratedLength = lastModeratedLength.current;
+            //   const snippet = value[cursorPos - 1];
+            //   setContent(value);
+            //   if (value.trim().length < 8)
+            //     return;
 
-              if ([" ", ".", ",", "!", "?", "\n"].includes(snippet))
-                return;
+            //   if ([" ", ".", ",", "!", "?", "\n"].includes(snippet))
+            //     return;
 
-              if (Math.abs(value.length - previousModeratedLength) < 8)
-                return;
+            //   if (Math.abs(value.length - previousModeratedLength) < 8)
+            //     return;
 
-              sendModerationRequest(value);
-              lastModeratedLength.current = value.length;
+            //   sendModerationRequest(value);
+            //   lastModeratedLength.current = value.length;
 
-              console.log('send moderation debounce! length value now:', lastModeratedLength.current);
-            }}
+            //   console.log('send moderation debounce! length value now:', lastModeratedLength.current);
+            // }}
             onSubmit={handleSubmit}
             onContinue={() => resetToForm(false)}
           />
