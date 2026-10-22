@@ -165,8 +165,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
     };
 
-    const handleLivePostStage = (msg: WSLivePostMessage) => {
-      dispatch(fetchPosts());
+    const handleLivePostPublished = (msg: WSLivePostMessage) => {
       setLivePostSeq(prev => {
         const next = prev + 1;
         setLivePostMessageQueue(q =>
@@ -245,10 +244,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (isLivePostsMessage(msg)) {
         switch (msg.subject) {
           case "liveposts_post_Stage":
-            handleLivePostStage(msg);
+            dispatch(fetchPosts());
             return;
           case "liveposts_post_Published":
-            handleLivePostStage(msg);
+            handleLivePostPublished(msg);
             return;
           case "liveposts_moderate_Result":
             handleLivePostModerate(msg);

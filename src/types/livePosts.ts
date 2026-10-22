@@ -25,6 +25,13 @@ export type PostCreate = {
   wsId: string;
 }
 
+export type PostUpdate = {
+  title: string;
+  content: string;
+  postId: number;
+  wsId: string;
+}
+
 export type PostStage = {
   id: number;
   slug: string;

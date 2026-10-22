@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
-import type { Post, PostCreate, PostStage, ReactPost } from '../../types';
+import type { Post, PostCreate, PostStage, PostUpdate, ReactPost } from '../../types';
 import { http } from '../../utility/fetchData';
 
 // Entity adaptor for normalised posts structure; ids end entities.
@@ -24,7 +24,7 @@ const initialState = postsAdapter.getInitialState(
   { status: 'idle' } as PostAdaptorProp);
 
 export const fetchPosts = createAsyncThunk(
-  'posts/fetchPostsStatus',
+  'posts/fetchPosts',
   async () => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const response = await http<{ fetchPosts: Post[] }>(
@@ -38,7 +38,7 @@ export const fetchPosts = createAsyncThunk(
   });
 
 export const addNewPost = createAsyncThunk(
-  'posts/addNewPostStatus',
+  'posts/addNewPost',
   async ({ title, content, authorUserId, wsId }: PostCreate) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const reqInit = {
@@ -51,25 +51,20 @@ export const addNewPost = createAsyncThunk(
   }
 );
 
-// export const updatePost = createAsyncThunk(
-//   'posts/updatePost',
-//   // The payload creator receives the partial `{title, content, user}` object
-//   async ({ id, title, content, user, date, reactions }: Post) => {
-//     //  { id: string, title: string, content: string }) => {
-//     // We send the data to the fake API server
-//     const reqInit = {
-//       body: JSON.stringify({
-//         post: { id, title, content, user, date, reactions }
-//       }),
-//       method: "PUT"
-//     };
-//     console.log('Response before put:', reqInit);
-//     const response = await http<Post>('/api/v1/liveposts/posts', reqInit);
-//     // The response includes the complete post object, including unique ID
-//     console.log('Response put:', response, typeof response);
-//     return response;
-//   }
-// );
+export const updatePost = createAsyncThunk(
+  'posts/updatePost',
+  async ({ postId, title, content, wsId }: PostUpdate) => {
+    const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
+    const reqInit = {
+      body: JSON.stringify({ title, content, wsId }),
+      method: "PUT",
+      credentials: "include" as const
+    };
+    const response = await http<{ updatePost: Post }>(`${apiUrl}/api/v1/liveposts/update/post/${postId}`, reqInit);
+    console.log('Response put:', response, typeof response);
+    return response.updatePost;
+  }
+);
 
 // Warning on reducer immutabiliy:
 export const postsSlice = createSlice({
@@ -94,18 +89,6 @@ export const postsSlice = createSlice({
     upsertPost: (state, action: PayloadAction<Post>) => {
       return postsAdapter.upsertOne(state, action.payload);
     },
-    //addPosts: postsAdapter.addMany,
-    //updatePost: postsAdapter.updateOne,
-    //removePost: postsAdapter.removeOne
-    // postUpdated(state, action: PayloadAction<Post>) {
-    //   const { id, title, content } = action.payload;
-    //   const existingPost = state.entities[id];
-    //   if (existingPost) {
-    //     // immer functionality for immutability
-    //     existingPost.title = title;
-    //     existingPost.content = content;
-    //   }
-    // }
   },
   extraReducers: builder => {
     builder.addCase(fetchPosts.pending, (state, _action) => {
@@ -133,7 +116,7 @@ export const postsSlice = createSlice({
     // });
   }
 });
-//postUpdated,
+
 export const { reactionAdded, postStage } = postsSlice.actions;
 export const { reducer } = postsSlice;
 

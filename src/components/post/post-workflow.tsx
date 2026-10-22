@@ -5,7 +5,7 @@ import { IconAlertCircle } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
 import {
   type ModerationCategory,
-  type ModerationScenario,
+//  type ModerationScenario,
   type CategoryScore,
   type ModerationStatus,
   type Post,
@@ -13,9 +13,9 @@ import {
   getStatusForScores,
   //  SCENARIO_SCORES,
 } from '../../lib/moderation'
-import { simulateModeration } from '../../lib/moderation-service'
+//import { simulateModeration } from '../../lib/moderation-service'
 import { PostForm } from './post-form'
-import { PrototypeControls } from './prototype-controls'
+//import { PrototypeControls } from './prototype-controls'
 import { PublishedPostCard } from './published-post-card'
 import { ResultActions } from './result-actions'
 import { PostWorkflowHeader } from './post-workflow-header'
@@ -35,22 +35,22 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
-import { addNewPost } from '../../store/api/postsSlice'
+import { addNewPost, updatePost } from '../../store/api/postsSlice'
 
-const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string }> = {
-  approved: {
-    title: 'Weekend hiking recap',
-    content: 'Had a great time on the ridge trail this weekend. The views were incredible!',
-  },
-  borderline: {
-    title: 'Hot take on the finale',
-    content: 'Honestly that finale was the worst writing I have seen in years. Awful pacing.',
-  },
-  rejected: {
-    title: 'Reply to that thread',
-    content: 'You are an idiot and I hate everything you post.',
-  },
-}
+// const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string }> = {
+//   approved: {
+//     title: 'Weekend hiking recap',
+//     content: 'Had a great time on the ridge trail this weekend. The views were incredible!',
+//   },
+//   borderline: {
+//     title: 'Hot take on the finale',
+//     content: 'Honestly that finale was the worst writing I have seen in years. Awful pacing.',
+//   },
+//   rejected: {
+//     title: 'Reply to that thread',
+//     content: 'You are an idiot and I hate everything you post.',
+//   },
+// }
 
 type WorkflowMode =
   | "create"
@@ -154,23 +154,29 @@ export function PostWorkflow({ email }: { email: string }) {
       const { seq, msg } = livePostMessageQueue[i];
 
       console.log('liveposts message', msg);
-      if (msg.subject === "liveposts_post_Published") {
 
+      if (msg.subject === "liveposts_post_Published") {
         setEditingPostId(msg.payload.postId);
         setStatus("approved");
-        //if (msg.payload.slug) {
-        setPublishedPost({ id: msg.payload.postId.toString(), title, content, slug: msg.payload.slug, scores, publishedAt: new Date() })
+        setPublishedPost({
+          id: msg.payload.postId.toString(),
+          title,
+          content,
+          slug: msg.payload.slug,
+          scores: [],
+          publishedAt: new Date()
+        })
         setCreateStatus("created");
-        //}
-        //else {
-        //  setCreateStatus("rejected");
-        //}
       }
 
-      if (msg.subject === "liveposts_moderate_Result" &&
-        (msg.payload.id === draftId || msg.payload.purpose === "publish")) {
+      if (msg.subject === "liveposts_moderate_Result") {
 
-        if (msg.payload.purpose === "live") {
+        const score = (category: ModerationCategory) => {
+          const idx = labels.indexOf(category as typeof labels[number]);
+          return Math.min(Math.round(msg.payload.probabilities[idx] * 100), 98)
+        }
+
+        if (msg.payload.id === draftId && msg.payload.purpose === "live") {
           moderationPending.current = false;
           const latest = queuedValue.current;
 
@@ -183,21 +189,36 @@ export function PostWorkflow({ email }: { email: string }) {
           if (msg.payload.seq < moderationSeq.current) {
             continue;
           }
+
+          const scores = [
+            { category: "insult", score: score('insult') },
+            { category: "threat", score: score('threat') },
+            { category: "toxic", score: score('toxic') },
+            { category: "obscene", score: score('obscene') }
+          ] as CategoryScore[]
+          console.log ('set live scores', draftId, scores);
+          setResultScores(null);
+          setLiveScores(scores);
+
         }
 
-        const score = (category: ModerationCategory) => {
-          const idx = labels.indexOf(category as typeof labels[number]);
-          return Math.min(Math.round(msg.payload.probabilities[idx] * 100), 98)
+        if (msg.payload.purpose === "publish") {
+
+          const scores = [
+            { category: "insult", score: score('insult') },
+            { category: "threat", score: score('threat') },
+            { category: "toxic", score: score('toxic') },
+            { category: "obscene", score: score('obscene') }
+          ] as CategoryScore[]
+
+          const finalStatus = getStatusForScores(scores)
+          setResultScores(scores)
+          setStatus(finalStatus)
+
         }
-        const scores = [
-          { category: "insult", score: score('insult') },
-          { category: "threat", score: score('threat') },
-          { category: "toxic", score: score('toxic') },
-          { category: "obscene", score: score('obscene') }
-        ] as CategoryScore[]
-        setLiveScores(scores);
 
       }
+
       setLastProcessedLivePostSeq(seq);
     }
 
@@ -205,86 +226,85 @@ export function PostWorkflow({ email }: { email: string }) {
 
   }, [setEditingPostId, title, content, sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
-  const runModeration = async (
-    draft: { title: string; content: string },
-    getScores: () => Promise<CategoryScore[]>,
-  ) => {
-    const requestId = ++requestIdRef.current
-    setError(null)
-    setResultScores(null)
-    setStatus('pending')
+  // const runModeration = async (
+  //   draft: { title: string; content: string },
+  //   getScores: () => Promise<CategoryScore[]>,
+  // ) => {
+  //   const requestId = ++requestIdRef.current
+  //   setError(null)
+  //   setResultScores(null)
+  //   setStatus('pending')
 
-    try {
-      const scores = await getScores()
-      //const scores = estimateScores(`${draft.title}\n${draft.content}`)
+  //   try {
+  //     const scores = await getScores()
+  //     //const scores = estimateScores(`${draft.title}\n${draft.content}`)
 
-      if (requestId !== requestIdRef.current) return
+  //     if (requestId !== requestIdRef.current) return
 
-      const finalStatus = getStatusForScores(scores)
-      setResultScores(scores)
-      setStatus(finalStatus)
-      if (finalStatus === 'approved') {
-        setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, slug: "wert", publishedAt: new Date() })
-      }
-    } catch {
-      if (requestId !== requestIdRef.current) return
-      setStatus('live')
-      setError('Moderation service is unavailable. Please try again.')
-    }
-  }
+  //     const finalStatus = getStatusForScores(scores)
+  //     setResultScores(scores)
+  //     setStatus(finalStatus)
+  //     if (finalStatus === 'approved') {
+  //       setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, slug: "wert", publishedAt: new Date() })
+  //     }
+  //   } catch {
+  //     if (requestId !== requestIdRef.current) return
+  //     setStatus('live')
+  //     setError('Moderation service is unavailable. Please try again.')
+  //   }
+  // }
 
   const handleSubmit = async () => {
-    //const draft = { title, content }
-    //runModeration(draft, () => moderatePost(draft))
+    if (gatewayWsId) {
+      try {
+        setError(null)
+        //setResultScores(null)
+        setStatus('pending')
+        setCreateStatus("creating");
 
-    try {
-      setError(null)
-      setResultScores(null)
-
-      setStatus('pending')
-      setCreateStatus("creating");
-
-      if (workflowMode === "create" && gatewayWsId) {
-        await dispatch(
-          addNewPost({
-            title,
-            content,
-            authorUserId: authUser[0].id,
-            wsId: gatewayWsId
-          })
-        ).unwrap(); // promise ready to throw
+        if (workflowMode === "create") {
+          await dispatch(
+            addNewPost({
+              title,
+              content,
+              authorUserId: authUser[0].id,
+              wsId: gatewayWsId
+            })
+          ).unwrap(); // promise ready to throw
+        }
+        else {
+          await dispatch(
+            updatePost({
+              postId: editingPostId!,
+              title,
+              content,
+              wsId: gatewayWsId
+            })
+          ).unwrap();
+        }
+      } catch (err) {
+        console.error('Failed to save the post: ', err);
       }
-      // else {
-      //   await dispatch(
-      //     updatePost({
-      //       id: editingPostId!,
-      //       title,
-      //       content
-      //     })
-      //   );
-      // }
-    } catch (err) {
-      console.error('Failed to save the post: ', err);
     }
   }
 
-  const handleScenario = (scenario: ModerationScenario) => {
-    const useSample = !title.trim() || !content.trim()
-    const draft = useSample ? SAMPLE_POSTS[scenario] : { title, content }
-    setTitle(draft.title)
-    setContent(draft.content)
-    runModeration(draft, () => simulateModeration(scenario))
-  }
+  // const handleScenario = (scenario: ModerationScenario) => {
+  //   const useSample = !title.trim() || !content.trim()
+  //   const draft = useSample ? SAMPLE_POSTS[scenario] : { title, content }
+  //   setTitle(draft.title)
+  //   setContent(draft.content)
+  //   runModeration(draft, () => simulateModeration(scenario))
+  // }
 
   const resetToForm = (clear: boolean) => {
     if (clear) {
       setTitle('')
       setContent('')
+      setResultScores(null)
     }
     requestIdRef.current++
     setStatus('live')
     setCreateStatus('idle')
-    setResultScores(null)
     setShowPost(false)
     setError(null)
   }
@@ -400,7 +420,7 @@ export function PostWorkflow({ email }: { email: string }) {
           )}
           <ModerationCard status={status} scores={scores} />
 
-          <PrototypeControls disabled={isPending} onScenario={handleScenario} />
+          {/* <PrototypeControls disabled={isPending} onScenario={handleScenario} /> */}
         </Stack>
       </Paper>
     </Container>
