@@ -5,17 +5,13 @@ import { IconAlertCircle } from '@tabler/icons-react'
 import { useEffect, useRef, useState } from 'react'
 import {
   type ModerationCategory,
-//  type ModerationScenario,
   type CategoryScore,
   type ModerationStatus,
   type Post,
   getOverallRisk,
   getStatusForScores,
-  //  SCENARIO_SCORES,
 } from '../../lib/moderation'
-//import { simulateModeration } from '../../lib/moderation-service'
 import { PostForm } from './post-form'
-//import { PrototypeControls } from './prototype-controls'
 import { PublishedPostCard } from './published-post-card'
 import { ResultActions } from './result-actions'
 import { PostWorkflowHeader } from './post-workflow-header'
@@ -36,21 +32,6 @@ import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
 import { addNewPost, updatePost } from '../../store/api/postsSlice'
-
-// const SAMPLE_POSTS: Record<ModerationScenario, { title: string; content: string }> = {
-//   approved: {
-//     title: 'Weekend hiking recap',
-//     content: 'Had a great time on the ridge trail this weekend. The views were incredible!',
-//   },
-//   borderline: {
-//     title: 'Hot take on the finale',
-//     content: 'Honestly that finale was the worst writing I have seen in years. Awful pacing.',
-//   },
-//   rejected: {
-//     title: 'Reply to that thread',
-//     content: 'You are an idiot and I hate everything you post.',
-//   },
-// }
 
 type WorkflowMode =
   | "create"
@@ -226,34 +207,6 @@ export function PostWorkflow({ email }: { email: string }) {
 
   }, [setEditingPostId, title, content, sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
-  // const runModeration = async (
-  //   draft: { title: string; content: string },
-  //   getScores: () => Promise<CategoryScore[]>,
-  // ) => {
-  //   const requestId = ++requestIdRef.current
-  //   setError(null)
-  //   setResultScores(null)
-  //   setStatus('pending')
-
-  //   try {
-  //     const scores = await getScores()
-  //     //const scores = estimateScores(`${draft.title}\n${draft.content}`)
-
-  //     if (requestId !== requestIdRef.current) return
-
-  //     const finalStatus = getStatusForScores(scores)
-  //     setResultScores(scores)
-  //     setStatus(finalStatus)
-  //     if (finalStatus === 'approved') {
-  //       setPublishedPost({ id: crypto.randomUUID(), ...draft, scores, slug: "wert", publishedAt: new Date() })
-  //     }
-  //   } catch {
-  //     if (requestId !== requestIdRef.current) return
-  //     setStatus('live')
-  //     setError('Moderation service is unavailable. Please try again.')
-  //   }
-  // }
-
   const handleSubmit = async () => {
     if (gatewayWsId) {
       try {
@@ -287,14 +240,6 @@ export function PostWorkflow({ email }: { email: string }) {
       }
     }
   }
-
-  // const handleScenario = (scenario: ModerationScenario) => {
-  //   const useSample = !title.trim() || !content.trim()
-  //   const draft = useSample ? SAMPLE_POSTS[scenario] : { title, content }
-  //   setTitle(draft.title)
-  //   setContent(draft.content)
-  //   runModeration(draft, () => simulateModeration(scenario))
-  // }
 
   const resetToForm = (clear: boolean) => {
     if (clear) {
@@ -420,7 +365,6 @@ export function PostWorkflow({ email }: { email: string }) {
           )}
           <ModerationCard status={status} scores={scores} />
 
-          {/* <PrototypeControls disabled={isPending} onScenario={handleScenario} /> */}
         </Stack>
       </Paper>
     </Container>
