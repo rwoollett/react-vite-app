@@ -39,10 +39,10 @@ export const fetchPosts = createAsyncThunk(
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPost',
-  async ({ title, content, authorUserId, wsId }: PostCreate) => {
+  async ({ title, content, wsId }: PostCreate) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const reqInit = {
-      body: JSON.stringify({ title, content, authorUserId, wsId }),
+      body: JSON.stringify({ title, content, wsId }),
       method: "PUT",
       credentials: "include" as const
     };

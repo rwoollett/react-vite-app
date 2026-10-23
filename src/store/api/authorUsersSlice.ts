@@ -14,12 +14,13 @@ export const usersAdapter = createEntityAdapter<AuthorUser, number>({
 
 interface AuthorUserAdaptorProp {
   status: string;
-  statusNewUser: string;
   error?: string
 }
 
 const initialState = usersAdapter.getInitialState(
-  { status: 'idle', statusNewUser: 'idle' } as AuthorUserAdaptorProp);
+  {
+    status: 'idle'
+  } as AuthorUserAdaptorProp);
 
 export const fetchAuthor = createAsyncThunk(
   'postusers/fetchAuthor',
@@ -35,30 +36,6 @@ export const fetchAuthor = createAsyncThunk(
     return response.fetchAuthor;
   });
 
-export const addNewUser = createAsyncThunk(
-  'postusers/addNewUser',
-  async ({ name, authUserEmail }:
-    { name: string, authUserEmail: string }) => {
-    const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
-    const reqInit = {
-      body: JSON.stringify({ name, authUserEmail }),
-      method: "PUT",
-      credentials: "include" as const
-    };
-    const response = await http<{ createUser: AuthorUser }>(`${apiUrl}/api/v1/liveposts/users`, reqInit);
-    return response.createUser;
-  }
-);
-
-// export const fetchUsers = createAsyncThunk('postusers/fetchUsers', async () => {
-//   const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
-//   const response = await http<{ fetchUsers: AuthorUser[] }>(
-//     `${apiUrl}/api/v1/users`,
-//     { method: "GET" }
-//   );
-//   return response.fetchUsers;
-// });
-
 // Warning immutability is obtained with createSclide of RDK
 export const usersSlice = createSlice({
   name: 'postusers',
@@ -70,7 +47,6 @@ export const usersSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // builder.addCase(fetchUsers.fulfilled, usersAdapter.setAll);
     builder.addCase(fetchAuthor.pending, (state, _action) => {
       state.status = 'loading';
     });
@@ -84,19 +60,6 @@ export const usersSlice = createSlice({
       state.status = 'failed';
       state.error = action.error.message;
     });
-    builder.addCase(addNewUser.pending, (state, _action) => {
-      state.statusNewUser = 'loading';
-    });
-    builder.addCase(addNewUser.fulfilled, (state, action) => {
-      state.statusNewUser = 'succeeded';
-      return usersAdapter.addOne(state, action.payload);
-    });
-    builder.addCase(addNewUser.rejected, (state, action) => {
-      state.statusNewUser = 'failed';
-      state.error = action.error.message;
-    });
-
-
   }
 });
 

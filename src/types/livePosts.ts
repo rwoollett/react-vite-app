@@ -21,7 +21,6 @@ export type Post = {
 export type PostCreate = {
   title: string;
   content: string;
-  authorUserId: number;
   wsId: string;
 }
 
@@ -60,6 +59,7 @@ export type ModerateResult = {
 export type AuthorUser = {
   id: number;
   authUserEmail: string;
+  authUserId: string;
   name: string;
 }
 

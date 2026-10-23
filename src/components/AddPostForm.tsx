@@ -12,7 +12,7 @@ import {
 } from '../store/reducers/store';
 
 import { addNewPost } from '../store/api/postsSlice';
-import { addNewUser, fetchUserByAuthId } from '../store/api/authorUsersSlice';
+import { fetchAuthor } from '../store/api/authorUsersSlice';
 import { ROUTES } from '../resources/routes-constants';
 import { useWebSocket } from '../hooks/use-websocket-context';
 
@@ -23,7 +23,6 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
   const { gatewayWsId } = useWebSocket();
   
   const postUserByAuthIdStatus = useAppSelector(state => state.postusers.status);
-  const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
   const authUser = useAppSelector(state => selectIdByAuth(state, email));
 
   const [title, setTitle] = useState('');
@@ -38,22 +37,17 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     authUser.length > 0 &&
     authUser[0].id;
 
-  // Fetch user by authId
   useEffect(() => {
     if (postUserByAuthIdStatus === 'idle') {
-      dispatch(fetchUserByAuthId({ authId: email }));
+      dispatch(fetchAuthor());
     }
   }, [dispatch, postUserByAuthIdStatus, email]);
 
-  // Create user if missing
   useEffect(() => {
-    if (authUser.length === 0 && postUserByAuthIdStatus === 'succeeded' && postUsersNewUserStatus === 'idle') {
-      dispatch(addNewUser({ name: email, authId: email }));
-    }
-    if (authUser.length && postUsersNewUserStatus) {
+    if (authUser.length) {
       setAuthor(authUser[0].name);
     }
-  }, [authUser, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch, email]);
+  }, [authUser]);
 
   if (postUserByAuthIdStatus === 'failed') {
     navigate(ROUTES.LIVEPOSTS_ROUTE);
@@ -79,7 +73,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     if (canSave && gatewayWsId) {
       try {
         const resultAction = await dispatch(
-          addNewPost({ title, content, authorUserId: authUser[0].id, wsId: gatewayWsId })
+          addNewPost({ title, content, wsId: gatewayWsId })
         );
         unwrapResult(resultAction);
         navigate(ROUTES.LIVEPOSTS_ROUTE);

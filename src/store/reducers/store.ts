@@ -127,8 +127,8 @@ export const {
 } = usersAdapter.getSelectors<RootState>(state => state.postusers);
 
 export const selectIdByAuth = createAppSelector(
-  [selectAllUsers, (_: RootState, authId: string) => authId],
-  (users, authId) => users.filter(user => user.authId === authId)
+  [selectAllUsers, (_: RootState, authUserEmail: string) => authUserEmail],
+  (users, authUserEmail) => users.filter(user => user.authUserEmail === authUserEmail)
 );
 
 

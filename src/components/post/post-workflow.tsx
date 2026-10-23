@@ -25,7 +25,7 @@ import {
   useAppDispatch,
   useAppSelector
 } from '../../store/reducers/store';
-import { addNewUser, fetchAuthor } from '../../store/api/authorUsersSlice';
+import { fetchAuthor } from '../../store/api/authorUsersSlice';
 
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
@@ -65,7 +65,7 @@ export function PostWorkflow({ email }: { email: string }) {
   const requestIdRef = useRef(0)
 
   const postUserByAuthIdStatus = useAppSelector(state => state.postusers.status);
-  const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
+  //const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
   const authUser = useAppSelector(state => selectIdByAuth(state, email));
 
   const draftId = useRef(uuidv4()).current;
@@ -220,7 +220,6 @@ export function PostWorkflow({ email }: { email: string }) {
             addNewPost({
               title,
               content,
-              authorUserId: authUser[0].id,
               wsId: gatewayWsId
             })
           ).unwrap(); // promise ready to throw
@@ -281,22 +280,19 @@ export function PostWorkflow({ email }: { email: string }) {
   const scores = resultScores ?? liveScores
   const isLiveHighRisk = status === 'live' && getOverallRisk(liveScores) === 'high'
 
-  // Fetch user by authId (authUserEmail)
+  // Fetch author PostUser record for logged in authuser
   useEffect(() => {
     if (postUserByAuthIdStatus === 'idle') {
       dispatch(fetchAuthor());
     }
-  }, [dispatch, postUserByAuthIdStatus, email]);
+  }, [dispatch, postUserByAuthIdStatus]);
 
   // Create user if missing
   useEffect(() => {
-    if (authUser.length === 0 && postUserByAuthIdStatus === 'succeeded' && postUsersNewUserStatus === 'idle') {
-      dispatch(addNewUser({ name: email, authUserEmail: email }));
-    }
-    if (authUser.length && postUsersNewUserStatus) {
+    if (authUser.length) {
       setAuthor(authUser[0].name);
     }
-  }, [authUser, postUserByAuthIdStatus, postUsersNewUserStatus, dispatch, email]);
+  }, [authUser]);
 
   if (postUserByAuthIdStatus === 'failed') {
     navigate(ROUTES.LIVEPOSTS_ROUTE);
