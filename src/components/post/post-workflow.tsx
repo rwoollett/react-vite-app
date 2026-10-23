@@ -25,7 +25,7 @@ import {
   useAppDispatch,
   useAppSelector
 } from '../../store/reducers/store';
-import { addNewUser, fetchUserByAuthId } from '../../store/api/authorUsersSlice';
+import { addNewUser, fetchAuthor } from '../../store/api/authorUsersSlice';
 
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
@@ -281,17 +281,17 @@ export function PostWorkflow({ email }: { email: string }) {
   const scores = resultScores ?? liveScores
   const isLiveHighRisk = status === 'live' && getOverallRisk(liveScores) === 'high'
 
-  // Fetch user by authId
+  // Fetch user by authId (authUserEmail)
   useEffect(() => {
     if (postUserByAuthIdStatus === 'idle') {
-      dispatch(fetchUserByAuthId({ authId: email }));
+      dispatch(fetchAuthor());
     }
   }, [dispatch, postUserByAuthIdStatus, email]);
 
   // Create user if missing
   useEffect(() => {
     if (authUser.length === 0 && postUserByAuthIdStatus === 'succeeded' && postUsersNewUserStatus === 'idle') {
-      dispatch(addNewUser({ name: email, authId: email }));
+      dispatch(addNewUser({ name: email, authUserEmail: email }));
     }
     if (authUser.length && postUsersNewUserStatus) {
       setAuthor(authUser[0].name);

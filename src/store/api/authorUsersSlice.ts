@@ -21,28 +21,27 @@ interface AuthorUserAdaptorProp {
 const initialState = usersAdapter.getInitialState(
   { status: 'idle', statusNewUser: 'idle' } as AuthorUserAdaptorProp);
 
-export const fetchUserByAuthId = createAsyncThunk(
-  'postusers/fetchUserByAuthIdStatus',
-  async ({ authId }:
-    { authId: string }) => {
+export const fetchAuthor = createAsyncThunk(
+  'postusers/fetchAuthor',
+  async () => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
-    const response = await http<{ fetchUserByAuthId: AuthorUser[] }>(
-      `${apiUrl}/api/v1/liveposts/user/fetchbyauthid/${authId}`,
+    const response = await http<{ fetchAuthor: AuthorUser[] }>(
+      `${apiUrl}/api/v1/liveposts/user/fetchauthor`,
       {
         method: "GET",
         credentials: "include" as const
       }
     );
-    return response.fetchUserByAuthId;
+    return response.fetchAuthor;
   });
 
 export const addNewUser = createAsyncThunk(
-  'postusers/addNewUserStatusNewUser',
-  async ({ name, authId }:
-    { name: string, authId: string }) => {
+  'postusers/addNewUser',
+  async ({ name, authUserEmail }:
+    { name: string, authUserEmail: string }) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const reqInit = {
-      body: JSON.stringify({ name, authId }),
+      body: JSON.stringify({ name, authUserEmail }),
       method: "PUT",
       credentials: "include" as const
     };
@@ -72,16 +71,16 @@ export const usersSlice = createSlice({
   },
   extraReducers: builder => {
     // builder.addCase(fetchUsers.fulfilled, usersAdapter.setAll);
-    builder.addCase(fetchUserByAuthId.pending, (state, _action) => {
+    builder.addCase(fetchAuthor.pending, (state, _action) => {
       state.status = 'loading';
     });
-    builder.addCase(fetchUserByAuthId.fulfilled, (state, action) => {
+    builder.addCase(fetchAuthor.fulfilled, (state, action) => {
       state.status = 'succeeded';
       if (action.payload.length) {
         usersAdapter.upsertOne(state, action.payload[0]);
       }
     });
-    builder.addCase(fetchUserByAuthId.rejected, (state, action) => {
+    builder.addCase(fetchAuthor.rejected, (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
     });

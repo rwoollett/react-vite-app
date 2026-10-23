@@ -59,7 +59,7 @@ export type ModerateResult = {
 
 export type AuthorUser = {
   id: number;
-  authId: string;
+  authUserEmail: string;
   name: string;
 }
 
