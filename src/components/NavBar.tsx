@@ -5,7 +5,7 @@ import logo from '../styles/favicon-32x32.png';
 import { TABLE_VIEW } from './TableModes';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 import { useAppDispatch } from '../store/reducers/store';
-import { refetchUserByID } from '../store/api/authorUsersSlice';
+import { refetchAuthor } from '../store/api/authorUsersSlice';
 import {
   Group,
   Flex,
@@ -178,7 +178,7 @@ export function NavBar({ isLoggedIn }: NavBarProps) {
               c={buttonText}
               onClick={() => {
                 setOpened(false);
-                dispatch(refetchUserByID());
+                dispatch(refetchAuthor());
               }}
             >
               Create Post

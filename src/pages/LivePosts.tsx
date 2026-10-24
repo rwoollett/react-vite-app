@@ -8,7 +8,7 @@ import { Button } from '@mantine/core';
 import { useAppDispatch } from '../store/reducers/store';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../resources/routes-constants';
-import { refetchUserByID } from '../store/api/authorUsersSlice';
+import { refetchAuthor } from '../store/api/authorUsersSlice';
 import useSignedInAuthorize from '../hooks/use-signedin-authenticate';
 
 import { Box, Paper, Group, Text } from '@mantine/core';
@@ -47,7 +47,7 @@ const LivePosts: React.FC = () => {
   }, []);
 
   const toAddPostPage = () => {
-    dispatch(refetchUserByID());
+    dispatch(refetchAuthor());
     navigate(`${ROUTES.LIVEPOSTS_ROUTE}/create`);
   };
 

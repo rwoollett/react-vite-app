@@ -26,15 +26,24 @@ export const fetchAuthor = createAsyncThunk(
   'postusers/fetchAuthor',
   async ({ wsId }: { wsId: string }) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
-    const response = await http<{ fetchAuthor: AuthorUser[] }>(
-      `${apiUrl}/api/v1/liveposts/user/fetchauthor`,
-      {
-        body: JSON.stringify({ wsId }),
-        method: "GET",
-        credentials: "include" as const
-      }
-    );
-    return response.fetchAuthor;
+    console.log('wsid api', wsId, apiUrl);
+
+    try {
+      const response = await http<{ fetchAuthor: AuthorUser[] }>(
+        `${apiUrl}/api/v1/liveposts/user/fetchauthor/${wsId}`,
+        {
+          method: "GET",
+          credentials: "include" as const
+        }
+      );
+      return response.fetchAuthor;
+
+    } catch (err) {
+      console.error('fetchAuthor error', err);
+      return [];
+    }
+
+    //return response.fetchAuthor;
   });
 
 // Warning immutability is obtained with createSclide of RDK
@@ -43,7 +52,7 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {
     removePost: usersAdapter.removeOne,
-    refetchUserByID: (state) => {
+    refetchAuthor: (state) => {
       state.status = 'idle';
     },
   },
@@ -53,8 +62,10 @@ export const usersSlice = createSlice({
     });
     builder.addCase(fetchAuthor.fulfilled, (state, action) => {
       state.status = 'succeeded';
-      if (action.payload.length) {
-        usersAdapter.upsertOne(state, action.payload[0]);
+      if (action.payload) {
+        if (action.payload.length) {
+          usersAdapter.upsertOne(state, action.payload[0]);
+        }
       }
     });
     builder.addCase(fetchAuthor.rejected, (state, action) => {
@@ -64,5 +75,5 @@ export const usersSlice = createSlice({
   }
 });
 
-export const { refetchUserByID } = usersSlice.actions;
+export const { refetchAuthor } = usersSlice.actions;
 export const { reducer } = usersSlice;

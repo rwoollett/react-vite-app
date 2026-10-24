@@ -25,7 +25,7 @@ import {
   useAppDispatch,
   useAppSelector
 } from '../../store/reducers/store';
-import { fetchAuthor } from '../../store/api/authorUsersSlice';
+import { fetchAuthor, refetchAuthor } from '../../store/api/authorUsersSlice';
 
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
@@ -259,7 +259,7 @@ export function PostWorkflow({ email }: { email: string }) {
     setContent(value);
 
     const moderateValue = title + '\n' + value;
-    
+
     if (moderateValue.trim().length < 8)
       return;
 
@@ -285,6 +285,9 @@ export function PostWorkflow({ email }: { email: string }) {
     if (postUserByAuthIdStatus === 'idle' && gatewayWsId) {
       dispatch(fetchAuthor({ wsId: gatewayWsId }));
     }
+    if (postUserByAuthIdStatus === 'failed') {
+      navigate(ROUTES.LIVEPOSTS_ROUTE);
+    }
   }, [dispatch, postUserByAuthIdStatus, gatewayWsId]);
 
   // Create user if missing
@@ -294,9 +297,7 @@ export function PostWorkflow({ email }: { email: string }) {
     }
   }, [authUser]);
 
-  if (postUserByAuthIdStatus === 'failed') {
-    navigate(ROUTES.LIVEPOSTS_ROUTE);
-  }
+  console.log('postUserByAuthIdStatus', postUserByAuthIdStatus);
 
   // Skeleton loader
   if (postUserByAuthIdStatus === 'idle' || postUserByAuthIdStatus === 'loading') {
