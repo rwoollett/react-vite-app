@@ -25,7 +25,7 @@ import {
   useAppDispatch,
   useAppSelector
 } from '../../store/reducers/store';
-import { fetchAuthor, refetchAuthor } from '../../store/api/authorUsersSlice';
+import { fetchAuthor } from '../../store/api/authorUsersSlice';
 
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
@@ -288,7 +288,7 @@ export function PostWorkflow({ email }: { email: string }) {
     if (postUserByAuthIdStatus === 'failed') {
       navigate(ROUTES.LIVEPOSTS_ROUTE);
     }
-  }, [dispatch, postUserByAuthIdStatus, gatewayWsId]);
+  }, [dispatch, navigate, postUserByAuthIdStatus, gatewayWsId]);
 
   // Create user if missing
   useEffect(() => {

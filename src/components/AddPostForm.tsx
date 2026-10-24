@@ -41,7 +41,7 @@ const AddPostForm: React.FC<{ email: string }> = ({ email }) => {
     if (postUserByAuthIdStatus === 'idle' && gatewayWsId) {
       dispatch(fetchAuthor({ wsId: gatewayWsId }));
     }
-  }, [dispatch, postUserByAuthIdStatus, email]);
+  }, [dispatch, gatewayWsId, postUserByAuthIdStatus, email]);
 
   useEffect(() => {
     if (authUser.length) {
