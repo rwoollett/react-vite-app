@@ -25,7 +25,7 @@ import {
   useAppDispatch,
   useAppSelector
 } from '../../store/reducers/store';
-import { fetchAuthor } from '../../store/api/authorUsersSlice';
+import { fetchAuthor, refetchAuthor } from '../../store/api/authorUsersSlice';
 
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
@@ -136,6 +136,10 @@ export function PostWorkflow({ email }: { email: string }) {
 
       console.log('liveposts message', msg);
 
+      if (msg.subject === "liveposts_user_Created") {
+        dispatch(refetchAuthor());
+      }
+
       if (msg.subject === "liveposts_post_Published") {
         setEditingPostId(msg.payload.postId);
         setStatus("approved");
@@ -205,7 +209,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
     lastQueueIndex.current = livePostMessageQueue.length;
 
-  }, [setEditingPostId, title, content, sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
+  }, [dispatch, setEditingPostId, title, content, sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
 
   const handleSubmit = async () => {
     if (gatewayWsId) {
