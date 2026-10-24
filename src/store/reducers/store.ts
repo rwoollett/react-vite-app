@@ -29,7 +29,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage,
-    whitelist: ['data', 'ip', 'posts']
+    whitelist: ['data', 'ip']
   },
   rootReducer
 );
