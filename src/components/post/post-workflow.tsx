@@ -292,25 +292,31 @@ export function PostWorkflow({ email }: { email: string }) {
 
   // Create user if missing
   useEffect(() => {
+    // if (postUserByAuthIdStatus === 'succeeded' && authUser.length === 0) {
+    //   navigate(ROUTES.LIVEPOSTS_ROUTE);
+    // }
     if (authUser.length) {
       setAuthor(authUser[0].name);
     }
   }, [authUser]);
 
-  console.log('postUserByAuthIdStatus', postUserByAuthIdStatus);
-
   // Skeleton loader
-  if (postUserByAuthIdStatus === 'idle' || postUserByAuthIdStatus === 'loading') {
+  if (postUserByAuthIdStatus === 'idle' ||
+    postUserByAuthIdStatus === 'loading' ||
+    (postUserByAuthIdStatus === 'succeeded' && authUser.length === 0)) {
     return (
-      <Paper shadow="sm" radius="md" p="lg" bg={surfaceBg} c={surfaceText}>
-        <Text size="lg" mb="md">Live Posts</Text>
-        <Stack>
-          <Skeleton height={30} radius="sm" />
-          <Skeleton height={30} radius="sm" />
-          <Skeleton height={200} radius="sm" />
-          <Skeleton height={40} radius="sm" />
-        </Stack>
-      </Paper>
+      <Container size="md" py="md">
+        <PostWorkflowHeader author={'Please wait...'} title={"Live Posts"} />
+
+        <Paper shadow="sm" radius="md" p="lg" bg={surfaceBg} c={surfaceText}>
+          <Stack gap="xl">
+            <Skeleton height={70} radius="sm" />
+            <Skeleton height={200} radius="sm" />
+            <Skeleton height={60} radius="sm" />
+            <ModerationCard status={'live'} scores={scores} />
+          </Stack>
+        </Paper>
+      </Container>
     );
   }
 
@@ -357,24 +363,6 @@ export function PostWorkflow({ email }: { email: string }) {
             workflowMode={workflowMode}
             onTitleChange={setTitle}
             onContentChange={moderateLiveOnChangePost}
-            // onContentChange={(value, cursorPos) => {
-            //   const previousModeratedLength = lastModeratedLength.current;
-            //   const snippet = value[cursorPos - 1];
-            //   setContent(value);
-            //   if (value.trim().length < 8)
-            //     return;
-
-            //   if ([" ", ".", ",", "!", "?", "\n"].includes(snippet))
-            //     return;
-
-            //   if (Math.abs(value.length - previousModeratedLength) < 8)
-            //     return;
-
-            //   sendModerationRequest(value);
-            //   lastModeratedLength.current = value.length;
-
-            //   console.log('send moderation debounce! length value now:', lastModeratedLength.current);
-            // }}
             onSubmit={handleSubmit}
             onContinue={() => resetToForm(false)}
           />
