@@ -24,11 +24,12 @@ const initialState = usersAdapter.getInitialState(
 
 export const fetchAuthor = createAsyncThunk(
   'postusers/fetchAuthor',
-  async () => {
+  async ({ wsId }: { wsId: string }) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     const response = await http<{ fetchAuthor: AuthorUser[] }>(
       `${apiUrl}/api/v1/liveposts/user/fetchauthor`,
       {
+        body: JSON.stringify({ wsId }),
         method: "GET",
         credentials: "include" as const
       }

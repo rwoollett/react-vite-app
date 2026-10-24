@@ -282,10 +282,10 @@ export function PostWorkflow({ email }: { email: string }) {
 
   // Fetch author PostUser record for logged in authuser
   useEffect(() => {
-    if (postUserByAuthIdStatus === 'idle') {
-      dispatch(fetchAuthor());
+    if (postUserByAuthIdStatus === 'idle' && gatewayWsId) {
+      dispatch(fetchAuthor({ wsId: gatewayWsId }));
     }
-  }, [dispatch, postUserByAuthIdStatus]);
+  }, [dispatch, postUserByAuthIdStatus, gatewayWsId]);
 
   // Create user if missing
   useEffect(() => {
