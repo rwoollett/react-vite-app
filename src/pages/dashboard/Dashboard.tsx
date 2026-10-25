@@ -7,7 +7,7 @@ import ClientToken from "./ClientToken";
 import NetworkList from "./NetworkList";
 
 const Dashboard: React.FC = () => {
-  const range = { from: 5000, to: 7080 };
+  const range = { from: 5000, to: 7100 };
   const { surfaceBg, surfaceText } = useColorMap();
 
   const [data, setData] = useState<{ getClients: ClientCS[] } | null>(null);
