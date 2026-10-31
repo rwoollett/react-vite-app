@@ -7,6 +7,20 @@ export type LivePostPage = {
   isFetching: boolean;
 };
 
+// types/post.ts
+
+export type PostStatusType =
+  | "PendingModeration"
+  | "Live"
+  | "Rejected";
+
+export interface PostSummary {
+  id: number;
+  title: string;
+  date: Date | string;
+  status: PostStatusType;
+}
+
 export type Post = {
   id: number;
   date: string;

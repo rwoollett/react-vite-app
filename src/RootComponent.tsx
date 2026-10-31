@@ -21,6 +21,8 @@ import LivePosts from './pages/LivePosts'
 import LivePostsPage from './pages/LivePostsPage'
 import { useColorMap } from './theme/colorMap';
 import { PostWorkflow } from './components/post/post-workflow';
+import { MyPostsPage } from './components/post/MyPostsPage';
+import { MyPostsRoutePage } from './pages/MyPostsRoutePage';
 
 
 const RootComponent: React.FC = () => {
@@ -64,6 +66,7 @@ const RootComponent: React.FC = () => {
               <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
                 {/* <Route path="create" element={<AddPostForm email={email} />} /> */}
                 <Route path="create" element={<PostWorkflow email={email} />} />
+                <Route path="myposts" element={<MyPostsRoutePage email={email}/>} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Route>
