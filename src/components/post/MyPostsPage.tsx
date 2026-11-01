@@ -51,7 +51,7 @@ export function MyPostsPage({
             leftSection={
               <IconPlus size={18} />
             }
-            onClick={() => onAddPost}
+            onClick={onAddPost}
           >
             Add Post
           </Button>

@@ -15,7 +15,10 @@ export function MyPostsRoutePage({ email }: { email: string }) {
         loading,
         error,
     }: { posts: PostSummary[] | [], loading: boolean, error: string } = {
-        posts: [], loading: false, error: ""
+        posts: [
+            { id: 3, title: "My new response", date: "01/11/2026 13:53", status: "PendingModeration" },
+            { id: 4, title: "My new response", date: "01/11/2026 13:53", status: "Live" },
+            { id: 5, title: "My new response", date: "01/11/2026 13:53", status: "Rejected" }], loading: false, error: ""
     };
 
     if (loading) {
@@ -29,7 +32,7 @@ export function MyPostsRoutePage({ email }: { email: string }) {
             </Alert>
         );
     }
-
+    console.log('Selected post id', selectedPostId);
     return (
         <MyPostsPage
             email={email}
@@ -38,9 +41,7 @@ export function MyPostsRoutePage({ email }: { email: string }) {
             onPostSelect={(post) =>
                 setSelectedPostId(post.id)
             }
-            onAddPost={() =>
-                navigate("../create")
-            }
+            onAddPost={() => navigate("../create")}
         />
     );
 }
