@@ -8,6 +8,7 @@ import {
 } from "@mantine/core";
 import { PostStatus } from "./post-status";
 import type { PostStatusType } from "../../types";
+import { useColorMap } from "../../theme/colorMap";
 
 interface PostItemProps {
   title: string;
@@ -26,6 +27,8 @@ export function PostItem({
   selected,
   onClick,
 }: PostItemProps) {
+  const { surfaceBg, surfaceText } = useColorMap();
+
   return (
     <Card
       withBorder
@@ -37,6 +40,8 @@ export function PostItem({
         cursor: "pointer",
         borderWidth: selected ? 2 : 1,
       }}
+      bg={surfaceBg}
+      c={surfaceText}
     >
       <Group justify="space-between" align="center">
         <Stack gap={2}>

@@ -7,6 +7,7 @@ import {
   IconClockFilled,
 } from "@tabler/icons-react";
 import type { PostStatusType } from "../../types";
+import { useColorMap } from "../../theme/colorMap";
 
 interface PostStatusProps {
   status: PostStatusType;
@@ -15,16 +16,18 @@ interface PostStatusProps {
 export function PostStatus({
   status,
 }: PostStatusProps) {
+  const { POST_STATUS_COLORS } = useColorMap();
+
   switch (status) {
     case "Live":
       return (
         <Badge
-          color="green"
           size="lg"
           leftSection={
             <IconCircleCheckFilled size={12} />
           }
-          variant="light"
+          bg={POST_STATUS_COLORS[6]}
+          c={POST_STATUS_COLORS[2]}
         >
           Live
         </Badge>
@@ -33,12 +36,12 @@ export function PostStatus({
     case "PendingModeration":
       return (
         <Badge
-          color="yellow"
           size="lg"
           leftSection={
             <IconClockFilled size={12} />
           }
-          variant="light"
+          bg={POST_STATUS_COLORS[7]}
+          c={POST_STATUS_COLORS[3]}
         >
           Pending Moderation
         </Badge>
@@ -47,12 +50,12 @@ export function PostStatus({
     case "Rejected":
       return (
         <Badge
-          color="red"
           size="lg"
           leftSection={
             <IconCircleXFilled size={12} />
           }
-          variant="light"
+          bg={POST_STATUS_COLORS[8]}
+          c={POST_STATUS_COLORS[4]}
         >
           Rejected
         </Badge>

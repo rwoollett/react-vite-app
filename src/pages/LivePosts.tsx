@@ -46,9 +46,9 @@ const LivePosts: React.FC = () => {
     })();
   }, []);
 
-  const toAddPostPage = () => {
+  const toMyPostsPage = () => {
     dispatch(refetchAuthor());
-    navigate(`${ROUTES.LIVEPOSTS_ROUTE}/create`);
+    navigate(`${ROUTES.LIVEPOSTS_ROUTE}/myposts`);
   };
 
   if (isFetching) {
@@ -76,9 +76,9 @@ const LivePosts: React.FC = () => {
                 type="button"
                 color="gray"
                 variant='outline'
-                onClick={toAddPostPage}
+                onClick={toMyPostsPage}
               >
-                Create Post
+                My Posts
               </Button>
             </Group>
           </Paper>

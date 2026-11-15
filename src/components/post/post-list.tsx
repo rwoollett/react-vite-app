@@ -9,6 +9,7 @@ import { IconInfoCircle } from "@tabler/icons-react";
 
 import { PostItem } from "./post-item";
 import type { PostSummary } from "../../types";
+import { useColorMap } from "../../theme/colorMap";
 
 
 
@@ -30,12 +31,14 @@ export function PostList({
   onPostSelect,
   emptyMessage = "No posts found.",
 }: PostListProps) {
+  const { POST_STATUS_COLORS, surfaceText } = useColorMap();
+
   if (posts.length === 0) {
     return (
       <Alert
         icon={<IconInfoCircle size={18} />}
-        color="gray"
-        variant="light"
+        bg={POST_STATUS_COLORS[5]}
+        c={surfaceText}
       >
         {emptyMessage}
       </Alert>
@@ -43,7 +46,9 @@ export function PostList({
   }
 
   return (
-    <Stack>
+    <Stack
+      c={surfaceText}
+    >
       {posts.map((post) => (
         <PostItem
           key={post.id}

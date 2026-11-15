@@ -14,6 +14,7 @@ import {
 
 import { PostList } from "./post-list";
 import type { PostSummary } from "../../types";
+import { useColorMap } from "../../theme/colorMap";
 
 
 interface MyPostsPageProps {
@@ -35,15 +36,19 @@ export function MyPostsPage({
   onAddPost,
   email
 }: MyPostsPageProps) {
+  const { surfaceBg, surfaceText } = useColorMap();
 
   return (
-    <Card withBorder>
+    <Card withBorder
+      bg={surfaceBg}
+      c={surfaceText}>
       <Stack>
         <Group justify="space-between">
           <Text
             size="xl"
             fw={700}
-          >
+            bg={surfaceBg}
+            c={surfaceText}>
             {email} My Posts
           </Text>
 
@@ -51,6 +56,8 @@ export function MyPostsPage({
             leftSection={
               <IconPlus size={18} />
             }
+            color="gray"
+            variant='outline'
             onClick={onAddPost}
           >
             Add Post
@@ -67,6 +74,7 @@ export function MyPostsPage({
             size="sm"
             ta="center"
             c="dimmed"
+            bg={surfaceBg}
           >
             {posts.length} post(s)
           </Text>

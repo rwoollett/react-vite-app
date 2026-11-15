@@ -33,6 +33,33 @@ export function useColorMap() {
     'rgb(220, 40, 40)'     // Apple deep
   ];
 
+  const POST_STATUS_COLORS_LIGHT: string[] = [
+    'rgb(255, 255, 255)', // 0 White
+    'rgb(0, 0, 0)',       // 1 Black
+    'rgb(40, 150, 50)',   // 2 Live (Dark Green)
+    'rgb(255, 208, 0)',   // 3 Pending moderation (Lemon)
+    'rgb(255, 5, 5)',     // 4 Rejected (Apple)
+    'rgb(230, 230, 230)', // 5 No posts background
+    'rgb(190, 255, 190)', // 6 Live background (Green lightened)
+    'rgb(245, 245, 223)', // 7 Pending moderation background
+    'rgb(247, 181, 181)', // 8 Rejected background
+    'rgb(255, 136, 5)',   // 9 Manderine
+    'rgb(255, 5, 5)'      // 10 Apple
+  ];
+
+  const POST_STATUS_COLORS_DARK: string[] = [
+    'rgb(40, 40, 40)',     // Dark grey instead of white
+    'rgb(230, 230, 230)',  // Light grey instead of black
+    'rgb(230, 230, 230)',  // 2 Live (Light grey)
+    'rgb(230, 230, 230)',  // 3 Pending moderation (Light grey)
+    'rgb(230, 230, 230)',  // 4 Rejected (Light grey)
+    'rgb(40, 40, 40)',     // 5 No post background
+    'rgb(40, 150, 50)',    // 6 Live background (Green)  
+    'rgb(181, 181, 86)',   // 7 Pending moderation background
+    'rgb(220, 40, 40)',    // 8 Rejected background
+    'rgb(255, 110, 20)',   // Mandarin warm
+    'rgb(220, 40, 40)'     // Apple deep
+  ];
 
   return {
     // AppShell backgrounds
@@ -67,6 +94,8 @@ export function useColorMap() {
     countdownItemText: isDark ? "#D0BFFF" : "#5A189A", // purple text
 
 
-    GAME_COLORS: isDark ? GAME_COLORS_DARK : GAME_COLORS_LIGHT
+    GAME_COLORS: isDark ? GAME_COLORS_DARK : GAME_COLORS_LIGHT,
+
+    POST_STATUS_COLORS: isDark ? POST_STATUS_COLORS_DARK : POST_STATUS_COLORS_LIGHT
   };
 }
