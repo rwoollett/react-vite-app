@@ -32,7 +32,7 @@ export const fetchMyPosts = createAsyncThunk(
       if (!response.fetchUserPosts)
         return [];
       return response.fetchUserPosts;
-    } catch (e) {
+    } catch (_e) {
       return [];
     }
   });
