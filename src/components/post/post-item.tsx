@@ -7,6 +7,7 @@ import {
   Text,
 } from "@mantine/core";
 import { PostStatus } from "./post-status";
+import { parseISO } from 'date-fns';
 import { useColorMap } from "../../theme/colorMap";
 import { selectPostById, useAppSelector } from "../../store/reducers/store";
 import { memo } from "react";
@@ -35,6 +36,7 @@ export const PostItem = memo( function PostItem({
   if (!post) {
     return null;
   }
+  const date = parseISO(post.date);
 
   return (
     <Card
@@ -57,7 +59,7 @@ export const PostItem = memo( function PostItem({
           </Text>
 
           <Text size="sm" c="dimmed">
-            {post.date}
+            {date.toLocaleString()}
           </Text>
         </Stack>
 

@@ -22,16 +22,16 @@ export const fetchMyPosts = createAsyncThunk(
   async () => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
     try {
-      const response = await http<{ fetchUserPosts: Post[] }>(
+      const response = await http<{ fetchPosts: Post[] }>(
         `${apiUrl}/api/v1/liveposts/user/posts`,
         {
           method: "GET",
           credentials: "include"
         }
       );
-      if (!response.fetchUserPosts)
+      if (!response.fetchPosts)
         return [];
-      return response.fetchUserPosts;
+      return response.fetchPosts;
     } catch (_e) {
       return [];
     }
@@ -48,12 +48,13 @@ export const myPostsSlice = createSlice({
       state.status = 'loading';
     });
     builder.addCase(fetchMyPosts.fulfilled, (state, action) => {
-      state.status = 'succeeded';
-      state.ids =
-        action.payload.map(
-          p => p.id
-        );
-    });
+        state.status = 'succeeded';
+        state.ids = action.payload
+          .map(post => post.id)
+          .sort((a, b) => b - a);
+      }
+    );
+
     builder.addCase(fetchMyPosts.rejected, (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
