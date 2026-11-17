@@ -8,32 +8,32 @@ import {
 import { IconInfoCircle } from "@tabler/icons-react";
 
 import { PostItem } from "./post-item";
-import type { PostSummary } from "../../types";
+//import type { PostSummary } from "../../types";
 import { useColorMap } from "../../theme/colorMap";
 
 
 
 interface PostListProps {
-  posts: PostSummary[];
+  postIds: number[];//PostSummary[];
 
   selectedPostId?: number;
 
   onPostSelect?: (
-    post: PostSummary
+    postId: number //PostSummary
   ) => void;
 
   emptyMessage?: string;
 }
 
 export function PostList({
-  posts,
+  postIds,
   selectedPostId,
   onPostSelect,
   emptyMessage = "No posts found.",
 }: PostListProps) {
   const { POST_STATUS_COLORS, surfaceText } = useColorMap();
 
-  if (posts.length === 0) {
+  if (postIds.length === 0) {
     return (
       <Alert
         icon={<IconInfoCircle size={18} />}
@@ -49,19 +49,15 @@ export function PostList({
     <Stack
       c={surfaceText}
     >
-      {posts.map((post) => (
+      {postIds.map((postId) => (
         <PostItem
-          key={post.id}
-          title={post.title}
-          date={new Date(
-            post.date
-          ).toLocaleString()}
-          status={post.status}
+          key={postId}
+          postId={postId}
           selected={
-            selectedPostId === post.id
+            selectedPostId === postId
           }
           onClick={() =>
-            onPostSelect?.(post)
+            onPostSelect?.(postId)
           }
         />
       ))}

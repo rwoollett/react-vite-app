@@ -6,13 +6,15 @@ import {
 } from '@reduxjs/toolkit';
 import type { Post, PostCreate, PostStage, PostUpdate, ReactPost } from '../../types';
 import { http } from '../../utility/fetchData';
+import { fetchMyPosts } from './myPostsSlice';
 
 // Entity adaptor for normalised posts structure; ids end entities.
 export const postsAdapter = createEntityAdapter<Post, number>({
   selectId: post => post.id,
-  sortComparer: (a, b) => {
-    return b.date.localeCompare(a.date);
-  }
+  sortComparer: (a, b) => b.id - a.id
+  // {
+  //   return b.date.localeCompare(a.date);
+  // }
 });
 
 interface PostAdaptorProp {
@@ -103,8 +105,12 @@ export const postsSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(addNewPost.fulfilled, (state, action) => {
-      return postsAdapter.addOne(state, action.payload);
+      postsAdapter.addOne(state, action.payload);
     });
+    builder.addCase(fetchMyPosts.fulfilled, (state, action) => {
+      postsAdapter.upsertMany(state, action.payload);
+    }
+    );
     // builder.addCase(updatePost.fulfilled, (state, action) => {
     //   const { id, title, content } = action.payload;
     //   const existingPost = state.entities[id];

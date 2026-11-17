@@ -7,27 +7,34 @@ import {
   Text,
 } from "@mantine/core";
 import { PostStatus } from "./post-status";
-import type { PostStatusType } from "../../types";
 import { useColorMap } from "../../theme/colorMap";
+import { selectPostById, useAppSelector } from "../../store/reducers/store";
+import { memo } from "react";
 
 interface PostItemProps {
-  title: string;
-  date: string;
-  status: PostStatusType;
-
+  postId: number;
   selected?: boolean;
 
   onClick?: () => void;
 }
 
-export function PostItem({
-  title,
-  date,
-  status,
+export const PostItem = memo( function PostItem({
+  postId,
   selected,
   onClick,
 }: PostItemProps) {
   const { surfaceBg, surfaceText } = useColorMap();
+  const post = useAppSelector(
+    state =>
+      selectPostById(
+        state,
+        postId
+      )
+  );
+
+  if (!post) {
+    return null;
+  }
 
   return (
     <Card
@@ -46,16 +53,16 @@ export function PostItem({
       <Group justify="space-between" align="center">
         <Stack gap={2}>
           <Text fw={600}>
-            {title}
+            {post.title}
           </Text>
 
           <Text size="sm" c="dimmed">
-            {date}
+            {post.date}
           </Text>
         </Stack>
 
-        <PostStatus status={status} />
+        <PostStatus status={post.status} />
       </Group>
     </Card>
   );
-}
+});

@@ -2,23 +2,32 @@ import { Paper, Group, Text } from '@mantine/core';
 import { parseISO, formatDistanceToNow } from 'date-fns';
 import { useColorMap } from '../theme/colorMap';
 import React from 'react';
+import { selectPostById, useAppSelector } from '../store/reducers/store';
 
 interface PostCardProps {
-  post: {
-    id: number;
-    slug: string;
-    title: string;
-    userName: string;
-    date: string;
-  };
+  postId: number;
+  // post: {
+  //   id: number;
+  //   slug: string;
+  //   title: string;
+  //   userName: string;
+  //   date: string;
+  // };
 }
 
 const staticPostUrl = (slug: string) =>
   `${import.meta.env.VITE_LIVEPOSTS_STATIC_URL}/${slug}/`;
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ postId }: PostCardProps) => {
   const { surfaceBg, surfaceText } = useColorMap();
-
+  const post = useAppSelector(
+    state =>
+      selectPostById(
+        state,
+        postId
+      )
+  );
+  if (!post) return null;
   const date = parseISO(post.date);
   const timeAgo = `${formatDistanceToNow(date)} ago`;
 

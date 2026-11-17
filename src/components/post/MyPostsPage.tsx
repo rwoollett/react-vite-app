@@ -13,16 +13,16 @@ import {
 } from "@tabler/icons-react";
 
 import { PostList } from "./post-list";
-import type { PostSummary } from "../../types";
+//import type { PostSummary } from "../../types";
 import { useColorMap } from "../../theme/colorMap";
 
 
 interface MyPostsPageProps {
-  posts: PostSummary[];
+  postIds: number[];
   selectedPostId?: number;
 
   onPostSelect?: (
-    post: PostSummary
+    postId: number //PostSummary
   ) => void;
 
   onAddPost: () => void;
@@ -30,7 +30,7 @@ interface MyPostsPageProps {
 }
 
 export function MyPostsPage({
-  posts,
+  postIds,
   selectedPostId,
   onPostSelect,
   onAddPost,
@@ -64,9 +64,9 @@ export function MyPostsPage({
           </Button>
         </Group>
         <PostList
-          posts={posts}
+          postIds={postIds}
           selectedPostId={selectedPostId}
-          onPostSelect={(post) => onPostSelect?.(post)}
+          onPostSelect={(postId) => onPostSelect?.(postId)}
         />
 
         <Group justify="flex-end">
@@ -76,7 +76,7 @@ export function MyPostsPage({
             c="dimmed"
             bg={surfaceBg}
           >
-            {posts.length} post(s)
+            {postIds.length} post(s)
           </Text>
         </Group>
       </Stack>

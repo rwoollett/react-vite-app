@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Box, Text, Stack } from '@mantine/core';
 import { useColorMap } from '../theme/colorMap';
-import { selectPostsForList, useAppDispatch, useAppSelector } from '../store/reducers/store';
+import { selectPostIds, useAppDispatch, useAppSelector } from '../store/reducers/store';
 import { fetchPosts } from '../store/api/postsSlice';
 import PostCard from './PostCard';
 import PostCardSkeleton from './PostCardSkeleton';
@@ -9,7 +9,7 @@ import PostCardSkeleton from './PostCardSkeleton';
 function PostsComponent() {
   const dispatch = useAppDispatch();
 
-  const posts = useAppSelector(selectPostsForList);
+  const postIds = useAppSelector(selectPostIds); //selectPostsForList);
   const postStatus = useAppSelector((state) => state.posts.status);
   const error = useAppSelector((state) => state.posts.error);
 
@@ -27,8 +27,8 @@ function PostsComponent() {
     content = Array.from({ length: 3 }).map((_, i) => <PostCardSkeleton key={i} />);
 
   } else if (postStatus === 'succeeded') {
-    content = posts.map((post) => (
-      <PostCard key={post.id} post={post} />
+    content = postIds.map((id) => (
+      <PostCard key={id} postId={id} />
     ));
 
   } else if (postStatus === 'failed') {

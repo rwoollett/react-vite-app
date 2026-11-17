@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ipApi } from '../api/ipApi'
 import { usersApi } from '../api/authenticatedUsersApi';
 import { reducer as postsReducer, postsAdapter } from '../api/postsSlice';
-import { reducer as csTokenActionsReducer, csTokenActionsAdapter, type CSTokenAction} from '../api/cstokenSlice';
+import { reducer as myPostsReducer } from '../api/myPostsSlice';
+import { reducer as csTokenActionsReducer, csTokenActionsAdapter, type CSTokenAction } from '../api/cstokenSlice';
 import clientIPSeqSliceReducer from '../api/cstokenClientIPSeqSlice';
 import { reducer as postUsersReducer, usersAdapter } from '../api/authorUsersSlice';
 
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   [ipApi.reducerPath]: ipApi.reducer,
   [usersApi.reducerPath]: usersApi.reducer,
   posts: postsReducer,
+  myPosts: myPostsReducer,
   postusers: postUsersReducer,
   csTokenActions: csTokenActionsReducer,
   clientIPSeq: clientIPSeqSliceReducer
@@ -44,7 +46,7 @@ export const store = configureStore({
     })
       .concat(ipApi.middleware)
       .concat(usersApi.middleware)
-      //.concat(postsReducer)
+  //.concat(postsReducer)
 })
 setupListeners(store.dispatch);
 
@@ -64,7 +66,7 @@ export const {
 } = csTokenActionsAdapter.getSelectors<RootState>(state => state.csTokenActions);
 
 export const selectActionsByClient = createAppSelector(
-  [selectAllTokenActions,  (_: RootState, clientIp: string) => clientIp],
+  [selectAllTokenActions, (_: RootState, clientIp: string) => clientIp],
   (actions, clientIp) => actions.filter(a => a.clientIp === clientIp)
 );
 
@@ -114,11 +116,8 @@ export const selectPostsByUser = createAppSelector(
   (posts, userId) => posts.filter(post => post.userId === userId)
 );
 
-// Memoized list of posts in correct order
-export const selectPostsForList = createAppSelector(
-  [selectPostIds, selectPostsEntities],
-  (ids, entities) => ids.map((id) => entities[id])
-);
+// MyPosts selectors
+export const selectMyPostIds = (state: RootState) => state.myPosts.ids;
 
 // Author Users selectors
 export const {

@@ -30,6 +30,8 @@ export type Post = {
   userName: string;
   slug: string;
   reactions: ReactionEmojiCount;
+  status: PostStatusType;
+
 }
 
 export type PostCreate = {

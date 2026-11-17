@@ -1,45 +1,43 @@
-import { Alert, Loader } from "@mantine/core";
+import { Alert } from "@mantine/core";
 import { MyPostsPage } from "../components/post/MyPostsPage";
 import { useNavigate } from 'react-router-dom'
-import { useState } from "react";
-import type { PostSummary } from "../types";
+import { useEffect, useState } from "react";
+import { selectMyPostIds, useAppDispatch, useAppSelector } from "../store/reducers/store";
+import { fetchMyPosts } from "../store/api/myPostsSlice";
+import PostCardSkeleton from "../components/PostCardSkeleton";
 
 export function MyPostsRoutePage({ email }: { email: string }) {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    const [selectedPostId, setSelectedPostId] =
-        useState<number>();
+    const postIds = useAppSelector(selectMyPostIds);
+    const [selectedPostId, setSelectedPostId] = useState<number>();
+    const status = useAppSelector((state) => state.myPosts.status);
+    const error = useAppSelector((state) => state.myPosts.error);
 
-    const {
-        posts,
-        loading,
-        error,
-    }: { posts: PostSummary[] | [], loading: boolean, error: string } = {
-        posts: [
-            { id: 3, title: "My new response", date: "01/11/2026 13:53", status: "PendingModeration" },
-            { id: 4, title: "My new response", date: "01/11/2026 13:53", status: "Live" },
-            { id: 5, title: "My new response", date: "01/11/2026 13:53", status: "Rejected" }], loading: false, error: ""
-    };
+    useEffect(() => {
+        dispatch(fetchMyPosts());
+    }, [dispatch]);
 
-    if (loading) {
-        return <Loader />;
+
+    if (status === 'loading') {
+        return Array.from({ length: 3 }).map((_, i) => <PostCardSkeleton key={i} />);
     }
-
-    if (error) {
+    if (status === 'failed') {
         return (
             <Alert color="red">
-                Failed to load posts
+                {error}
             </Alert>
         );
     }
-    console.log('Selected post id', selectedPostId);
+
     return (
         <MyPostsPage
             email={email}
-            posts={posts}
+            postIds={postIds}
             selectedPostId={selectedPostId}
-            onPostSelect={(post) =>
-                setSelectedPostId(post.id)
+            onPostSelect={(postId) =>
+                setSelectedPostId(postId)
             }
             onAddPost={() => navigate("../create")}
         />
