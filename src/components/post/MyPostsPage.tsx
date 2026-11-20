@@ -6,23 +6,19 @@ import {
   Group,
   Stack,
   Text,
-  ThemeIcon,
   Title,
 } from "@mantine/core";
 
 import {
   IconArrowLeft,
   IconPlus,
-  IconShieldCheck,
   IconUser,
 } from "@tabler/icons-react";
 
 import { PostList } from "./post-list";
 import { useNavigate } from 'react-router-dom'
-//import type { PostSummary } from "../../types";
 import { useColorMap } from "../../theme/colorMap";
 import { ROUTES } from "../../resources/routes-constants";
-
 
 interface MyPostsPageProps {
   postIds: number[];
