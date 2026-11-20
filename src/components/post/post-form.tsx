@@ -3,6 +3,7 @@
 import { Button, Group, Stack, TextInput, Textarea } from '@mantine/core'
 import { IconArrowRight, IconSend } from '@tabler/icons-react'
 import { type FormEvent, useRef } from 'react'
+import { useColorMap } from '../../theme/colorMap'
 
 interface PostFormProps {
   title: string
@@ -31,6 +32,8 @@ export function PostForm({
   onSubmit,
   onContinue,
 }: PostFormProps) {
+  const { surfaceText, surfaceBg, buttonColors } = useColorMap();
+
   const contentRef = useRef<HTMLTextAreaElement>(null)
   const canSubmit =
     title.trim().length > 0 && content.trim().length > 0 && !isLocked && !isSubmitBlocked
@@ -77,6 +80,9 @@ export function PostForm({
           <Button
             type="submit"
             size="md"
+            c={canSubmit ? surfaceText : "gray"}
+            bg={canSubmit ? buttonColors.primary : surfaceBg}
+
             leftSection={<IconSend size={18} />}
             //loading={isModerating || createStatus === "creating"}
             //loaderProps={{ type: 'dots' }}
@@ -84,7 +90,7 @@ export function PostForm({
           >
             {isModerating ? createStatus === "creating" ? workflowMode === "create"
               ? "Creating..."
-              : "Updating...":
+              : "Updating..." :
               'Moderating...' : workflowMode === "create"
               ? "Create Post"
               : "Update Post"}
@@ -93,6 +99,8 @@ export function PostForm({
             <Button
               type="button"
               size="md"
+              c={surfaceText}
+              bg={buttonColors.primary}
               variant="light"
               rightSection={<IconArrowRight size={18} />}
               onClick={handleContinue}

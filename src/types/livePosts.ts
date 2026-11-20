@@ -10,6 +10,7 @@ export type LivePostPage = {
 // types/post.ts
 
 export type PostStatusType =
+  | "Creating"
   | "PendingModeration"
   | "Live"
   | "Rejected";

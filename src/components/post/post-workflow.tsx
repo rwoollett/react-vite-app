@@ -11,7 +11,7 @@ import {
   getStatusForScores,
 } from '../../lib/moderation'
 import { PostForm } from './post-form'
-import { PublishedPostCard } from './published-post-card'
+//import { PublishedPostCard } from './published-post-card'
 import { ResultActions } from './result-actions'
 import { PostWorkflowHeader } from './post-workflow-header'
 import { v4 as uuidv4 } from "uuid";
@@ -32,8 +32,6 @@ import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
 import { addNewPost, updatePost } from '../../store/api/postsSlice'
-import { parseISO } from 'date-fns'
-import { PostStatus } from './post-status'
 
 type WorkflowMode =
   | "create"
@@ -71,7 +69,6 @@ export function PostWorkflow({ email }: { email: string }) {
     { category: "obscene", score: 0 },
   ])
 
-  const [showPost, setShowPost] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const requestIdRef = useRef(0)
 
@@ -154,16 +151,7 @@ export function PostWorkflow({ email }: { email: string }) {
         //}
         // if (msg.payload.status === "Live") {
         //   console.log('live post status');
-        //   setEditingPostId(msg.payload.postId);
         //   setStatus("approved");
-        //   setPublishedPost({
-        //     id: msg.payload.postId.toString(),
-        //     title,
-        //     content,
-        //     slug: msg.payload.slug,
-        //     scores: [],
-        //     publishedAt: new Date()
-        //   })
         //   setCreateStatus("created");
         // }
       }
@@ -275,7 +263,6 @@ export function PostWorkflow({ email }: { email: string }) {
     requestIdRef.current++
     setStatus('live')
     setCreateStatus('idle')
-    setShowPost(false)
     setError(null)
   }
 
@@ -329,10 +316,9 @@ export function PostWorkflow({ email }: { email: string }) {
     (postUserByAuthIdStatus === 'succeeded' && authUser.length === 0)) {
     return (
       <Container size="md" py="md">
-        <PostWorkflowHeader author={'Please wait...'} title={"Live Posts"} />
-
         <Paper shadow="sm" radius="md" p="lg" bg={surfaceBg} c={surfaceText}>
           <Stack gap="xl">
+            <Skeleton height={70} radius="sm" />
             <Skeleton height={70} radius="sm" />
             <Skeleton height={200} radius="sm" />
             <Skeleton height={60} radius="sm" />
@@ -344,17 +330,17 @@ export function PostWorkflow({ email }: { email: string }) {
   }
   // of End Fetch author
 
-  if (status === 'approved') {
+  if (post && status === 'approved') {
     return (
       <Container size="md" py="md">
 
-        <PostWorkflowHeader author={author} title={"Live Posts"} />
+        <PostWorkflowHeader author={author} status={post?.status} title={"Live Posts"} />
 
         <Paper shadow="sm" radius="md" p="lg">
           <Stack gap="xl">
             <ModerationCard status={status} scores={scores} />
             <ResultActions
-              onView={() => setShowPost(true)}
+              slug={post.slug}
               onCreateAnother={() => {
                 setWorkflowMode("create");
                 resetToForm(true);
@@ -368,14 +354,6 @@ export function PostWorkflow({ email }: { email: string }) {
                 resetToForm(false);
               }}
             />
-            {showPost && post && postId && <PublishedPostCard post={{
-              id: postId,
-              title: post.title,
-              content: post.content,
-              slug: post.slug,
-              scores: [],
-              publishedAt: parseISO(post.date)
-            }} />}
           </Stack>
         </Paper>
       </Container>
@@ -384,12 +362,12 @@ export function PostWorkflow({ email }: { email: string }) {
 
   return (
     <Container size="md" py="md">
-      <PostWorkflowHeader author={author} title={"Create Post"} />
+      <PostWorkflowHeader author={author} status={post?.status} title={workflowMode === "create"
+        ? "Create Post"
+        : "Update Post"} />
 
       <Paper shadow="sm" radius="md" p="lg">
         <Stack gap="xl">
-          {post && <PostStatus status={post.status} />}
-
           <PostForm
             title={title}
             content={content}

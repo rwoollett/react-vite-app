@@ -6,15 +6,22 @@ import {
   Group,
   Stack,
   Text,
+  ThemeIcon,
+  Title,
 } from "@mantine/core";
 
 import {
+  IconArrowLeft,
   IconPlus,
+  IconShieldCheck,
+  IconUser,
 } from "@tabler/icons-react";
 
 import { PostList } from "./post-list";
+import { useNavigate } from 'react-router-dom'
 //import type { PostSummary } from "../../types";
 import { useColorMap } from "../../theme/colorMap";
+import { ROUTES } from "../../resources/routes-constants";
 
 
 interface MyPostsPageProps {
@@ -37,6 +44,7 @@ export function MyPostsPage({
   email
 }: MyPostsPageProps) {
   const { surfaceBg, surfaceText } = useColorMap();
+  const navigate = useNavigate();
 
   return (
     <Card withBorder
@@ -44,25 +52,46 @@ export function MyPostsPage({
       c={surfaceText}>
       <Stack>
         <Group justify="space-between">
-          <Text
-            size="xl"
-            fw={700}
-            bg={surfaceBg}
-            c={surfaceText}>
-            {email} My Posts
-          </Text>
+          <div>
+            <Title
+              bg={surfaceBg}
+              c={surfaceText}
+              order={2}>My Posts</Title>
+            <Stack gap={6} mt={2}>
+              <Group gap="xs">
+                <IconUser size={14} color="gray" />
+                <Text size="sm" c="dimmed">
+                  {email}
+                </Text>
+              </Group>
+            </Stack>
 
-          <Button
-            leftSection={
-              <IconPlus size={18} />
-            }
-            color="gray"
-            variant='outline'
-            onClick={onAddPost}
-          >
-            Add Post
-          </Button>
+          </div>
+          <Stack align="flex-end" gap="xs">
+            <Button
+              variant="subtle"
+              leftSection={<IconArrowLeft size={16} />}
+              onClick={() =>
+                navigate(`${ROUTES.LIVEPOSTS_ROUTE}`)
+              }
+            >
+              Live Posts
+            </Button>
+            <Button
+              leftSection={
+                <IconPlus size={18} />
+              }
+              color="gray"
+              variant='outline'
+              onClick={onAddPost}
+            >
+              Add Post
+            </Button>
+
+          </Stack>
+
         </Group>
+
         <PostList
           postIds={postIds}
           selectedPostId={selectedPostId}

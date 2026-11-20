@@ -17,5 +17,9 @@ export function baseAuthUrl() {
   return `${import.meta.env.VITE_AUTH_SERVER_URL}`;
 }
 
+export const staticPostUrl = (slug: string) =>
+  `${import.meta.env.VITE_LIVEPOSTS_STATIC_URL}/${slug}/`;
+
+
 
 

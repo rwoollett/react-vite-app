@@ -61,6 +61,22 @@ export function useColorMap() {
     'rgb(220, 40, 40)'     // Apple deep
   ];
 
+  const buttonColors_light = {
+    primary: 'blue',
+    secondary: 'gray',
+    success: 'green',
+    warning: 'yellow',
+    danger: 'red',
+  } as const;
+
+  const buttonColors_dark = {
+    primary: 'blue',
+    secondary: 'gray',
+    success: 'green',
+    warning: 'yellow',
+    danger: 'red',
+  } as const;
+
   return {
     // AppShell backgrounds
     appShellBg: isDark ? theme.colors.dark[4] : theme.white,
@@ -80,6 +96,7 @@ export function useColorMap() {
     // Buttons
     buttonText: isDark ? theme.white : theme.black,
 
+    buttonColors: isDark ? buttonColors_dark : buttonColors_light,
     // Banner
     bannerOverlay: isDark
       ? 'rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)'
