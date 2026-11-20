@@ -26,8 +26,6 @@ export const fetchAuthor = createAsyncThunk(
   'postusers/fetchAuthor',
   async ({ wsId }: { wsId: string }) => {
     const apiUrl = `${import.meta.env.VITE_LIVEPOSTS_URL}`;
-    console.log('wsid api', wsId, apiUrl);
-
     try {
       const response = await http<{ fetchAuthor: AuthorUser[] }>(
         `${apiUrl}/api/v1/liveposts/user/fetchauthor/${wsId}`,

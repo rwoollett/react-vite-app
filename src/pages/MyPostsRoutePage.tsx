@@ -36,9 +36,12 @@ export function MyPostsRoutePage({ email }: { email: string }) {
             email={email}
             postIds={postIds}
             selectedPostId={selectedPostId}
-            onPostSelect={(postId) =>
-                setSelectedPostId(postId)
-            }
+            onPostSelect={(postId) => {
+                setSelectedPostId(postId);
+                navigate(
+                    `../edit/${postId}`
+                )
+            }}
             onAddPost={() => navigate("../create")}
         />
     );

@@ -56,11 +56,12 @@ export type UserCreated = {
   wsId: string;
 }
 
-export type PostPublished = {
+export type PostStatusChanged = {
   postId: number;
+  authorUserId: number;
+  status: PostStatusType;
   slug: string;
   wsId: string;
-  authorUserId: number;
 }
 
 export type ModerateResult = {
@@ -126,7 +127,7 @@ declare global {
 
 export type WSLivePostMessage =
   | { subject: "liveposts_post_Stage"; payload: PostStage }
-  | { subject: "liveposts_post_Published"; payload: PostPublished }
+  | { subject: "liveposts_post_StatusChanged"; payload: PostStatusChanged }
   | { subject: "liveposts_user_Created"; payload: UserCreated }
   | { subject: "liveposts_moderate_Result"; payload: ModerateResult };
 

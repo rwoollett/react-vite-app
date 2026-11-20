@@ -7,7 +7,6 @@ import {
   type ModerationCategory,
   type CategoryScore,
   type ModerationStatus,
-  type Post,
   getOverallRisk,
   getStatusForScores,
 } from '../../lib/moderation'
@@ -22,16 +21,19 @@ import { http } from "../../utility/fetchData";
 
 import {
   selectIdByAuth,
+  selectPostById,
   useAppDispatch,
   useAppSelector
 } from '../../store/reducers/store';
-import { fetchAuthor, refetchAuthor } from '../../store/api/authorUsersSlice';
+import { fetchAuthor } from '../../store/api/authorUsersSlice';
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
 import { addNewPost, updatePost } from '../../store/api/postsSlice'
+import { parseISO } from 'date-fns'
+import { PostStatus } from './post-status'
 
 type WorkflowMode =
   | "create"
@@ -41,16 +43,25 @@ export function PostWorkflow({ email }: { email: string }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const { postId } = useParams();
+  const post = useAppSelector(
+    state =>
+      postId
+        ? selectPostById(
+          state,
+          Number(postId)
+        )
+        : undefined
+  );
+
   const { gatewayWsId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [title, setTitle] = useState(post ? post.title : '')
+  const [content, setContent] = useState(post ? post.content : '')
   const [status, setStatus] = useState<ModerationStatus>('live')
   const [createStatus, setCreateStatus] = useState<CreateStatus>("idle");
-  const [author, setAuthor] = useState('');
-  const [workflowMode, setWorkflowMode] = useState<WorkflowMode>("create");
-  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [author, setAuthor] = useState(''); // from logged credentails
+  const [workflowMode, setWorkflowMode] = useState<WorkflowMode>(post ? "update" : "create");
 
-  console.log('Editing post id', editingPostId);
   const { surfaceBg, surfaceText } = useColorMap();
   const [resultScores, setResultScores] = useState<CategoryScore[] | null>(null)
   const [liveScores, setLiveScores] = useState<CategoryScore[]>([
@@ -59,13 +70,12 @@ export function PostWorkflow({ email }: { email: string }) {
     { category: "toxic", score: 0 },
     { category: "obscene", score: 0 },
   ])
-  const [publishedPost, setPublishedPost] = useState<Post | null>(null)
+
   const [showPost, setShowPost] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const requestIdRef = useRef(0)
 
   const postUserByAuthIdStatus = useAppSelector(state => state.postusers.status);
-  //const postUsersNewUserStatus = useAppSelector(state => state.postusers.statusNewUser);
   const authUser = useAppSelector(state => selectIdByAuth(state, email));
 
   const draftId = useRef(uuidv4()).current;
@@ -118,11 +128,14 @@ export function PostWorkflow({ email }: { email: string }) {
   }, 500);
 
   useEffect(() => {
-    for (
-      let i = lastQueueIndex.current;
-      i < livePostMessageQueue.length;
-      ++i
-    ) {
+    for (let i = lastQueueIndex.current; i < livePostMessageQueue.length; ++i) {
+      //for (const { seq, msg } of livePostMessageQueue) {
+      const { seq, msg } = livePostMessageQueue[i];
+
+      if (seq <= lastProcessedLivePostSeq) {
+        continue;
+      }
+
       const labels = [
         "toxic",
         "severe_toxic",
@@ -132,26 +145,27 @@ export function PostWorkflow({ email }: { email: string }) {
         "identity_hate"
       ] as const;
 
-      const { seq, msg } = livePostMessageQueue[i];
-
-      console.log('liveposts message', msg);
-
-      if (msg.subject === "liveposts_user_Created") {
-        dispatch(refetchAuthor());
-      }
-
-      if (msg.subject === "liveposts_post_Published") {
-        setEditingPostId(msg.payload.postId);
-        setStatus("approved");
-        setPublishedPost({
-          id: msg.payload.postId.toString(),
-          title,
-          content,
-          slug: msg.payload.slug,
-          scores: [],
-          publishedAt: new Date()
-        })
-        setCreateStatus("created");
+      if (msg.subject === "liveposts_post_StatusChanged") {
+        //if (msg.payload.status === "PendingModeration") {
+        navigate(
+          `../edit/${msg.payload.postId}`,
+          { replace: true }
+        );
+        //}
+        // if (msg.payload.status === "Live") {
+        //   console.log('live post status');
+        //   setEditingPostId(msg.payload.postId);
+        //   setStatus("approved");
+        //   setPublishedPost({
+        //     id: msg.payload.postId.toString(),
+        //     title,
+        //     content,
+        //     slug: msg.payload.slug,
+        //     scores: [],
+        //     publishedAt: new Date()
+        //   })
+        //   setCreateStatus("created");
+        // }
       }
 
       if (msg.subject === "liveposts_moderate_Result") {
@@ -181,7 +195,7 @@ export function PostWorkflow({ email }: { email: string }) {
             { category: "toxic", score: score('toxic') },
             { category: "obscene", score: score('obscene') }
           ] as CategoryScore[]
-          console.log('set live scores', draftId, scores);
+          // console.log('set live scores', draftId, scores);
           setResultScores(null);
           setLiveScores(scores);
 
@@ -209,7 +223,14 @@ export function PostWorkflow({ email }: { email: string }) {
 
     lastQueueIndex.current = livePostMessageQueue.length;
 
-  }, [dispatch, setEditingPostId, title, content, sendModerationRequest, livePostMessageQueue, draftId, lastProcessedLivePostSeq, setLastProcessedLivePostSeq]);
+  }, [dispatch, navigate,
+    title, content,
+    sendModerationRequest,
+    livePostMessageQueue,
+    draftId,
+    lastProcessedLivePostSeq,
+    setLastProcessedLivePostSeq
+  ]);
 
   const handleSubmit = async () => {
     if (gatewayWsId) {
@@ -229,14 +250,15 @@ export function PostWorkflow({ email }: { email: string }) {
           ).unwrap(); // promise ready to throw
         }
         else {
-          await dispatch(
-            updatePost({
-              postId: editingPostId!,
-              title,
-              content,
-              wsId: gatewayWsId
-            })
-          ).unwrap();
+          if (postId)
+            await dispatch(
+              updatePost({
+                postId: Number(postId),
+                title,
+                content,
+                wsId: gatewayWsId
+              })
+            ).unwrap();
         }
       } catch (err) {
         console.error('Failed to save the post: ', err);
@@ -276,7 +298,7 @@ export function PostWorkflow({ email }: { email: string }) {
     sendModerationRequest(moderateValue);
     lastModeratedLength.current = moderateValue.length;
 
-    console.log('send moderation debounce! length value now:', lastModeratedLength.current, '\nModerate Value:', moderateValue);
+    //console.log('send moderation debounce! length value now:', lastModeratedLength.current, '\nModerate Value:', moderateValue);
   };
 
   const isPending = status === 'pending'
@@ -296,9 +318,6 @@ export function PostWorkflow({ email }: { email: string }) {
 
   // Create user if missing
   useEffect(() => {
-    // if (postUserByAuthIdStatus === 'succeeded' && authUser.length === 0) {
-    //   navigate(ROUTES.LIVEPOSTS_ROUTE);
-    // }
     if (authUser.length) {
       setAuthor(authUser[0].name);
     }
@@ -323,6 +342,7 @@ export function PostWorkflow({ email }: { email: string }) {
       </Container>
     );
   }
+  // of End Fetch author
 
   if (status === 'approved') {
     return (
@@ -338,13 +358,24 @@ export function PostWorkflow({ email }: { email: string }) {
               onCreateAnother={() => {
                 setWorkflowMode("create");
                 resetToForm(true);
+                navigate(
+                  `../create`,
+                  { replace: true }
+                );
               }}
               onEdit={() => {
                 setWorkflowMode("update");
                 resetToForm(false);
               }}
             />
-            {showPost && publishedPost && <PublishedPostCard post={publishedPost} />}
+            {showPost && post && postId && <PublishedPostCard post={{
+              id: postId,
+              title: post.title,
+              content: post.content,
+              slug: post.slug,
+              scores: [],
+              publishedAt: parseISO(post.date)
+            }} />}
           </Stack>
         </Paper>
       </Container>
@@ -357,6 +388,8 @@ export function PostWorkflow({ email }: { email: string }) {
 
       <Paper shadow="sm" radius="md" p="lg">
         <Stack gap="xl">
+          {post && <PostStatus status={post.status} />}
+
           <PostForm
             title={title}
             content={content}

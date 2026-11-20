@@ -16,7 +16,8 @@ import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 import type { WSUserConnectMessage } from "../types/wsuser";
 import { baseAuthUrl } from "../utility/functions";
 import { http } from "../utility/fetchData";
-import { fetchPosts } from "../store/api/postsSlice";
+import { fetchPosts, postStatusUpdated } from "../store/api/postsSlice";
+import { refetchAuthor } from "../store/api/authorUsersSlice";
 
 type WebSocketContextType = {
   wsRefGateway: React.RefObject<WebSocketClient | null>;
@@ -48,11 +49,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [lastProcessedLivePostSeq, setLastProcessedLivePostSeq] = useState(0);
   const [gatewayWsId, setGatewayWsId] = useState<string | null>(null);
 
-
-  console.log(
-    "Gateway WS state:",
-    wsRefGateway.current?.client.readyState
-  );
+  // console.log(
+  //   "Gateway WS state:",
+  //   wsRefGateway.current?.client.readyState
+  // );
 
   useEffect(() => {
 
@@ -165,16 +165,6 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
     };
 
-    const handleLivePostPublished = (msg: WSLivePostMessage) => {
-      setLivePostSeq(prev => {
-        const next = prev + 1;
-        setLivePostMessageQueue(q =>
-          [...q, { seq: next, msg }].slice(-MSG_QUEUE_MAX)
-        );
-        return next;
-      });
-    };
-
     const handleLivePostModerate = (msg: WSLivePostMessage) => {
       setLivePostSeq(prev => {
         const next = prev + 1;
@@ -246,11 +236,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           case "liveposts_post_Stage":
             dispatch(fetchPosts());
             return;
-          case "liveposts_post_Published":
-            handleLivePostPublished(msg);
+          case "liveposts_post_StatusChanged":
+            handleLivePostModerate(msg); // do need to use event on post workflow
+            dispatch(postStatusUpdated(msg.payload));
             return;
           case "liveposts_user_Created":
-            handleLivePostPublished(msg);
+            dispatch(refetchAuthor());
             return;
           case "liveposts_moderate_Result":
             handleLivePostModerate(msg);

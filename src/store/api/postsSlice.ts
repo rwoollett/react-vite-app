@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
-import type { Post, PostCreate, PostStage, PostUpdate, ReactPost } from '../../types';
+import type { Post, PostCreate, PostStatusChanged, PostUpdate } from '../../types';
 import { http } from '../../utility/fetchData';
 import { fetchMyPosts } from './myPostsSlice';
 
@@ -73,24 +73,15 @@ export const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    reactionAdded(state, action: PayloadAction<ReactPost>) {
-      const { postId, reaction } = action.payload;
+    postStatusUpdated: (state, action: PayloadAction<PostStatusChanged>) => {
+      const { postId, status } = action.payload;
       const existingPost = state.entities[postId];
+      // immer functionality for  
       if (existingPost) {
-        existingPost.reactions[reaction]++;
+        existingPost.status = status;
       }
-    },
-    postStage(state, action: PayloadAction<PostStage>) {
-      const { id, slug } = action.payload;
-      const existingPost = state.entities[id];
-      if (existingPost) {
-        existingPost.slug = slug;
-        //console.log (existingPost);
-      }
-    },
-    upsertPost: (state, action: PayloadAction<Post>) => {
-      return postsAdapter.upsertOne(state, action.payload);
-    },
+
+    }
   },
   extraReducers: builder => {
     builder.addCase(fetchPosts.pending, (state, _action) => {
@@ -111,18 +102,9 @@ export const postsSlice = createSlice({
       postsAdapter.upsertMany(state, action.payload);
     }
     );
-    // builder.addCase(updatePost.fulfilled, (state, action) => {
-    //   const { id, title, content } = action.payload;
-    //   const existingPost = state.entities[id];
-    //   if (existingPost) {
-    //     // immer functionality for immutability
-    //     existingPost.title = title;
-    //     existingPost.content = content;
-    //   }
-    // });
   }
 });
 
-export const { reactionAdded, postStage } = postsSlice.actions;
+export const { postStatusUpdated } = postsSlice.actions;
 export const { reducer } = postsSlice;
 
