@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Alert, Card, Loader, Stack, Text } from '@mantine/core'
+import { Alert, Card, Loader, Stack } from '@mantine/core'
 import {
   IconAlertTriangle,
   IconCircleCheck,
@@ -7,7 +7,6 @@ import {
 } from '@tabler/icons-react'
 import { ModerationAnalysis } from './moderation-analysis'
 import { CATEGORY_LABELS, getOverallRisk, getExceededCategory, getPublishThreshold } from '../../lib/moderation'
-import { RiskBadge } from './risk-badge'
 import type { CategoryScore, ModerationStatus, RiskLevel } from '../../lib/moderation'
 
 export interface ModerationCardProps {
