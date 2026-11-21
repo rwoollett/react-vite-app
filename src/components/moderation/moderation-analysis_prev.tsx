@@ -146,7 +146,7 @@ export function ModerationAnalysis_PREV({ status, scores }: ModerationAnalysisPr
           {scores.map(({ category, score }) => (
             <ScoreRow
               key={category}
-              label={CATEGORY_LABELS[category]}
+              category={category}
               score={score}
             />
           ))}

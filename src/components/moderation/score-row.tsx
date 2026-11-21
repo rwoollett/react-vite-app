@@ -1,22 +1,22 @@
 'use client'
 
 import { Group, Text } from '@mantine/core'
-import { getSeverity } from '../../lib/moderation'
+import { CATEGORY_LABELS, getSeverity, type ModerationCategory } from '../../lib/moderation'
 import { RiskBadge } from './risk-badge'
 
 interface ScoreRowProps {
-  label: string
+  category: ModerationCategory
   score: number
 }
 
-export function ScoreRow({ label, score }: ScoreRowProps) {
+export function ScoreRow({ category, score }: ScoreRowProps) {
   return (
     <Group gap="md" wrap="nowrap">
-      <Text w={110} size="sm">{label}</Text>
+      <Text w={110} size="sm">{CATEGORY_LABELS[category]}</Text>
       <Text w={48} ta="right" ff="monospace" fw={500} size="sm">
         {`${score}%`}
       </Text>
-      <RiskBadge level={getSeverity(score)} size="sm" />
+      <RiskBadge level={getSeverity(category, score)} size="sm" />
     </Group>
   )
 }
