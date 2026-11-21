@@ -10,7 +10,7 @@ import {
   getOverallRisk,
   getStatusForScores,
   getEditableTitle,
-  getEditableContent,
+  getEditableContent
 } from '../../lib/moderation'
 import { PostForm } from './post-form'
 //import { PublishedPostCard } from './published-post-card'
@@ -53,7 +53,6 @@ export function PostWorkflow({ email }: { email: string }) {
         )
         : undefined
   );
-
   const { gatewayWsId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
   const [title, setTitle] = useState(post ? getEditableTitle(post) : '')
   const [content, setContent] = useState(post ? getEditableContent(post) : '')
@@ -98,7 +97,7 @@ export function PostWorkflow({ email }: { email: string }) {
     };
   }
 
-  const sendModerationRequest = debounce(async (value: string) => {
+  const sendModerationRequestRef = useRef(debounce(async (value: string) => {
     if (moderationPending.current) {
       queuedValue.current = value;
       return;
@@ -124,7 +123,9 @@ export function PostWorkflow({ email }: { email: string }) {
       console.warn("Moderate Job not authenticated.");
       moderationPending.current = false;
     }
-  }, 500);
+  }, 500));
+
+  const sendModerationRequest = sendModerationRequestRef.current;
 
   useEffect(() => {
     for (let i = lastQueueIndex.current; i < livePostMessageQueue.length; ++i) {
@@ -185,7 +186,7 @@ export function PostWorkflow({ email }: { email: string }) {
             { category: "toxic", score: score('toxic') },
             { category: "obscene", score: score('obscene') }
           ] as CategoryScore[]
-          // console.log('set live scores', draftId, scores);
+
           setResultScores(null);
           setLiveScores(scores);
 
@@ -226,7 +227,6 @@ export function PostWorkflow({ email }: { email: string }) {
     if (gatewayWsId) {
       try {
         setError(null)
-        //setResultScores(null)
         setStatus('pending')
         setCreateStatus("creating");
 
@@ -290,10 +290,35 @@ export function PostWorkflow({ email }: { email: string }) {
     //console.log('send moderation debounce! length value now:', lastModeratedLength.current, '\nModerate Value:', moderateValue);
   };
 
+  const moderatedPostId = useRef<number>(0);
+  useEffect(() => {
+    console.log("effect");
+    if (!post) {
+      return;
+    }
+    if (post.status !== 'Rejected') {
+      return;
+    }
+
+    if (moderatedPostId.current === post.id)
+      return;
+
+    const moderateValue = `${title}\n${content}`;
+    if (moderateValue.trim().length < 8)
+      return;
+
+    moderatedPostId.current = post.id;
+
+    console.log("sendModerationRequest recreated");
+    console.log(sendModerationRequest);
+    sendModerationRequest(moderateValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post?.id]);
+
   const isPending = status === 'pending'
   const isAwaitingContinue = status === 'rejected' || status === 'borderline'
   const scores = resultScores ?? liveScores
-  const isLiveHighRisk = status === 'live' && getOverallRisk(liveScores) === 'high'
+  const isLiveHighRisk = !post && status === 'live' && getOverallRisk(liveScores) === 'high'
 
   // Fetch author PostUser record for logged in authuser
   useEffect(() => {
@@ -366,7 +391,7 @@ export function PostWorkflow({ email }: { email: string }) {
     <Container size="md" py="md">
       <PostWorkflowHeader author={author} status={post?.status} title={workflowMode === "create"
         ? "Create Post"
-        : "Update Post"}  scores={scores} />
+        : "Update Post"} scores={scores} />
 
       <Paper shadow="sm" radius="md" p="lg">
         <Stack gap="xl">

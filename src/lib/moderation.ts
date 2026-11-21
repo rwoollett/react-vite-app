@@ -2,11 +2,11 @@ import type { Post } from "../types";
 
 
 export const CATEGORY_THRESHOLDS = {
-  toxic:         { publish: 80, attention: 40 },
-  severe_toxic:  { publish: 80, attention: 40 },
-  obscene:       { publish: 60, attention: 30 },
-  threat:        { publish: 50, attention: 25 },
-  insult:        { publish: 80, attention: 40 },
+  toxic: { publish: 80, attention: 40 },
+  severe_toxic: { publish: 80, attention: 40 },
+  obscene: { publish: 60, attention: 30 },
+  threat: { publish: 50, attention: 25 },
+  insult: { publish: 80, attention: 40 },
   identity_hate: { publish: 80, attention: 40 },
 } as const;
 
@@ -156,26 +156,44 @@ export function clampScore(score: number): number {
 
 export function getEditableTitle(post: Post) {
 
-    if (
-        post.status === "Rejected" &&
-        post.draftTitle
-    ) {
-        return post.draftTitle;
-    }
+  if (
+    post.status === "Rejected" &&
+    post.draftTitle
+  ) {
+    return post.draftTitle;
+  }
 
-    return post.title;
+  return post.title;
 }
 
 export function getEditableContent(post: Post) {
 
-    if (
-        post.status === "Rejected" &&
-        post.draftContent
-    ) {
-        return post.draftContent;
-    }
+  if (
+    post.status === "Rejected" &&
+    post.draftContent
+  ) {
+    return post.draftContent;
+  }
 
-    return post.content;
+  return post.content;
+}
+
+export function getEditablePostContent(
+  post: Post
+) {
+  if (post.status === 'Rejected') {
+    return {
+      title:
+        post.draftTitle ?? post.title,
+      content:
+        post.draftContent ?? post.content,
+    };
+  }
+
+  return {
+    title: post.title,
+    content: post.content,
+  };
 }
 
 
