@@ -12,15 +12,19 @@ import { PostStatus } from './post-status';
 import type { PostStatusType } from '../../types';
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants';
+import { RiskBadge } from '../moderation/risk-badge';
+import { getOverallRisk, type CategoryScore } from '../../lib/moderation';
 
 interface PostWorkflowHeaderProps {
   author: string;
   status?: PostStatusType;
   title: string;
+  scores: CategoryScore[];
 }
 
-export function PostWorkflowHeader({ author, status, title }: PostWorkflowHeaderProps) {
+export function PostWorkflowHeader({ author, status, title, scores }: PostWorkflowHeaderProps) {
   const navigate = useNavigate();
+  const overallRisk = getOverallRisk(scores);
 
   return (
     <Paper p="md" radius="md" withBorder mb="lg">
@@ -66,6 +70,14 @@ export function PostWorkflowHeader({ author, status, title }: PostWorkflowHeader
           {status && (
             <PostStatus status={status} />
           )}
+
+          <Group gap={6} align="flex-start">
+            <Text fw={600} size="sm">
+              Overall Risk
+            </Text>
+            <RiskBadge level={overallRisk} />
+          </Group>
+
 
         </Stack>
       </Group>

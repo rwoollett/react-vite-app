@@ -334,7 +334,7 @@ export function PostWorkflow({ email }: { email: string }) {
     return (
       <Container size="md" py="md">
 
-        <PostWorkflowHeader author={author} status={post?.status} title={"Live Posts"} />
+        <PostWorkflowHeader author={author} status={post?.status} title={"Live Posts"} scores={scores} />
 
         <Paper shadow="sm" radius="md" p="lg">
           <Stack gap="xl">
@@ -364,7 +364,7 @@ export function PostWorkflow({ email }: { email: string }) {
     <Container size="md" py="md">
       <PostWorkflowHeader author={author} status={post?.status} title={workflowMode === "create"
         ? "Create Post"
-        : "Update Post"} />
+        : "Update Post"}  scores={scores} />
 
       <Paper shadow="sm" radius="md" p="lg">
         <Stack gap="xl">

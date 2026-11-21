@@ -1,6 +1,13 @@
 
-export const PUBLISH_THRESHOLD = 60
-export const ATTENTION_THRESHOLD = 40
+
+export const CATEGORY_THRESHOLDS = {
+  toxic:         { publish: 80, attention: 40 },
+  severe_toxic:  { publish: 80, attention: 40 },
+  obscene:       { publish: 60, attention: 30 },
+  threat:        { publish: 50, attention: 25 },
+  insult:        { publish: 80, attention: 40 },
+  identity_hate: { publish: 80, attention: 40 },
+} as const;
 
 export type ModerationStatus = 'live' | 'pending' | 'approved' | 'rejected' | 'borderline'
 
@@ -13,15 +20,6 @@ export type ModerationScenario = 'approved' | 'rejected' | 'borderline'
 export interface CategoryScore {
   category: ModerationCategory
   score: number
-}
-
-export interface Post {
-  id: string
-  title: string
-  content: string
-  slug: string
-  scores: CategoryScore[]
-  publishedAt: Date
 }
 
 export const CATEGORY_LABELS: Record<ModerationCategory, string> = {
@@ -61,33 +59,61 @@ export const SCENARIO_SCORES: Record<ModerationScenario, CategoryScore[]> = {
     { category: "obscene", score: 51 }]
 }
 
-//export const PUBLISHING_THRESHOLD = 60
+export function getPublishThreshold(
+  category: ModerationCategory
+) {
+  return CATEGORY_THRESHOLDS[
+    category
+  ].publish;
+}
 
-export function getExceededCategory(scores: CategoryScore[]): ModerationCategory | null {
-  if (scores.length === 0) {
-    return null
+export function getAttentionThreshold(
+  category: ModerationCategory
+) {
+  return CATEGORY_THRESHOLDS[
+    category
+  ].attention;
+}
+
+export function getExceededCategory(
+  scores: CategoryScore[]
+): ModerationCategory | null {
+
+  const exceeded = scores.filter(score =>
+    score.score >= getPublishThreshold(score.category)
+  );
+
+  if (
+    exceeded.length === 0
+  ) {
+    return null;
   }
 
-  const topScore = scores.reduce((top, current) =>
-    current.score > top.score ? current : top,
-  )
+  exceeded.sort(
+    (a, b) => b.score - a.score
+  );
 
-  return topScore.score >= PUBLISH_THRESHOLD
-    ? topScore.category
-    : null
+  return exceeded[0].category;
 }
 
 const RISK_RANK: Record<RiskLevel, number> = { low: 0, medium: 1, high: 2 }
 
-export function getSeverity(score: number): RiskLevel {
-  if (score >= PUBLISH_THRESHOLD) return 'high'
-  if (score >= ATTENTION_THRESHOLD) return 'medium'
-  return 'low'
+export function getSeverity(
+  category: ModerationCategory,
+  score: number
+): RiskLevel {
+  if (score >= getPublishThreshold(category)) {
+    return 'high';
+  }
+  if (score >= getAttentionThreshold(category)) {
+    return 'medium';
+  }
+  return 'low';
 }
 
 export function getOverallRisk(scores: CategoryScore[]): RiskLevel {
-  return scores.reduce<RiskLevel>((highest, { score }) => {
-    const severity = getSeverity(score)
+  return scores.reduce<RiskLevel>((highest, { category, score }) => {
+    const severity = getSeverity(category, score)
     return RISK_RANK[severity] > RISK_RANK[highest] ? severity : highest
   }, 'low')
 }

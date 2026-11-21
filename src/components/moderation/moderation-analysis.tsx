@@ -17,7 +17,7 @@ export function ModerationAnalysis({ scores, heading = 'Moderation Analysis' }: 
             key={category}
             category={category}
             score={score}
-            severity={getSeverity(score)}
+            severity={getSeverity(category, score)}
           />
         ))}
       </Stack>

@@ -11,7 +11,6 @@ import {
 import type { ReactNode } from 'react'
 import {
   CATEGORY_LABELS,
-  PUBLISH_THRESHOLD,
   type CategoryScore,
   type ModerationStatus,
   type RiskLevel,
@@ -97,7 +96,7 @@ function getConfig(status: ModerationStatus, scores: CategoryScore[]): StatusCon
     if (exceeded) {
       return {
         ...config,
-        message: `${CATEGORY_LABELS[exceeded]} score exceeded publishing threshold (${PUBLISH_THRESHOLD}%).`,
+        message: `${CATEGORY_LABELS[exceeded]} score exceeded publishing threshold`,// (${PUBLISH_THRESHOLD}%).`,
       }
     }
   }

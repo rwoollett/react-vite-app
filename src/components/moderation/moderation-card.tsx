@@ -6,7 +6,7 @@ import {
   IconCircleX,
 } from '@tabler/icons-react'
 import { ModerationAnalysis } from './moderation-analysis'
-import { CATEGORY_LABELS, getOverallRisk, getExceededCategory, PUBLISH_THRESHOLD } from '../../lib/moderation'
+import { CATEGORY_LABELS, getOverallRisk, getExceededCategory, getPublishThreshold } from '../../lib/moderation'
 import { RiskBadge } from './risk-badge'
 import type { CategoryScore, ModerationStatus, RiskLevel } from '../../lib/moderation'
 
@@ -73,7 +73,7 @@ function getConfig(status: ModerationStatus, scores: CategoryScore[]): StatusCon
     if (exceeded) {
       return {
         ...config,
-        message: `${CATEGORY_LABELS[exceeded]} score exceeded publishing threshold (${PUBLISH_THRESHOLD}%).`,
+        message: `${CATEGORY_LABELS[exceeded]} score exceeded publishing threshold (${getPublishThreshold(exceeded)}%).`,
       }
     }
   }
@@ -150,12 +150,12 @@ export function ModerationCard({
 
         <ModerationAnalysis scores={scores} />
 
-        <Stack gap={6} align="flex-start">
+        {/* <Stack gap={6} align="flex-start">
           <Text fw={600} size="sm">
             Overall Risk
           </Text>
           <RiskBadge level={overallRisk} />
-        </Stack>
+        </Stack> */}
 
       </Stack>
     </Card>
