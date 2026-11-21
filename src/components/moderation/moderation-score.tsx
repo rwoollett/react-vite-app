@@ -12,7 +12,6 @@ export function ModerationScore({ category, score, severity }: ModerationScorePr
   const value = clampScore(score)
   const color = RISK_COLORS[severity]
   const isFlagged = severity !== 'low'
-
   return (
     <Group gap="md" wrap="nowrap" align="center">
       <Text w={96} size="sm" fw={500}>
@@ -32,7 +31,7 @@ export function ModerationScore({ category, score, severity }: ModerationScorePr
       <Group w={24} justify="center">
         {isFlagged ? (
           <Tooltip label={`${category} flagged`} withArrow>
-            <ThemeIcon variant="transparent" color="red" size="sm" aria-label={`${category} flagged`}>
+            <ThemeIcon variant="transparent" color={color} size="sm" aria-label={`${category} flagged`}>
               <IconStarFilled size={16} />
             </ThemeIcon>
           </Tooltip>

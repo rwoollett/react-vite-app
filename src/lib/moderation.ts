@@ -1,3 +1,4 @@
+import type { Post } from "../types";
 
 
 export const CATEGORY_THRESHOLDS = {
@@ -151,6 +152,30 @@ export function estimateScores(text: string): CategoryScore[] {
 
 export function clampScore(score: number): number {
   return Math.min(100, Math.max(0, Math.round(score)))
+}
+
+export function getEditableTitle(post: Post) {
+
+    if (
+        post.status === "Rejected" &&
+        post.draftTitle
+    ) {
+        return post.draftTitle;
+    }
+
+    return post.title;
+}
+
+export function getEditableContent(post: Post) {
+
+    if (
+        post.status === "Rejected" &&
+        post.draftContent
+    ) {
+        return post.draftContent;
+    }
+
+    return post.content;
 }
 
 

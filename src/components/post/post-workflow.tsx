@@ -9,6 +9,8 @@ import {
   type ModerationStatus,
   getOverallRisk,
   getStatusForScores,
+  getEditableTitle,
+  getEditableContent,
 } from '../../lib/moderation'
 import { PostForm } from './post-form'
 //import { PublishedPostCard } from './published-post-card'
@@ -53,8 +55,8 @@ export function PostWorkflow({ email }: { email: string }) {
   );
 
   const { gatewayWsId, livePostMessageQueue, lastProcessedLivePostSeq, setLastProcessedLivePostSeq } = useWebSocket();
-  const [title, setTitle] = useState(post ? post.title : '')
-  const [content, setContent] = useState(post ? post.content : '')
+  const [title, setTitle] = useState(post ? getEditableTitle(post) : '')
+  const [content, setContent] = useState(post ? getEditableContent(post) : '')
   const [status, setStatus] = useState<ModerationStatus>('live')
   const [createStatus, setCreateStatus] = useState<CreateStatus>("idle");
   const [author, setAuthor] = useState(''); // from logged credentails

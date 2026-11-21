@@ -27,6 +27,8 @@ export type Post = {
   date: string;
   title: string;
   content: string;
+  draftTitle: string;
+  draftContent: string;
   userId: number;
   userName: string;
   slug: string;
