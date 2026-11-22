@@ -23,7 +23,7 @@ const LivePosts: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { surfaceBg, surfaceText } = useColorMap();
+  const { buttonColors, surfaceBg, surfaceText } = useColorMap();
 
   // Fetch homepage content
   useEffect(() => {
@@ -59,14 +59,14 @@ const LivePosts: React.FC = () => {
     <>
       <Banner title={title} desc={description} />
 
-      <Box bg={surfaceBg} c={surfaceText} p="lg">
+      <Box bg={surfaceBg} c={surfaceText} p="xs">
 
         {/* Header Section */}
         {isLoggedIn && (
           <Paper
             shadow="sm"
             radius="md"
-            p="md"
+            p="sm"
             mb="lg"
             bg={surfaceBg}
             c={surfaceText}
@@ -74,7 +74,7 @@ const LivePosts: React.FC = () => {
             <Group justify="flex-start">
               <Button
                 type="button"
-                color="gray"
+                color={buttonColors.secondary}
                 variant='outline'
                 onClick={toMyPostsPage}
               >
@@ -86,9 +86,9 @@ const LivePosts: React.FC = () => {
 
         {/* Posts Section */}
         <Paper
-          // shadow="sm"
+          shadow="md"
           radius="md"
-          p="md"
+          p="sm"
           bg={surfaceBg}
           c={surfaceText}
         >

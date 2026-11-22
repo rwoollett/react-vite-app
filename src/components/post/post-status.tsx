@@ -43,7 +43,7 @@ export function PostStatus({
           bg={POST_STATUS_COLORS[7]}
           c={POST_STATUS_COLORS[3]}
         >
-          Pending Moderation
+          Moderating...
         </Badge>
       );
 

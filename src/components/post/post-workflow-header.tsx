@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants';
 import { RiskBadge } from '../moderation/risk-badge';
 import { getOverallRisk, type CategoryScore } from '../../lib/moderation';
+import { useColorMap } from '../../theme/colorMap';
 
 interface PostWorkflowHeaderProps {
   author: string;
@@ -25,30 +26,30 @@ interface PostWorkflowHeaderProps {
 export function PostWorkflowHeader({ author, status, title, scores }: PostWorkflowHeaderProps) {
   const navigate = useNavigate();
   const overallRisk = getOverallRisk(scores);
+  const { buttonColors } = useColorMap();
 
   return (
-    <Paper p="md" radius="md" withBorder mb="lg">
+    <Paper p="sm" radius="sm" withBorder >
       <Group justify="space-between" align="flex-start">
         <div>
           <Title order={2}>{title}</Title>
 
-          <Stack gap={6} mt={2}>
+          <Stack gap={24} mt={2}>
             <Group gap="xs">
               <IconUser size={14} color="gray" />
               <Text size="sm" c="dimmed">
                 {author}
               </Text>
             </Group>
-            <Group gap="xs">
+            <Group gap="sm">
               <ThemeIcon
                 variant="light"
                 color="blue"
-                size="md"
-                radius="xl"
+                size="sm"
+                radius="lg"
               >
-                <IconShieldCheck size={16} />
+                <IconShieldCheck size={14} />
               </ThemeIcon>
-
               <Text size="sm" c="dimmed">
                 Toxic BERT moderation
               </Text>
@@ -56,9 +57,11 @@ export function PostWorkflowHeader({ author, status, title, scores }: PostWorkfl
           </Stack>
         </div>
 
-        <Stack align="flex-end" gap="xs">
-          <Button
+        <Stack align="flex-end" gap="sm">
+          <Button p={4}
             variant="subtle"
+            color={buttonColors.secondary}
+
             leftSection={<IconArrowLeft size={16} />}
             onClick={() =>
               navigate(`${ROUTES.LIVEPOSTS_ROUTE}/myposts`)
@@ -67,17 +70,16 @@ export function PostWorkflowHeader({ author, status, title, scores }: PostWorkfl
             My Posts
           </Button>
 
-          {status && (
-            <PostStatus status={status} />
-          )}
-
-          <Group gap={6} align="flex-start">
-            <Text fw={600} size="sm">
+          <Group gap={4}>
+            <Text fw={500} size="sm">
               Overall Risk
             </Text>
             <RiskBadge level={overallRisk} />
           </Group>
 
+          {status && (
+            <PostStatus status={status} />
+          )}
 
         </Stack>
       </Group>

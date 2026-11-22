@@ -40,7 +40,7 @@ function PostsComponent() {
   }
 
   return (
-    <Box bg={surfaceBg} c={surfaceText} p="md">
+    <Box bg={surfaceBg} c={surfaceText} p="sm">
       <Stack>{content}</Stack>
     </Box>
   );

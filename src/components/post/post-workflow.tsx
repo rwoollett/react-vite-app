@@ -359,7 +359,7 @@ export function PostWorkflow({ email }: { email: string }) {
 
   if (post && status === 'approved') {
     return (
-      <Container size="md" py="md">
+      <Container size="xl" py="xs">
 
         <PostWorkflowHeader author={author} status={post?.status} title={"Live Posts"} scores={scores} />
 
@@ -388,7 +388,7 @@ export function PostWorkflow({ email }: { email: string }) {
   }
 
   return (
-    <Container size="md" py="md">
+    <Container size="xl" py="xs">
       <PostWorkflowHeader author={author} status={post?.status} title={workflowMode === "create"
         ? "Create Post"
         : "Update Post"} scores={scores} />
