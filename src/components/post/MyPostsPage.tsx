@@ -5,7 +5,6 @@ import {
   Card,
   Container,
   Group,
-  Paper,
   Stack,
   Text,
   Title,
