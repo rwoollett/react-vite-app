@@ -15,6 +15,11 @@ export type PostStatusType =
   | "Live"
   | "Rejected";
 
+export type PrerenderStatus =
+  | 'Pending'
+  | 'Completed'
+  | 'Failed';
+
 export interface PostSummary {
   id: number;
   title: string;
@@ -34,6 +39,7 @@ export type Post = {
   slug: string;
   reactions: ReactionEmojiCount;
   status: PostStatusType;
+  prerenderStatus: PrerenderStatus;
 
 }
 

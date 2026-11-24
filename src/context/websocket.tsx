@@ -16,7 +16,7 @@ import { actionReceived, truncateClient } from '../store/api/cstokenSlice';
 import type { WSUserConnectMessage } from "../types/wsuser";
 import { baseAuthUrl } from "../utility/functions";
 import { http } from "../utility/fetchData";
-import { fetchPosts, postStatusUpdated } from "../store/api/postsSlice";
+import { fetchPosts, postPrerenderCompleted, postStatusUpdated } from "../store/api/postsSlice";
 import { refetchAuthor } from "../store/api/authorUsersSlice";
 
 type WebSocketContextType = {
@@ -235,6 +235,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         switch (msg.subject) {
           case "liveposts_post_Stage":
             dispatch(fetchPosts());
+            dispatch(postPrerenderCompleted(msg.payload));
             return;
           case "liveposts_post_StatusChanged":
             handleLivePostModerate(msg); // do need to use event on post workflow

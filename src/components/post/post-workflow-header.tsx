@@ -13,19 +13,18 @@ import type { PostStatusType } from '../../types';
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants';
 import { RiskBadge } from '../moderation/risk-badge';
-import { getOverallRisk, type CategoryScore } from '../../lib/moderation';
+import { type RiskLevel } from '../../lib/moderation';
 import { useColorMap } from '../../theme/colorMap';
 
 interface PostWorkflowHeaderProps {
   author: string;
   status?: PostStatusType;
   title: string;
-  scores: CategoryScore[];
+  overallRisk: RiskLevel;
 }
 
-export function PostWorkflowHeader({ author, status, title, scores }: PostWorkflowHeaderProps) {
+export function PostWorkflowHeader({ author, status, title, overallRisk }: PostWorkflowHeaderProps) {
   const navigate = useNavigate();
-  const overallRisk = getOverallRisk(scores);
   const { buttonColors } = useColorMap();
 
   return (
@@ -61,7 +60,6 @@ export function PostWorkflowHeader({ author, status, title, scores }: PostWorkfl
           <Button p={4}
             variant="subtle"
             color={buttonColors.secondary}
-
             leftSection={<IconArrowLeft size={16} />}
             onClick={() =>
               navigate(`${ROUTES.LIVEPOSTS_ROUTE}/myposts`)

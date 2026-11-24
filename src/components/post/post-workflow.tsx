@@ -361,13 +361,19 @@ export function PostWorkflow({ email }: { email: string }) {
     return (
       <Container size="xl" py="xs">
 
-        <PostWorkflowHeader author={author} status={post?.status} title={"Live Posts"} scores={scores} />
+        <PostWorkflowHeader
+          author={author}
+          status={post?.status}
+          title={"Live Posts"}
+          overallRisk={getOverallRisk(scores)}
+        />
 
         <Paper shadow="sm" radius="md" p="lg">
           <Stack gap="xl">
             <ModerationCard status={status} scores={scores} />
             <ResultActions
               slug={post.slug}
+              prerenderStatus={post.prerenderStatus}
               onCreateAnother={() => {
                 setWorkflowMode("create");
                 resetToForm(true);
@@ -389,9 +395,13 @@ export function PostWorkflow({ email }: { email: string }) {
 
   return (
     <Container size="xl" py="xs">
-      <PostWorkflowHeader author={author} status={post?.status} title={workflowMode === "create"
-        ? "Create Post"
-        : "Update Post"} scores={scores} />
+      <PostWorkflowHeader
+        author={author}
+        status={post?.status}
+        title={workflowMode === "create"
+          ? "Create Post"
+          : "Update Post"}
+        overallRisk={getOverallRisk(scores)} />
 
       <Paper shadow="sm" radius="md" p="lg">
         <Stack gap="xl">

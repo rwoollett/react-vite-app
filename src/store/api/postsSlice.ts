@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
   createEntityAdapter,
 } from '@reduxjs/toolkit';
-import type { Post, PostCreate, PostStatusChanged, PostUpdate } from '../../types';
+import type { Post, PostCreate, PostStage, PostStatusChanged, PostUpdate } from '../../types';
 import { http } from '../../utility/fetchData';
 import { fetchMyPosts } from './myPostsSlice';
 
@@ -81,6 +81,17 @@ export const postsSlice = createSlice({
         existingPost.status = status;
       }
 
+    },
+    postPrerenderCompleted: (state, action: PayloadAction<PostStage>) => {
+      const { id, slug } = action.payload;
+      const post = state.entities[id];
+      console.log('prerender has post from addNewPost.fulfilled iin create post workflow', id, post);
+
+      if (post) {
+        post.slug = slug; 
+        post.prerenderStatus = "Completed";
+       console.log('prerender completed');
+      }
     }
   },
   extraReducers: builder => {
@@ -105,6 +116,6 @@ export const postsSlice = createSlice({
   }
 });
 
-export const { postStatusUpdated } = postsSlice.actions;
+export const { postStatusUpdated, postPrerenderCompleted } = postsSlice.actions;
 export const { reducer } = postsSlice;
 
