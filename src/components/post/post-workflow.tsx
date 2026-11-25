@@ -33,7 +33,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ROUTES } from '../../resources/routes-constants'
 import { useColorMap } from '../../theme/colorMap'
 import { ModerationCard } from '../moderation/moderation-card'
-import { addNewPost, updatePost } from '../../store/api/postsSlice'
+import { addNewPost, postPrerenderPending, updatePost } from '../../store/api/postsSlice'
 
 type WorkflowMode =
   | "create"
@@ -241,6 +241,7 @@ export function PostWorkflow({ email }: { email: string }) {
         }
         else {
           if (postId)
+            dispatch(postPrerenderPending({id: Number(postId)}));
             await dispatch(
               updatePost({
                 postId: Number(postId),

@@ -82,6 +82,15 @@ export const postsSlice = createSlice({
       }
 
     },
+    postPrerenderPending: (state, action: PayloadAction<{id: number;}>) => {
+      const { id } = action.payload;
+      const post = state.entities[id];
+
+      if (post) {
+        post.prerenderStatus = "Pending";
+       console.log('prerender pending');
+      }
+    },
     postPrerenderCompleted: (state, action: PayloadAction<PostStage>) => {
       const { id, slug } = action.payload;
       const post = state.entities[id];
@@ -109,6 +118,9 @@ export const postsSlice = createSlice({
     builder.addCase(addNewPost.fulfilled, (state, action) => {
       postsAdapter.addOne(state, action.payload);
     });
+    builder.addCase(updatePost.fulfilled, (state, action) => {
+      postsAdapter.upsertOne(state, action.payload);
+    });
     builder.addCase(fetchMyPosts.fulfilled, (state, action) => {
       postsAdapter.upsertMany(state, action.payload);
     }
@@ -116,6 +128,6 @@ export const postsSlice = createSlice({
   }
 });
 
-export const { postStatusUpdated, postPrerenderCompleted } = postsSlice.actions;
+export const { postStatusUpdated, postPrerenderPending, postPrerenderCompleted } = postsSlice.actions;
 export const { reducer } = postsSlice;
 
